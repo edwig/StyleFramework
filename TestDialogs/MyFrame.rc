@@ -1,0 +1,622 @@
+// Microsoft Visual C++ generated resource script.
+//
+#pragma code_page(65001)
+
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+#include "verrsrc.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "Edwig Huisman"
+            VALUE "FileDescription", "MyFrame"
+            VALUE "FileVersion", "1.0.0.1"
+            VALUE "InternalName", "MyFrame.exe"
+            VALUE "LegalCopyright", "Edwig Huisman (c) 2020"
+            VALUE "OriginalFilename", "MyFrame.exe"
+            VALUE "ProductName", "StylingFramework"
+            VALUE "ProductVersion", "1.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_ABOUTBOX            "&About MyFrame..."
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 233, 99
+STYLE DS_SETFONT | WS_POPUP | WS_SYSMENU
+FONT 10, "Verdana", 400, 0, 0x0
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,16,16
+    LTEXT           "StyleFramework, Version 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2020 Edwig Huisman",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "OK",IDOK,143,64,83,14,WS_GROUP
+END
+
+IDD_MYSETTINGS_DIALOG DIALOGEX 0, 0, 441, 256
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,267,215,81,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,353,215,81,14
+    CONTROL         "",IDC_TAB_1,"SysTabControl32",TCS_OWNERDRAWFIXED,7,8,427,199
+END
+
+IDD_DIALOG1 DIALOGEX 0, 0, 323, 322
+STYLE DS_SETFONT | WS_POPUP | WS_VISIBLE | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+FONT 10, "Verdana", 400, 0, 0x0
+BEGIN
+    PUSHBUTTON      "Standard",IDC_BUTTON_1,7,5,86,29
+    LTEXT           "Choose a color style ",IDC_STATIC,108,8,86,8
+    LTEXT           "Test a standard text box",IDC_STATIC,108,23,89,8
+    COMBOBOX        IDC_COMBO_1,200,5,116,69,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT_1,200,20,116,14,ES_AUTOHSCROLL
+    GROUPBOX        "Choose one of these",IDC_STATIC,7,45,93,85
+    CONTROL         "Option one",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON,17,59,80,10
+    CONTROL         "Option two",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,17,73,79,10
+    CONTROL         "Option three",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON,17,87,80,10
+    CONTROL         "Final option (four)",IDC_RADIO4,"Button",BS_AUTORADIOBUTTON,17,101,80,10
+    GROUPBOX        "Options",IDC_STATIC,108,46,208,84
+    CONTROL         "Very logic choice. The right thing to do",IDC_CHECK1,
+                    "Button",BS_AUTO3STATE | WS_TABSTOP,113,59,192,10
+    CONTROL         "Illogical faulty choice",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,113,72,190,10
+    EDITTEXT        IDC_MULTI,114,86,197,38,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    CONTROL         "",IDC_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_TABSTOP,7,141,309,109,WS_EX_CLIENTEDGE
+    COMBOBOX        IDC_COMBO_2,7,257,193,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_TEXT,7,278,101,14,ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_CLIENTEDGE
+    DEFPUSHBUTTON   "OK",IDOK,145,278,81,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,235,278,81,14
+END
+
+IDD_DIALOG2 DIALOGEX 0, 0, 323, 322
+STYLE DS_SETFONT | WS_POPUP | WS_VISIBLE | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+FONT 10, "Verdana", 400, 0, 0x0
+BEGIN
+    LTEXT           "Color styles",IDC_STATIC,7,8,65,8
+    COMBOBOX        IDC_COMBO_1,81,6,236,30,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Multi selection",IDC_STATIC,7,29,66,8
+    COMBOBOX        IDC_COMBO_2,81,27,236,30,CBS_DROPDOWN | CBS_OWNERDRAWFIXED | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Enabled / Disabled",IDC_STATIC,7,51,66,8
+    CONTROL         "",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,81,50,8,10
+    COMBOBOX        IDC_COMBO_3,92,49,225,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Enter a number (10)",IDC_STATIC,7,72,71,8
+    CONTROL         "",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,81,71,8,10
+    EDITTEXT        IDC_EDIT1,92,70,58,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPIN1,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,150,70,9,14
+    LTEXT           "Enter a number (20)",IDC_STATIC,7,93,71,8
+    CONTROL         "",IDC_CHECK3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,81,92,8,10
+    EDITTEXT        IDC_EDIT2,92,91,58,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPIN2,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_ARROWKEYS,150,91,9,14
+    DEFPUSHBUTTON   "OK",IDOK,145,284,81,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,235,284,81,14
+    PUSHBUTTON      "Error State",IDC_ERROR,235,91,82,14
+    LTEXT           "Visit Edwig on GitHub",IDC_HYPERLINK,81,116,134,8
+    LTEXT           "Testing the link:",IDC_STATIC,7,116,66,8
+END
+
+IDD_GRIDDIALOG DIALOGEX 0, 0, 423, 416
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,253,369,74,14
+    PUSHBUTTON      "Cancel",IDCANCEL,335,369,81,14
+    CONTROL         "Grid",IDC_GRID,"MFCGridCtrl",WS_TABSTOP,7,7,409,321
+    EDITTEXT        IDC_TEXT,7,332,409,33,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL
+END
+
+IDD_DIALOG3 DIALOGEX 0, 0, 319, 318
+STYLE DS_SETFONT | WS_POPUP | WS_SYSMENU
+FONT 10, "Verdana", 400, 0, 0x0
+BEGIN
+    LTEXT           "Field one",IDC_STATIC,7,16,48,8
+    EDITTEXT        IDC_EDIT1,60,14,109,14,ES_AUTOHSCROLL
+    LTEXT           "Field two",IDC_STATIC,7,39,48,8
+    EDITTEXT        IDC_EDIT2,60,36,109,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Mutations",IDC_BUTTON,186,36,50,14
+    LTEXT           "Field three",IDC_STATIC,7,60,48,8
+    EDITTEXT        IDC_EDIT3,60,59,109,14,ES_AUTOHSCROLL
+    LTEXT           "Mandatory",IDC_STATIC,7,85,49,8
+    EDITTEXT        IDC_EDIT4,60,82,109,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "",IDC_DIR_EDIT4,171,82,15,14
+    LTEXT           "Date field",IDC_STATIC,7,109,49,8
+    EDITTEXT        IDC_EDIT5,60,106,109,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "",IDC_CAL_EDIT5,171,106,15,14
+    LTEXT           "Text 'error'",IDC_STATIC,7,130,48,8
+    EDITTEXT        IDC_EDIT6,60,128,109,14,ES_AUTOHSCROLL
+    LTEXT           "Password",IDC_STATIC,7,155,49,8
+    EDITTEXT        IDC_EDIT7,60,152,109,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,186,271,55,14
+    PUSHBUTTON      "Cancel",IDCANCEL,254,271,58,14
+END
+
+IDD_DIALOG4 DIALOGEX 0, 0, 312, 286
+STYLE DS_SETFONT | WS_POPUP
+EXSTYLE WS_EX_APPWINDOW
+FONT 10, "Verdana", 400, 0, 0x0
+BEGIN
+    EDITTEXT        IDC_EDIT1,6,6,300,54,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    EDITTEXT        IDC_EDIT2,6,62,300,54,ES_MULTILINE | ES_AUTOHSCROLL | ES_WANTRETURN | WS_HSCROLL
+    EDITTEXT        IDC_EDIT3,6,118,300,54,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL
+    EDITTEXT        IDC_EDIT4,6,174,300,54,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_WANTRETURN
+    PUSHBUTTON      "Error",IDC_ERROR,6,234,50,14
+    DEFPUSHBUTTON   "OK",IDOK,154,234,75,14
+    PUSHBUTTON      "Cancel",IDCANCEL,231,234,75,14
+END
+
+IDD_DIALOG5 DIALOGEX 0, 0, 335, 289
+STYLE DS_SETFONT | WS_POPUP | WS_SYSMENU
+FONT 10, "Verdana", 400, 0, 0x0
+BEGIN
+    EDITTEXT        IDC_EDIT,7,7,244,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Add",IDC_ADD,264,7,64,14
+    LISTBOX         IDC_LIST1,7,25,158,222,LBS_NOINTEGRALHEIGHT | NOT WS_BORDER | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
+    LISTBOX         IDC_LIST2,170,25,158,222,LBS_NOINTEGRALHEIGHT | NOT WS_BORDER | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "&Empty",IDC_LEGEN,7,251,67,14
+    DEFPUSHBUTTON   "OK",IDOK,181,251,71,14
+    PUSHBUTTON      "Cancel",IDCANCEL,258,251,70,14
+    PUSHBUTTON      "&Printing",IDC_PRINTEN,76,251,67,14
+END
+
+IDD_DIALOG6 DIALOGEX 0, 0, 335, 289
+STYLE DS_SETFONT | WS_POPUP | WS_SYSMENU
+FONT 10, "Verdana", 400, 0, 0x0
+BEGIN
+    EDITTEXT        IDC_EDIT,7,7,244,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Add",IDC_ADD,264,7,64,14
+    CONTROL         "",IDC_TREE1,"SysTreeView32",TVS_HASBUTTONS | TVS_HASLINES | TVS_NONEVENHEIGHT | WS_BORDER | WS_HSCROLL | WS_TABSTOP,7,25,158,219
+    CONTROL         "",IDC_TREE2,"SysTreeView32",TVS_NONEVENHEIGHT | WS_BORDER | WS_HSCROLL | WS_TABSTOP,170,25,158,219
+    PUSHBUTTON      "&Empty",IDC_LEGEN,7,251,67,14
+    DEFPUSHBUTTON   "OK",IDOK,181,251,71,14
+    PUSHBUTTON      "Cancel",IDCANCEL,258,251,70,14
+END
+
+IDD_DIALOG7 DIALOGEX 0, 0, 364, 142
+STYLE DS_SETFONT | WS_POPUP | WS_SYSMENU
+FONT 10, "Verdana", 400, 0, 0x0
+BEGIN
+    LTEXT           "Total number",IDC_STATIC,7,10,57,8
+    EDITTEXT        IDC_TOTAL,71,7,109,14,ES_AUTOHSCROLL
+    LTEXT           "Interval in ms",IDC_STATIC,7,26,57,8
+    EDITTEXT        IDC_INTERVAL,71,24,109,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",0x0,7,50,321,11
+    PUSHBUTTON      "Error",IDC_ERROR,104,64,71,14
+    PUSHBUTTON      "Pause",IDC_PAUSE,180,64,71,14
+    PUSHBUTTON      "Start",IDC_START,257,64,71,14
+    DEFPUSHBUTTON   "OK",IDOK,181,102,71,14
+    PUSHBUTTON      "Cancel",IDCANCEL,258,102,70,14
+    CONTROL         "",IDC_PROGRESS2,"msctls_progress32",PBS_VERTICAL,343,7,14,109
+    PUSHBUTTON      "Start M.",IDC_STARTM,7,64,35,14
+    PUSHBUTTON      "Stop M.",IDC_STOPM,45,64,35,14
+    PUSHBUTTON      "Reset",IDC_RESET,257,7,71,14
+END
+
+IDD_TESTS DIALOGEX 0, 0, 247, 272
+STYLE DS_SETFONT | WS_POPUP | WS_SYSMENU
+FONT 10, "Verdana", 400, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,103,231,64,14
+    PUSHBUTTON      "Cancel",IDCANCEL,177,231,63,14
+    EDITTEXT        IDC_TEXT,7,7,233,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Test dialog elements",IDC_TEST1,133,30,107,14
+    LTEXT           "Various dialog elements",IDC_STATIC,7,33,120,8
+    PUSHBUTTON      "Combo boxes",IDC_TEST2,133,50,107,14
+    LTEXT           "Multi selectie combo box",IDC_STATIC,7,53,120,8
+    PUSHBUTTON      "Edit boxes",IDC_TEST3,133,71,107,14
+    LTEXT           "Edit boxes and styles",IDC_STATIC,7,74,120,8
+    PUSHBUTTON      "Multiline & resize",IDC_TEST4,133,92,107,14
+    LTEXT           "Edit boxes multi lines",IDC_STATIC,7,95,120,8
+    PUSHBUTTON      "List box",IDC_TEST5,133,113,107,14
+    LTEXT           "List boxes && resize",IDC_STATIC,7,116,120,8
+    PUSHBUTTON      "Tree controls",IDC_TEST6,133,134,107,14
+    LTEXT           "Tree controls && borders",IDC_STATIC,7,137,120,8
+    PUSHBUTTON      "Progress control",IDC_TEST7,133,153,107,14
+    LTEXT           "Progress control && marquee",IDC_STATIC,7,156,120,8
+    PUSHBUTTON      "Grid dialog",IDC_GRID,133,174,107,14
+    LTEXT           "Maunder grid",IDC_STATIC,7,177,120,8
+    PUSHBUTTON      "Tab control",IDC_TABS,133,194,107,14
+    LTEXT           "Tabulate control",IDC_STATIC,7,197,120,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 226
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 92
+    END
+
+    IDD_MYSETTINGS_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 434
+        VERTGUIDE, 108
+        VERTGUIDE, 348
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 249
+        HORZGUIDE, 62
+    END
+
+    IDD_DIALOG1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 316
+        VERTGUIDE, 108
+        VERTGUIDE, 200
+        VERTGUIDE, 224
+        TOPMARGIN, 5
+        BOTTOMMARGIN, 315
+        HORZGUIDE, 34
+        HORZGUIDE, 292
+    END
+
+    IDD_DIALOG2, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 317
+        VERTGUIDE, 81
+        VERTGUIDE, 92
+        VERTGUIDE, 226
+        VERTGUIDE, 235
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 311
+        HORZGUIDE, 18
+        HORZGUIDE, 39
+        HORZGUIDE, 61
+        HORZGUIDE, 84
+        HORZGUIDE, 105
+        HORZGUIDE, 298
+    END
+
+    IDD_GRIDDIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 416
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 409
+        HORZGUIDE, 383
+    END
+
+    IDD_DIALOG3, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 312
+        VERTGUIDE, 60
+        VERTGUIDE, 169
+        VERTGUIDE, 186
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 311
+        HORZGUIDE, 50
+        HORZGUIDE, 285
+    END
+
+    IDD_DIALOG4, DIALOG
+    BEGIN
+        LEFTMARGIN, 6
+        RIGHTMARGIN, 306
+        VERTGUIDE, 300
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 280
+        HORZGUIDE, 248
+    END
+
+    IDD_DIALOG5, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 328
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 282
+        HORZGUIDE, 265
+    END
+
+    IDD_DIALOG6, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 328
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 282
+        HORZGUIDE, 265
+    END
+
+    IDD_DIALOG7, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 357
+        VERTGUIDE, 71
+        VERTGUIDE, 180
+        VERTGUIDE, 257
+        VERTGUIDE, 328
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 135
+        HORZGUIDE, 38
+        HORZGUIDE, 78
+        HORZGUIDE, 116
+    END
+
+    IDD_TESTS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 240
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 265
+        HORZGUIDE, 44
+        HORZGUIDE, 64
+        HORZGUIDE, 85
+        HORZGUIDE, 106
+        HORZGUIDE, 127
+        HORZGUIDE, 148
+        HORZGUIDE, 167
+        HORZGUIDE, 188
+        HORZGUIDE, 208
+        HORZGUIDE, 245
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_MYSETTINGS_DIALOG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG2 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_ABOUTBOX AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_GRIDDIALOG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG3 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG4 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG5 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG6 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG7 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG1 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_TESTS AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\MyFrame.ico"
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "#include ""verrsrc.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#include ""res\\MyFrame.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""      // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU
+BEGIN
+    MENUITEM "Application",                 ID_APPLICATION
+    MENUITEM "Image",                       ID_IMAGE
+    MENUITEM "Options",                     ID_OPTIONS
+    MENUITEM "Extrawindows",                ID_EXTRAWINDOWS
+    MENUITEM "Userinfo",                    ID_USERINFO
+    MENUITEM "Help",                        ID_HELP32776
+END
+
+IDR_MENU4 MENU
+BEGIN
+    POPUP "MENU"
+    BEGIN
+        POPUP "File"
+        BEGIN
+            MENUITEM "Open",                        ID_FILE_OPEN32797
+            MENUITEM "New",                         ID_FILE_NEW32798
+            MENUITEM "Save",                        ID_FILE_SAVE32799
+            MENUITEM "Save as...",                  ID_FILE_SAVEAS32800
+            MENUITEM "Exit",                        IDOK
+        END
+        POPUP "Edit"
+        BEGIN
+            MENUITEM "Action 1",                    ID_EDIT_ACTION6
+            MENUITEM "Action 2",                    ID_EDIT_ACTION7
+            MENUITEM "Action 3",                    ID_EDIT_ACTION8
+            MENUITEM "Action 4",                    ID_EDIT_ACTION9
+        END
+        POPUP "Thema"
+        BEGIN
+            MENUITEM "Lime",                        ID_THEMA_LIME
+            MENUITEM "Skyblue",                     ID_THEMA_SKYBLUE
+            MENUITEM "Purple",                      ID_THEMA_PURPLE
+            MENUITEM "Moderate gray",               ID_THEMA_MODERATE
+            MENUITEM "Pure gray",                   ID_THEMA_PUREGRAY
+            MENUITEM "Black && White",              ID_THEMA_BLACKWHITE
+        END
+        POPUP "View"
+        BEGIN
+            MENUITEM "Minimize",                    ID_VIEW_MINIMIZE32806
+            MENUITEM "Maximize",                    ID_VIEW_MAXIMIZE32807
+            MENUITEM "Restore",                     ID_VIEW_RESTORE
+            MENUITEM "Optimal",                     ID_VIEW_OPTIMAL
+        END
+        POPUP "Help"
+        BEGIN
+            MENUITEM "General Help",                ID_HELP_GENERALHELP32810
+            MENUITEM "About Testdialog 4...",       ID_HELP_ABOUTTESTDIALOG4
+        END
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_TABICONS            BITMAP                  "res\\TabIcons.bmp"
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE 9, 1
+#include "res\MyFrame.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"      // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

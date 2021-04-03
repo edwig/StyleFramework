@@ -1,0 +1,79 @@
+// RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES
+//   _____ _         _ _             ______                                           _    
+//  / ____| |       | (_)           |  ____|                                         | |   
+// | (___ | |_ _   _| |_ _ __   __ _| |__ _ __ __ _ _ __ ___   _____      _____  _ __| | __
+//  \___ \| __| | | | | | '_ \ / _` |  __| '__/ _` | '_ ` _ \ / _ \ \ /\ / / _ \| '__| |/ /
+//  ____) | |_| |_| | | | | | | (_| | |  | | | (_| | | | | | |  __/\ V  V / (_) | |  |   < 
+// |_____/ \__|\__, |_|_|_| |_|\__, |_|  |_|  \__,_|_| |_| |_|\___| \_/\_/ \___/|_|  |_|\_\
+//              __/ |           __/ |                                                      
+//             |___/           |___/                                                       
+//
+// RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES
+
+Version of 02-04-2021
+---------------------
+1) Release version 1.0.0
+2) Build all platforms/configurations in the 'lib' directory. Tested all builds work
+3) Automatic linking through "StyleFramework.h". Just include in your 'stdafx.h' file
+4) Full batch build of all 4 Debug/Release/x86/x64 builds work.
+
+Version of 28 march 2021
+------------------------
+1) Fixed StyleTabCtrl to work directly with inserted dialogs
+2) Added SelectTab(n) method to StyleTabCtrl.
+   Eliminating the need for a OnTcnSelchangeTabs method in your dialog
+
+Version of 13 march 2021
+------------------------
+1) Controls can now be hidden with "ShowWindow(SW_HIDE)" or shown again with "SW_SHOW"
+2) Clicking on the title bar will bring the window back to the foreground.
+3) Mousewheel correction for various views
+
+Version of 14 november 2020
+---------------------------
+1) Added DDV functions for most controls
+2) Added a general StyleFramework.h header
+3) Re-wrote the StyleComboBox control it now has the following abilties
+   - Multi-selection
+   - Enable/disabled window state and still show the list
+   - Can scroll outside of the application window (!)
+4) Added the "StyleToast" class
+5) Added the "StyleSpinButtonCtrl" class
+6) Removed all "Init()" functions. The initialisation is done in PreSubClassWindow
+   or in the InitSkin() function inside the DDX_Control function
+7) Removed the IMGButton class. All buttons are now "StyleButton"s
+8) Re-wrote the grid, so that grid comboboxes and checkboxes are themed
+9) Fixed a bug in StyleTreeCtrl. Must have a border to cleanly resize and still be styled
+
+Version of 21 march 2020
+------------------------
+1) Remove all of your WSCALE macros
+2) LinePrinter is now default in English. 
+   Use methods to set the text of the header/footer
+   Ending/Page/Date settings
+3) Tabs: Use the new "StyleTabControl::InsertItem()"
+   or revert to "CTabCtrl::InsertItem()"
+   
+Version of 25 march 2020
+------------------------  
+4) Resizing with <WIN>-<ARROWS> now works in all three main window forms
+5) AutoGrayScreen works in all three main window forms when using
+   StyleMessageBox instead of ::MessageBox
+
+Version of 27 march 2020
+------------------------
+6) New function SetRegistryProfile(CString p_key,CString p_program,CString p_version)
+   So the main program can set a version of the workspace profile.
+   If not the correct version: the profile WILL be deleted from the registry
+   and thus protecting the program from crashing while loading the old profile.
+   
+Version of 18 april 2020
+------------------------
+7) Added the "emtpy" state and "emtpy" text to the StyleEditControl
+8) Added the "password" state, eye and editting to the StyleEditControl
+9) Added the "date" state and StyleCalendar to the StyleEditControl
+   Check out the EditDialog3 to test all these functions   
+   
+Version of 26 augustus 2020
+---------------------------
+10) Added StyleComboBoxEx that works in more types of dialogs and frames
