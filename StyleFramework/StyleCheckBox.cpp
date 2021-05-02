@@ -227,7 +227,7 @@ StyleCheckbox::Draw(CWnd* p_wnd
       CPen pen;
       pen.CreatePen(PS_SOLID,1,textcolor);
       p_dc->SelectObject(pen);
-      p_dc->SetBkColor(UsersBackground);
+      p_dc->SetBkColor(ClrCheckBoxDefaultBkGrnd);
       p_dc->SelectObject(STYLEFONTS.DialogTextFont);
       p_rect.left += WS(28);
       p_dc->DrawText(text,&p_rect,DT_VCENTER | DT_SINGLELINE);
@@ -248,7 +248,7 @@ StyleCheckbox::OnPaint()
     GetClientRect(rect);
 
     // Remove underlying MFC implementation
-    dc.FillSolidRect(rect,ClrFrameBkGnd);
+    dc.FillSolidRect(rect,ClrCheckBoxDefaultBkGrnd);
 
     DWORD style = GetStyle();
     UINT  state = GetState();
