@@ -310,12 +310,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="StyleLibrary.rc">
+    <ResourceCompile Include="StyleFramework.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\StyleLibrary.rc2">
+    <None Include="res\StyleFramework.rc2">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

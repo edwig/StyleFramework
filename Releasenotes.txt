@@ -10,6 +10,11 @@
 //
 // RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES
 
+Version of 02-05-2021
+---------------------
+1) Release version 1.0.1
+2) StyleLibrary renamed to StyleFramework (libraries and directories)
+
 Version of 02-04-2021
 ---------------------
 1) Release version 1.0.0

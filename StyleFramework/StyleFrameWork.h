@@ -18,7 +18,7 @@
 //
 #pragma once
 
-#define SFX_VERSION "1.0.0"       // Current SFX version number
+#define SFX_VERSION "1.0.1"       // Current SFX version number
 
 // General headers
 #include "StyleColors.h"
@@ -69,6 +69,6 @@
 #endif 
 
 #ifndef SQL_COMPONENTS_NOAUTOLINK
-#pragma comment(lib,"StyleLibrary_"                        SFX_PLATFORM SFX_CONFIGURATION ".lib")
-#pragma message("Automatically linking with StyleLibrary_" SFX_PLATFORM SFX_CONFIGURATION ".lib")
+#pragma comment(lib,"StyleFramework_"                        SFX_PLATFORM SFX_CONFIGURATION ".lib")
+#pragma message("Automatically linking with StyleFramework_" SFX_PLATFORM SFX_CONFIGURATION ".lib")
 #endif 
