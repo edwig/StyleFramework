@@ -312,6 +312,12 @@ StyleComboBox::SetCheck(int p_index,bool p_check)
   SetEditSelection();
 }
 
+void  
+StyleComboBox::InsertAtCurPos(const char* p_text,int p_offset)
+{
+  m_itemControl->InsertAtCurPos(p_text,p_offset);
+}
+
 void 
 StyleComboBox::PreShowComboList()
 {
@@ -1424,7 +1430,11 @@ StyleComboBox::SetItemDataPtr(int nIndex, void* pData)
 int
 StyleComboBox::SetItemHeight(int nIndex,UINT cyItemHeight)
 {
-  return m_listControl->SetItemHeight(nIndex,cyItemHeight);
+  if (m_listControl)
+  {
+    return m_listControl->SetItemHeight(nIndex, cyItemHeight);
+  }
+  return CB_ERR;
 }
 
 LCID

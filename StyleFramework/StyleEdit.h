@@ -64,6 +64,7 @@ public:
   void SetWindowNumber(int p_number);
   void SetWindowText(LPTSTR lpszStringBuf);
   void SetWindowText(CString p_string1);
+  void InsertAtCurPos(const char* p_text,int p_offset);
   int  CheckEditOK();
   void SetSpinBuddy(StyleSpinButtonCtrl* p_buddy);
 
@@ -159,6 +160,9 @@ private:
 
   CString  m_tooltip;     // Tooltip on the contents
   CString  m_emptyText;   // Background text in case the field is empty: hint what to fill in
+  int      m_startChar;
+  int      m_endChar;
+
   // Flags
   bool     m_initCorrectly{ false };      // Correctly initialized
   bool     m_directInit   { true  };      // Directly initialized in PreSubclassWindow
@@ -277,6 +281,7 @@ StyleEdit::GetIsComboBox()
 void WINAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleEdit& p_editControl);
 void WINAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleEdit& p_editControl,CString& p_text);
 void WINAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleEdit& p_editControl,int& p_number);
+void WINAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleEdit& p_editControl,double& p_number);
 
 // SUPPORT FOR DynamicDataValidation in Dialogs
 

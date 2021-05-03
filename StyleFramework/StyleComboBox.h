@@ -53,6 +53,7 @@ public:
   bool  GetErrorState();
   void  SetFocusDots(bool p_dots);
   bool  GetFocusDots();
+  void  InsertAtCurPos(const char* p_text, int p_offset);
 
   // Standard CWnd methods
   void  GetWindowText(CString& p_text);

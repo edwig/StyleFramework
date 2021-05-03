@@ -427,6 +427,26 @@ StyleEdit::SetWindowText(CString p_string)
   DrawFrame();
 }
 
+void 
+StyleEdit::InsertAtCurPos(const char* p_string,int p_offset)
+{
+  CString text;
+  GetWindowText(text);
+
+  if (m_startChar != m_endChar)
+  {
+    text.Delete(m_startChar,m_endChar - m_startChar);
+  }
+  text.Insert(m_startChar,p_string);
+  SetWindowText(text);
+
+  int pos = m_startChar + ((p_offset != -1) ? p_offset : (int)strlen(p_string));
+
+  SetWindowText(text);
+  SetFocus();
+  SetSel(pos, pos);
+}
+
 // Returns 0 or 1 if all checks out OK
 // Allows to do a count on the correct fields
 int
@@ -876,6 +896,7 @@ StyleEdit::OnLButtonUp(UINT nFlags,CPoint point)
 BOOL 
 StyleEdit::OnKillFocus() 
 {
+  GetSel(m_startChar,m_endChar);
   CString text;
 
   m_focus = FALSE;
@@ -900,7 +921,6 @@ StyleEdit::OnKillFocus()
       SetErrorState(!result);
     }
   }
-
 
   // Reset the empty text state
   CEdit::GetWindowText(text);
@@ -1372,6 +1392,28 @@ void WINAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleEdit& p_editControl,int
   else
   {
     text.Format("%d", p_number);
+    p_editControl.SetWindowText(text);
+    if(p_editControl.GetIsPassword())
+    {
+      p_editControl.SetPassword(true);
+    }
+  }
+}
+
+void WINAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleEdit& p_editControl,double& p_number)
+{
+  CString text;
+  CEdit& edit = reinterpret_cast<CEdit&>(p_editControl);
+  DDX_Control(pDX,nIDC,edit);
+  p_editControl.SetInitCorrectly();
+  if(pDX->m_bSaveAndValidate)
+  {
+    p_editControl.GetWindowText(text);
+    p_number = atof(text);
+  }
+  else
+  {
+    text.Format("%.2f", p_number);
     p_editControl.SetWindowText(text);
     if(p_editControl.GetIsPassword())
     {

@@ -21,7 +21,7 @@
 #include "GridCtrl.h"
 #include "SkinScrollWnd.h"
 
-class StyleGridCtrl :   public CGridCtrl
+class StyleGridCtrl : public CGridCtrl
 {
 public:
   StyleGridCtrl();
