@@ -194,7 +194,7 @@ namespace ThemeColor
 #define ClrControlDefault         ThemeColor::_Color1
 
 // Checkbox
-#define ClrCheckBoxDefaultBkGrnd  RGB(0xF0,0xF0,0xF0)
+#define ClrCheckBoxDefaultBkGrnd  UsersBackground
 #define ClrCheckboxFrameNormal    Assistant6
 #define ClrCheckboxFrameFocus     Assistant8
 #define ClrCheckboxFrameHover     ClrCheckboxFrameFocus

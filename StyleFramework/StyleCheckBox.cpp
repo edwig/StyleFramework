@@ -269,11 +269,15 @@ StyleCheckbox::OnPaint()
 BOOL
 StyleCheckbox::OnEraseBkgnd(CDC* pDC)
 {
-  if((GetStyle() & BS_TYPEMASK) == BS_RADIOBUTTON || (GetStyle() & BS_TYPEMASK) == BS_AUTORADIOBUTTON)
+  DWORD style = GetStyle() & BS_TYPEMASK;
+  if(style == BS_CHECKBOX     || 
+     style == BS_RADIOBUTTON  ||
+     style == BS_AUTOCHECKBOX ||
+     style == BS_AUTORADIOBUTTON)
   {
     CRect rcChild;
     GetClientRect(rcChild);
-    pDC->FillSolidRect(0, 0, rcChild.Width(), rcChild.Height(), ClrFrameBkGnd);
+    pDC->FillSolidRect(0, 0, rcChild.Width(), rcChild.Height(),ClrCheckBoxDefaultBkGrnd);
   }
   
   return TRUE;
