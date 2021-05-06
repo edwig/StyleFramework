@@ -37,6 +37,8 @@ StyleTabCtrl::StyleTabCtrl()
   m_hover      = -1;
   m_notch      = false;
   m_offset     = 0;
+
+  m_brush.CreateSolidBrush(UsersBackground);
 }
 
 StyleTabCtrl::~StyleTabCtrl()
@@ -47,6 +49,9 @@ BEGIN_MESSAGE_MAP(StyleTabCtrl, CTabCtrl)
   ON_WM_PAINT()
   ON_WM_CREATE()
   ON_WM_SIZE()
+  ON_WM_ERASEBKGND()
+  ON_WM_CTLCOLOR()
+  ON_MESSAGE(WM_CTLCOLORSTATIC,   OnCtlColorStatic)
   ON_NOTIFY_REFLECT(TCN_SELCHANGE,OnTcnSelchangeTabs)
 END_MESSAGE_MAP()
 
@@ -67,6 +72,30 @@ StyleTabCtrl::PreSubclassWindow()
   CTabCtrl::PreSubclassWindow();
   ModifyStyle(0, TCS_OWNERDRAWFIXED);
   SetFont(&STYLEFONTS.DialogTextFontBold);
+}
+
+HBRUSH
+StyleTabCtrl::OnCtlColor(CDC* /*pDC*/,CWnd* /*pWnd*/,UINT /*nCtlColor*/)
+{
+  return (HBRUSH)m_brush;
+}
+
+LPARAM
+StyleTabCtrl::OnCtlColorStatic(WPARAM wParam,LPARAM /*lParam*/)
+{
+  HDC hdc = (HDC)wParam;
+  SetTextColor(hdc,InputTextActive);
+  SetBkColor(hdc,UsersBackground);
+  return (LPARAM)(HBRUSH)m_brush;
+}
+
+BOOL
+StyleTabCtrl::OnEraseBkgnd(CDC* pDC)
+{
+  CRect rect;
+  GetClientRect(&rect);
+  pDC->FillSolidRect(&rect,UsersBackground);
+  return TRUE;
 }
 
 // Insert a CWnd on a tab, so that the OnSize may work

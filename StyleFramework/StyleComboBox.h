@@ -47,9 +47,10 @@ public:
   bool  GetAutoComplete();
   void  SetMultiSelect(bool p_multi);
   bool  GetMultiSelect();
+  bool  GetTypeBuffer();
   void  SetMultiSelection(int p_index,bool p_select);
   bool  GetMultiSelection(int p_index);
-  void  SetErrorState(bool p_error);
+  void  SetErrorState(bool p_error,bool p_propagate = true);
   bool  GetErrorState();
   void  SetFocusDots(bool p_dots);
   bool  GetFocusDots();
@@ -159,6 +160,7 @@ protected:
   bool         m_buttonDown         { false };                      // Button is pressed, List is shown
   bool         m_extendedUI         { true  };                      // F4/Down key opens the list
   bool         m_multiselect        { false };                      // Multi-selection combo box list
+  bool         m_typebuffer         { true  };                      // type buffer for combo list
   bool         m_focus              { false };                      // Has the keyboard focus
   bool         m_error              { false };                      // Control is in error state
   ItemStore    m_items;                                             // Set/GetDataItem storage
@@ -328,6 +330,8 @@ private:
   int             m_current;        // Starting selection in a single-select list
   UINT            m_lastClick;      // Last LButtonDown time to simulate a double-click
   LBSelections    m_selected;       // Active selections in a multi-select list
+  DWORD           m_keyboardTime;   // Last keyboard char received
+  CString         m_searchText;     // Text searched in the combo list
 };
 
 // SUPPORT FOR DynamicDataEXchange in Dialogs

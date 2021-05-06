@@ -252,6 +252,12 @@ StyleComboBox::GetMultiSelect()
   return m_listControl->GetMultiSelect();
 }
 
+bool
+StyleComboBox::GetTypeBuffer()
+{
+  return m_typebuffer;
+}
+
 void
 StyleComboBox::SetMultiSelection(int p_index, bool p_select)
 {
@@ -265,13 +271,15 @@ StyleComboBox::GetMultiSelection(int p_index)
 }
 
 void
-StyleComboBox::SetErrorState(bool p_error)
+StyleComboBox::SetErrorState(bool p_error,bool p_propagate)
 {
   if(m_error != p_error)
   {
     m_error = p_error;
-    m_itemControl->SetErrorState(p_error);
-    Invalidate();
+    if(p_propagate)
+    {
+      m_itemControl->SetErrorState(p_error);
+    }
   }
 }
 
@@ -929,6 +937,8 @@ StyleComboBox::OnSelEndCancel()
 {
   if(m_buttonDown)
   {
+    // Set selection in the edit box
+    SetEditSelection();
     // Go cancel the selection list / closeup will follow
     CWnd* owner = GetOwner();
     if(owner)
@@ -1025,6 +1035,8 @@ StyleComboBox::OnEditChange()
 void
 StyleComboBox::OnEditUpdate()
 {
+  // Set selection in the edit box
+  SetEditSelection();
   CWnd* owner = GetOwner();
   if(owner)
   {
@@ -1746,7 +1758,7 @@ SCBTextEdit::OnChar(UINT nChar,UINT nRepCnt,UINT nFlags)
     }
     if(nRepCnt == 1 && (' ' <= nChar && nChar <= 0x7F))
     {
-      if(type || (GetTickCount() < (m_keyboardTime + COMBO_KEYBOARD_CACHE)))
+      if(type || (m_combo->GetTypeBuffer() && GetTickCount() < (m_keyboardTime + COMBO_KEYBOARD_CACHE)))
       {
         m_origText += (char)nChar;
       }
@@ -1771,7 +1783,15 @@ SCBTextEdit::OnChar(UINT nChar,UINT nRepCnt,UINT nFlags)
   if(m_doCompletion && (nChar != VK_BACK && nChar != VK_DELETE)) 
   {
     int base = m_combo->GetCurSel();
-    int find = m_combo->FindString(base - type,m_origText);
+    int find = 0;
+    if (m_origText.GetLength() > 1)
+    {
+      find = m_combo->FindString(0,m_origText);
+    }
+    else
+    {
+      find = m_combo->FindString(base - type, m_origText);
+    }
     if(find == -1 && base > 0)
     {
       // Search from the beginning, in case we searched past the end
@@ -2448,6 +2468,21 @@ SCBListBox::PreTranslateMessage(MSG* pMsg)
         m_combo->PostMessage(WM_KEYUP,  VK_TAB,pMsg->lParam);
       }
       return TRUE;
+    }
+
+    if (nchar <= 0x7F)
+    {
+      if(m_combo->GetTypeBuffer() && GetTickCount() < (m_keyboardTime + COMBO_KEYBOARD_CACHE))
+      {
+        m_searchText += (char)nchar;
+      }
+      else
+      {
+        m_searchText = (char)nchar;
+      }
+      m_combo->SelectString(0, m_searchText);
+      m_keyboardTime = GetTickCount();
+      return true;
     }
   }
   return StyleListBox::PreTranslateMessage(pMsg);

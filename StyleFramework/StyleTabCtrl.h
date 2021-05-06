@@ -55,10 +55,13 @@ public:
 
   DECLARE_MESSAGE_MAP()
 
-  afx_msg void OnTcnSelchangeTabs(NMHDR* pNMHDR, LRESULT* pResult);
-  afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
-  afx_msg void OnSize(UINT nType,int cx,int cy);
-  afx_msg void OnPaint();
+  afx_msg void   OnTcnSelchangeTabs(NMHDR* pNMHDR, LRESULT* pResult);
+  afx_msg int    OnCreate(LPCREATESTRUCT lpCreateStruct);
+  afx_msg void   OnSize(UINT nType,int cx,int cy);
+  afx_msg void   OnPaint();
+  afx_msg BOOL   OnEraseBkgnd(CDC* pDC);
+  afx_msg HBRUSH OnCtlColor(CDC* pDC,CWnd* pWnd,UINT nCtlColor);
+  afx_msg LPARAM OnCtlColorStatic(WPARAM wParam,LPARAM lParam);
 
 protected:
   virtual void PreSubclassWindow();
@@ -69,6 +72,7 @@ private:
   COLORREF   m_unselColor;
   CFont*     m_font;
   CImageList m_images;
+  CBrush     m_brush;
   int        m_hover;
   bool       m_notch;
   int        m_offset;

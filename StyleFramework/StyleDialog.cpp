@@ -62,10 +62,14 @@ StyleDialog::StyleDialog(UINT  p_IDTemplate
   {
     LoadStyleTheme();
   }
+  // Needed for coloring backgrounds of the controls
+  m_defaultBrush.CreateSolidBrush(UsersBackground);
 }
 
 BEGIN_MESSAGE_MAP(StyleDialog,CDialog)
   ON_WM_ERASEBKGND()
+  ON_WM_CTLCOLOR()
+  ON_MESSAGE(WM_CTLCOLORSTATIC,OnCtlColorStatic)
   ON_WM_NCMOUSEMOVE()
   ON_WM_NCLBUTTONDOWN()
   ON_WM_NCRBUTTONUP()
@@ -91,9 +95,6 @@ StyleDialog::OnInitDialog()
   // Needed for the shadow border
   ModifyStyleEx(0, WS_EX_LAYERED);
   SetLayeredWindowAttributes(ClrwindowTransparent, 0, LWA_COLORKEY);
-
-  // Needed for coloring backgrounds of the controls
-  m_defaultBrush.CreateSolidBrush(ClrFrameBkGnd);
 
   // Make room for the shadow border
   CRect window;
@@ -573,9 +574,17 @@ StyleDialog::OnEraseBkgnd(CDC* pDC)
 {
   CRect client;
   GetClientRect(client);
-  pDC->FillSolidRect(client, ClrFrameBkGnd);
-
+  pDC->FillSolidRect(client,UsersBackground);
   return TRUE;
+}
+
+LPARAM
+StyleDialog::OnCtlColorStatic(WPARAM wParam,LPARAM /*lParam*/)
+{
+  HDC hdc = (HDC)wParam;
+  SetTextColor(hdc,InputTextActive);
+  SetBkColor(hdc,UsersBackground);
+  return (LPARAM)(HBRUSH)m_defaultBrush;
 }
 
 void
@@ -886,7 +895,7 @@ StyleDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
                             pDC->SetTextColor(ClrLabelTextNormal);
                             pDC->SetBkColor  (ClrFrameBkGnd);
                           }
-                          return m_defaultBrush;
+                          break;
     case CTLCOLOR_BTN:    if (m_error)
                           {
                             pDC->SetTextColor(ClrWindowMessageTextError);
@@ -897,9 +906,9 @@ StyleDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
                             pDC->SetTextColor(ClrLabelTextNormal);
                             pDC->SetBkColor  (ClrFrameBkGnd);
                           }
-                          return m_defaultBrush;
+                          break;
   }
-  return CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+  return m_defaultBrush;
 }
 
 void 

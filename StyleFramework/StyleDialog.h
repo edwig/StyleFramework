@@ -86,12 +86,13 @@ protected:
 
   // Message handlers
   afx_msg BOOL    OnEraseBkgnd(CDC* pDC);
+  afx_msg HBRUSH  OnCtlColor(CDC* pDC,CWnd* pWnd,UINT nCtlColor);
+  afx_msg LPARAM  OnCtlColorStatic(WPARAM wParam,LPARAM lParam);
   afx_msg void    OnNcMouseMove(UINT nFlags, CPoint point);
   afx_msg void    OnNcLButtonDown(UINT nFlags, CPoint point);
   afx_msg void    OnNcRButtonUp(UINT nFlags, CPoint point);
   afx_msg void    OnNcLButtonDblClk(UINT nFlags, CPoint point);
   afx_msg void    OnNcMouseLeave();
-  afx_msg HBRUSH  OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
   afx_msg void    OnSize(UINT nType, int cx, int cy);
   afx_msg void    OnNcCalcSize(BOOL calcValidRects, NCCALCSIZE_PARAMS *params);
   afx_msg void    OnNcPaint();
