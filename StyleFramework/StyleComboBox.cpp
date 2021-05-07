@@ -172,6 +172,9 @@ StyleComboBox::CreateEditControl()
   style |= (cbstyle & CBS_UPPERCASE)    ? ES_UPPERCASE   : 0;
   style |= (cbstyle & CBS_LOWERCASE)    ? ES_LOWERCASE   : 0;
 
+  // Set default type buffer for
+  m_typebuffer = ((cbstyle & CBS_DROPDOWNLIST) == CBS_DROPDOWNLIST);
+
   // Create the edit control
   m_itemControl = new SCBTextEdit();
   m_itemControl->SetDirectInit(false);
@@ -250,6 +253,12 @@ bool
 StyleComboBox::GetMultiSelect()
 {
   return m_listControl->GetMultiSelect();
+}
+
+void  
+StyleComboBox::SetTypeBuffer(bool p_buffer /*= true*/)
+{
+  m_typebuffer = p_buffer;
 }
 
 bool
@@ -937,8 +946,11 @@ StyleComboBox::OnSelEndCancel()
 {
   if(m_buttonDown)
   {
-    // Set selection in the edit box
-    SetEditSelection();
+    if((GetStyle() & CBS_DROPDOWNLIST) == CBS_DROPDOWNLIST)
+    {
+      // Set selection in the edit box
+      SetEditSelection();
+    }
     // Go cancel the selection list / closeup will follow
     CWnd* owner = GetOwner();
     if(owner)
@@ -1035,8 +1047,11 @@ StyleComboBox::OnEditChange()
 void
 StyleComboBox::OnEditUpdate()
 {
-  // Set selection in the edit box
-  SetEditSelection();
+  if((GetStyle() & CBS_DROPDOWNLIST) == CBS_DROPDOWNLIST)
+  {
+    // Set selection in the edit box
+    SetEditSelection();
+  }
   CWnd* owner = GetOwner();
   if(owner)
   {
@@ -1784,14 +1799,14 @@ SCBTextEdit::OnChar(UINT nChar,UINT nRepCnt,UINT nFlags)
   {
     int base = m_combo->GetCurSel();
     int find = 0;
-    if (m_origText.GetLength() > 1)
-    {
-      find = m_combo->FindString(0,m_origText);
-    }
-    else
-    {
-      find = m_combo->FindString(base - type, m_origText);
-    }
+//     if (m_origText.GetLength() > 1)
+//     {
+//       find = m_combo->FindString(0,m_origText);
+//     }
+//     else
+//     {
+       find = m_combo->FindString(base - type, m_origText);
+//     }
     if(find == -1 && base > 0)
     {
       // Search from the beginning, in case we searched past the end

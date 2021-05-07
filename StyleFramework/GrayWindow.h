@@ -19,7 +19,10 @@
 #pragma once
 #define WM_GRAYSCREEN (WM_USER + 666)
 
-#define STATUSBAR_HEIGHT 30
+#define STATUSBAR_HEIGHT      30    // Mostly 30 pixels
+#define STATUSBAR_HEIGHT_MAX 120    // Max acceptable status bar height
+
+int SetGrayWindowStatusBarHeight(int p_height);
 
 class GrayWindow : public CWnd
 {

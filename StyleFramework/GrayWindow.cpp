@@ -25,6 +25,19 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+static int g_statusBarHeight = STATUSBAR_HEIGHT;
+
+int
+SetGrayWindowStatusBarHeight(int p_height)
+{
+  int previous = g_statusBarHeight;
+  if(p_height >= 0 && p_height < STATUSBAR_HEIGHT_MAX)
+  {
+    g_statusBarHeight = p_height;
+  }
+  return previous;
+}
+
 BOOL CALLBACK GrayWindow::MonitorEnumProc(__in  HMONITOR  hMonitor,
                                           __in  HDC       hdcMonitor,
                                           __in  LPRECT    lprcMonitor,
@@ -66,9 +79,9 @@ bool GrayWindow::Show()
   CWindowDC pDC(this);
   m_dc.CreateCompatibleDC(&pDC);
   m_bitmap.DeleteObject();
-  m_bitmap.CreateCompatibleBitmap(&pDC,window.Width(),window.Height() - STATUSBAR_HEIGHT);
+  m_bitmap.CreateCompatibleBitmap(&pDC,window.Width(),window.Height() - g_statusBarHeight);
   m_dc.SelectObject(&m_bitmap);
-  m_dc.FillSolidRect(0,0,window.Width(),window.Height() - STATUSBAR_HEIGHT,RGB(0,0,0));
+  m_dc.FillSolidRect(0,0,window.Width(),window.Height() - g_statusBarHeight,RGB(0,0,0));
 
   MonitorEnumProcStruct _struct;
   _struct.window = window;
@@ -76,7 +89,7 @@ bool GrayWindow::Show()
 
   EnumDisplayMonitors(NULL,window,GrayWindow::MonitorEnumProc,(LPARAM)&_struct);
 
-  SetWindowPos(0,window.left,window.top,window.Width(),window.Height() - STATUSBAR_HEIGHT,SWP_NOZORDER | SWP_SHOWWINDOW);
+  SetWindowPos(0,window.left,window.top,window.Width(),window.Height() - g_statusBarHeight,SWP_NOZORDER | SWP_SHOWWINDOW);
   return true;
 }
 
