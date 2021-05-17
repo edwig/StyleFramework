@@ -1799,14 +1799,14 @@ SCBTextEdit::OnChar(UINT nChar,UINT nRepCnt,UINT nFlags)
   {
     int base = m_combo->GetCurSel();
     int find = 0;
-//     if (m_origText.GetLength() > 1)
-//     {
-//       find = m_combo->FindString(0,m_origText);
-//     }
-//     else
-//     {
+    if (m_origText.GetLength() > 1)
+    {
+      find = m_combo->FindString(0,m_origText);
+    }
+    else
+    {
        find = m_combo->FindString(base - type, m_origText);
-//     }
+    }
     if(find == -1 && base > 0)
     {
       // Search from the beginning, in case we searched past the end

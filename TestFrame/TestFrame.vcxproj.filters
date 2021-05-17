@@ -54,6 +54,9 @@
     <ClInclude Include="calendarbar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StdException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestFrame.cpp">
@@ -87,6 +90,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="calendarbar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StdException.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

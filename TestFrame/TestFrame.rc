@@ -128,6 +128,7 @@ BEGIN
     BUTTON      ID_EDIT_PASTE
     SEPARATOR
     BUTTON      ID_FILE_PRINT
+    BUTTON      ID_USER_TESTING
     BUTTON      ID_APP_ABOUT
 END
 
@@ -142,6 +143,7 @@ BEGIN
     BUTTON      ID_EDIT_PASTE
     SEPARATOR
     BUTTON      ID_FILE_PRINT
+    BUTTON      ID_USER_TESTING
     BUTTON      ID_APP_ABOUT
 END
 
@@ -242,6 +244,7 @@ BEGIN
         MENUITEM "User Setting 1",              ID_USER_USERSETTING1
         MENUITEM "User Setting 2",              ID_USER_USERSETTING2
         MENUITEM "User Setting 3",              ID_USER_USERSETTING3
+        MENUITEM "TESTING",                     32786
     END
     POPUP "&Help"
     BEGIN
@@ -629,6 +632,11 @@ BEGIN
     IDS_CAPTION_TEXT        "This is a caption bar where a message can be presented to the user."
     IDS_CAPTION_IMAGE_TIP   "Important"
     IDS_CAPTION_IMAGE_TEXT  "Here is an informational message for the user."
+END
+
+STRINGTABLE
+BEGIN
+    ID_USER_TESTING         "TESTING"
 END
 
 #endif    // English (United States) resources
