@@ -52,6 +52,7 @@
 #include "StyleStatic.h"          // CStatic          -> StyleStatic
 #include "StyleSpinButtonCtrl.h"  // CSpinButtonCtrl  -> StyleSpinButtonCtrl
 #include "StyleTabCtrl.h"         // CTabCtrl         -> StyleTabCtrl
+#include "StyleToolBar.h"         // CMFCToolBar      -> StyleToolBar
 #include "StyleTreeCtrl.h"        // CTreeCtrl        -> StyleTreeCtrl
 
 // Selecting the right library to link with automatically
