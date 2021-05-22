@@ -23,7 +23,7 @@
     <ProjectGuid>{04FC3C5B-38E2-4B45-89EA-2F0A7463C767}</ProjectGuid>
     <Keyword>MFCProj</Keyword>
     <RootNamespace>TestFrame</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -227,6 +227,7 @@
     <ClInclude Include="TestFrame.h" />
     <ClInclude Include="TestFrameDoc.h" />
     <ClInclude Include="TestFrameView.h" />
+    <ClInclude Include="ToastHandler.h" />
     <ClInclude Include="ViewTree.h" />
   </ItemGroup>
   <ItemGroup>
@@ -246,6 +247,7 @@
     <ClCompile Include="TestFrame.cpp" />
     <ClCompile Include="TestFrameDoc.cpp" />
     <ClCompile Include="TestFrameView.cpp" />
+    <ClCompile Include="ToastHandler.cpp" />
     <ClCompile Include="ViewTree.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -257,6 +259,8 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="EdwigHuisman.jpg" />
+    <Image Include="Edwig_Koala.png" />
     <Image Include="res\classview.bmp" />
     <Image Include="res\classview_hc.bmp" />
     <Image Include="res\class_view.ico" />

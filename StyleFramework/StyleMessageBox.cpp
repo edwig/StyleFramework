@@ -748,6 +748,8 @@ MessageDialog::OnInitDialog()
 {
   StyleDialogCA::OnInitDialog();
 
+  ShowCloseButton(false);
+
   // MB_ICONERROR message?
   m_font = (m_image == IDI_SHIELD) ? &STYLEFONTS.ErrorTextFont : &STYLEFONTS.DialogTextFont;
   SetWindowText(m_title); 
@@ -1013,6 +1015,12 @@ MessageDialog::OnPaint()
       dc.DrawEdge(m_line, EDGE_ETCHED, BF_TOP);
     }
   }
+}
+
+void
+MessageDialog::OnCancel()
+{
+  // Ignore the ESC key from a StyleMesageBox
 }
 
 // Override for a suppressible message

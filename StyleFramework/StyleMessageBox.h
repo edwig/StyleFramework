@@ -85,6 +85,8 @@ protected:
   afx_msg void OnPaint();
   // Clicked the 'Do not show again' checkbox
   afx_msg void OnDoNotShowAgain();
+  // Default ESC-key cancel
+  afx_msg void OnCancel();
 
 private:
   // METHODEN
