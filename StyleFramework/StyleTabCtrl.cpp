@@ -189,31 +189,32 @@ StyleTabCtrl::OnSize(UINT nType,int cx,int cy)
 {
   CTabCtrl::OnSize(nType,cx,cy);
 
-  CRect rect;
-  GetClientRect(&rect);
-
-  rect.top    += 4 + tabHeaderHeight;
-  rect.left   += 1;
-  rect.right  -= 1;
-  rect.bottom -= 1;
-
-  if (m_notch)
-  {
-    rect.top += tabHeaderNotch;
-  }
-
   for(int index = 0;index < GetItemCount();++index)
   {
-    TCITEM item;
-    memset(&item,0,sizeof(TCITEM));
-    item.mask = TCIF_PARAM;
-    GetItem(index,&item);
+    ResizeTab(index);
+  }
+}
 
-    CWnd* wnd = reinterpret_cast<CWnd*>(item.lParam);
-    if(wnd)
+void
+StyleTabCtrl::ResizeTab(int p_tab)
+{
+
+  CWnd* wnd = GetTabWindow(p_tab);
+  if (wnd)
+  {
+    CRect rect;
+    GetClientRect(&rect);
+
+    rect.top    += 4 + tabHeaderHeight;
+    rect.left   += 1;
+    rect.right  -= 1;
+    rect.bottom -= 1;
+
+    if (m_notch)
     {
-      wnd->MoveWindow(rect,true);
+      rect.top += tabHeaderNotch;
     }
+    wnd->MoveWindow(rect, true);
   }
 }
 
@@ -493,6 +494,56 @@ StyleTabCtrl::SelectTab(int p_tab)
       wnd->ShowWindow(p_tab == index ? SW_SHOW : SW_HIDE);
     }
   }
+}
+
+CWnd* 
+StyleTabCtrl::GetActiveWindow()
+{
+  int index = GetCurSel();
+  return GetTabWindow(index);
+}
+
+CWnd* 
+StyleTabCtrl::GetTabWindow(int p_tab)
+{
+  TCITEM item;
+  memset(&item,0,sizeof(TCITEM));
+  item.mask = TCIF_PARAM;
+  if(GetItem(p_tab,&item))
+  {
+    return reinterpret_cast<CWnd*>(item.lParam);
+  }
+  return nullptr;
+}
+
+// Replace window on the tab, returning the previous one
+CWnd* 
+StyleTabCtrl::SetTabWindow(int p_tab,CWnd* p_window)
+{
+  if(p_tab >= 0 && p_tab < GetItemCount())
+  {
+    // Keep the old window
+    CWnd* old = GetTabWindow(p_tab);
+
+    // Set the new window on the tab
+    TCITEM item;
+    memset(&item, 0, sizeof(TCITEM));
+    item.mask = TCIF_PARAM;
+    item.lParam = (LPARAM)p_window;
+    SetItem(p_tab,&item);
+
+    // RESIZE and show the window
+    ResizeTab(p_tab);
+    if(old)
+    {
+      old->ShowWindow(SW_HIDE);
+    }
+    p_window->ShowWindow(SW_SHOW);
+
+    // Previous window on this tab
+    return old;
+  }
+  return nullptr;
 }
 
 void
