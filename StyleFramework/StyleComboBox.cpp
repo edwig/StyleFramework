@@ -1879,6 +1879,11 @@ SCBTextEdit::OnSetFocus(CWnd* p_prev)
   CEdit::OnSetFocus(p_prev);
   CheckAutoCompletion();
   DrawFrame();
+
+  if((m_combo->GetStyle() & CBS_DROPDOWNLIST) == CBS_DROPDOWN)
+  {
+    SetSel(0,-1,TRUE);
+  }
 }
 
 void
