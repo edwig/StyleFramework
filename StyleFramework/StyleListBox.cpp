@@ -491,7 +491,7 @@ StyleListBox::AdjustScroll()
   SkinScrollWnd* skin = GetSkin();
   if(skin)
   {
-    skin->PostMessage(WM_TIMER,1,0);
+    skin->SetTimer(TIMER_UPDATE,FRAME_FIRST_SCROLLBARS,nullptr);
   }
 }
 

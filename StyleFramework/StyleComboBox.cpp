@@ -2490,7 +2490,7 @@ SCBListBox::PreTranslateMessage(MSG* pMsg)
       return TRUE;
     }
 
-    if (nchar <= 0x7F)
+    if (nchar <= 0x7F && !(nchar == VK_LEFT || nchar == VK_UP || nchar == VK_RIGHT || nchar == VK_DOWN))
     {
       if(m_combo->GetTypeBuffer() && GetTickCount() < (m_keyboardTime + COMBO_KEYBOARD_CACHE))
       {
