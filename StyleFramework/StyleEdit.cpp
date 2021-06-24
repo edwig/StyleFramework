@@ -48,6 +48,7 @@ BEGIN_MESSAGE_MAP(StyleEdit,CEdit)
   ON_WM_SHOWWINDOW()
   ON_WM_LBUTTONDOWN()
   ON_WM_LBUTTONUP()
+  ON_WM_NCPAINT()
   ON_MESSAGE(WM_MOUSEHOVER,           OnMouseHover)
   ON_MESSAGE(WM_MOUSELEAVE,           OnMouseLeave)
   ON_MESSAGE(WM_LBUTTONDBLCLK,        OnDoubleClick)
@@ -94,7 +95,7 @@ StyleEdit::PreSubclassWindow()
 }
 
 void
-StyleEdit::InitSkin()
+StyleEdit::InitSkin(bool p_force /*=false*/)
 {
   // Test if init already done
   if(GetWindowLongPtr(GetSafeHwnd(),GWLP_USERDATA) != NULL)
@@ -127,7 +128,10 @@ StyleEdit::InitSkin()
     }
   }
   SetFont(&STYLEFONTS.DialogTextFont);
-  SkinWndScroll(this,border ? m_borderSize : 0);
+  if(p_force || (style & ES_MULTILINE))
+  {
+    SkinWndScroll(this,border?m_borderSize:0);
+  }
   m_initCorrectly = true;
 }
 
@@ -608,16 +612,15 @@ StyleEdit::OnComboBoxPaint()
 void
 StyleEdit::DrawFrame()
 {
-  CDC* dc = GetDC();
   int  penstyle = PS_SOLID;
   bool readonly = (GetStyle() & ES_READONLY) || !IsWindowEnabled();
-  COLORREF back = readonly ? UsersBackground : Assistant0;
+  COLORREF back = NO_BACKGROUND_COLOR;
 
   CRect rcItem;
   GetClientRect(&rcItem);
 
   // Getting the color
-  DWORD color = back;
+  DWORD color = readonly ? UsersBackground: Assistant0;
   if(m_combo)
   {
     if(m_colorBackground != FRAME_DEFAULT_COLOR)
@@ -643,29 +646,12 @@ StyleEdit::DrawFrame()
     if((m_focusDots || g_StyleFxComboBoxDots) &&
        (m_focus     || m_combo->GetDroppedState()))
     {
-      dc->SetBkColor(color);
+      back     = color;
       penstyle = PS_DOT;                // Dotted line
       color    = ThemeColor::_Color1;   // In the style color
     }
   }
-
-  if(dc)
-  {
-    CPen pen;
-    pen.CreatePen(penstyle,1,color);
-    HGDIOBJ orgpen = dc->SelectObject(pen);
-
-    // Paint the frame
-    dc->MoveTo(rcItem.left,      rcItem.top);
-    dc->LineTo(rcItem.right - 1, rcItem.top);
-    dc->LineTo(rcItem.right - 1, rcItem.bottom - 1);
-    dc->LineTo(rcItem.left,      rcItem.bottom - 1);
-    dc->LineTo(rcItem.left,      rcItem.top);
-
-    dc->SelectObject(orgpen);
-    dc->SetBkColor(back);
-    ReleaseDC(dc);
-  }
+  DrawBox(rcItem,color,penstyle,back);
 }
 
 void    
@@ -699,40 +685,103 @@ StyleEdit::DrawEditFrame()
   GetDrawFrameColor(color,bordersize,readonly);
 
   SkinScrollWnd* skin = (SkinScrollWnd*)GetWindowLongPtr(m_hWnd,GWLP_USERDATA);
-  if (skin)
+  DWORD skinborder = readonly ? ClrFrameBkGnd : RGB(0xFF,0xFF,0xFF);
+
+  if(m_combo && readonly)
   {
-    DWORD skinborder = readonly ? ClrFrameBkGnd : RGB(0xFF, 0xFF, 0xFF);
-    if(m_combo && readonly)
+    if(m_combo->GetDroppedState())
     {
-      if(m_combo->GetDroppedState())
-      {
-        skinborder = ComboBoxDropped;
-      }
-      else if(m_over)
-      {
-        skinborder = ComboBoxActive;
-      }
-      else
-      {
-        skinborder = ClrFrameBkGnd;
-      }
+      skinborder = ComboBoxDropped;
+    }
+    else if(m_over)
+    {
+      skinborder = ComboBoxActive;
     }
     else
     {
-      if(m_colorBackground != FRAME_DEFAULT_COLOR)
-      {
-        skinborder = m_colorBackground;
-      }
+      skinborder = ClrFrameBkGnd;
     }
+  }
+  else
+  {
+    if(m_colorBackground != FRAME_DEFAULT_COLOR)
+    {
+      skinborder = m_colorBackground;
+    }
+  }
+
+  if(skin)
+  {
     skin->SetBorderColor(skinborder);
     skin->DrawFrame(color,bordersize);
   }
   else
   {
-    CEdit::OnNcPaint();
+    StyleNcPaint(color);
   }
   DrawPasswordEye();
   DrawErrorExclamation();
+}
+
+void
+StyleEdit::OnNcPaint()
+{
+  if(GetWindowLongPtr(m_hWnd,GWLP_USERDATA) == NULL)
+  {
+    COLORREF color = FRAME_DEFAULT_COLOR;
+    int bordersize = 1;
+    bool  readonly = false;
+
+    GetDrawFrameColor(color,bordersize,readonly);
+    StyleNcPaint(color);
+  }
+}
+
+void
+StyleEdit::StyleNcPaint(DWORD p_color)
+{
+  CRect window;
+  GetWindowRect(window);
+  window.OffsetRect(-window.left,-window.top);
+  // All CEdit(View) objects are offsetted in al screen re-scalings
+  // It works, but totally undocumented by Microsoft.
+  window.OffsetRect(-2,-2);
+
+  // Paint the outer frame
+  DrawBox(window,p_color);
+
+  // Paint the inner frame
+  window.DeflateRect(1,1);
+  bool readonly = (GetStyle() & ES_READONLY) || !IsWindowEnabled();
+  COLORREF back = readonly ? UsersBackground : Assistant0;
+  DrawBox(window,back);
+}
+
+void
+StyleEdit::DrawBox(CRect& p_rect,DWORD p_color,int p_penstyle /*= PS_SOLID*/,DWORD p_background /*=NO_BACKGROUND_COLOR*/)
+{
+  CDC* dc = GetDC();
+  CPen pen;
+  pen.CreatePen(p_penstyle,1,p_color);
+  HGDIOBJ orgpen = dc->SelectObject(pen);
+  COLORREF oldbackground = NO_BACKGROUND_COLOR;
+
+  if(p_background != NO_BACKGROUND_COLOR)
+  {
+    oldbackground = dc->SetBkColor(p_background);
+  }
+  dc->MoveTo(p_rect.left,     p_rect.top);
+  dc->LineTo(p_rect.right - 1,p_rect.top);
+  dc->LineTo(p_rect.right - 1,p_rect.bottom - 1);
+  dc->LineTo(p_rect.left,     p_rect.bottom - 1);
+  dc->LineTo(p_rect.left,     p_rect.top);
+
+  dc->SelectObject(orgpen);
+  if(oldbackground != NO_BACKGROUND_COLOR)
+  {
+    dc->SetBkColor(oldbackground);
+  }
+  ReleaseDC(dc);
 }
 
 void

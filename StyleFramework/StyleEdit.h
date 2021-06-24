@@ -36,6 +36,9 @@
 #define   STYLE_TEXTEDIT_BORDER  2   // Standard multiline text box
 #define   STYLE_SINGLELN_BORDER  5   // Single-line MFC Wizard 
 
+// For detecting the background color
+#define   NO_BACKGROUND_COLOR    0xFFFFFFFF
+
 // Global functions to set your combobox style
 void  SetStyleFxComboBoxDots(bool p_dots = true);
 bool  GetStyleFxComboBoxDots();
@@ -56,7 +59,7 @@ public:
 // 
 
   // OPERATIONS
-  void InitSkin();
+  void InitSkin(bool p_force = false);
   void ResetSkin();
   BOOL EnableWindow(BOOL p_enable = TRUE);
   void DrawEditFrame();
@@ -135,6 +138,7 @@ protected:
   afx_msg void    OnLButtonUp  (UINT   nFlags,CPoint point);
   afx_msg LRESULT OnDoubleClick(WPARAM wParam,LPARAM lParam);
   afx_msg void    OnPaint();
+  afx_msg void    OnNcPaint();
   afx_msg HBRUSH  CtlColor(CDC* pDC, UINT nCtlColor);
   afx_msg void    OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
   afx_msg void    OnWindowPosChanged(WINDOWPOS* lpwndpos);
@@ -157,6 +161,8 @@ private:
   void     CreateBackgroundEmptyBrush(DWORD p_color);
   void     DrawPasswordEye();
   void     DrawErrorExclamation();
+  void     StyleNcPaint(DWORD p_color);
+  void     DrawBox(CRect& rect,DWORD p_color,int p_penstyle = PS_SOLID,DWORD p_background = NO_BACKGROUND_COLOR);
 
   CString  m_tooltip;     // Tooltip on the contents
   CString  m_emptyText;   // Background text in case the field is empty: hint what to fill in

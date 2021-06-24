@@ -24,10 +24,11 @@
 #define StyleFontName "Verdana"       // Standard font for dialogs
 #define EditFontName  "Courier New"   // Standard edit font
 
-#define DIALOOGFONTSIZE    MulDiv(10, 96, StyleFonts::logpixelsy()) // 10
-#define STANDAARDFONTSIZE  MulDiv(10, 96, StyleFonts::logpixelsy()) // 10
-#define ERRORFONTSIZE      MulDiv(12, 96, StyleFonts::logpixelsy()) // 12
-#define CAPTIONTEXTSIZE    MulDiv(18, 96, StyleFonts::logpixelsy()) // 18
+// By defining static values, the screen size scaling of MS-Windows 10 works correctly (again)
+#define DIALOOGFONTSIZE    10 // MulDiv(10, 96, StyleFonts::logpixelsy())
+#define STANDAARDFONTSIZE  10 // MulDiv(10, 96, StyleFonts::logpixelsy())
+#define ERRORFONTSIZE      12 // MulDiv(12, 96, StyleFonts::logpixelsy())
+#define CAPTIONTEXTSIZE    18 // MulDiv(18, 96, StyleFonts::logpixelsy())
 
 #define CaptionFontString       StyleFontName + CString(";") + IntegerToString(CAPTIONTEXTSIZE)     + CString(";") + IntegerToString(FW_BOLD)
 #define DialogFontString        StyleFontName + CString(";") + IntegerToString(STANDAARDFONTSIZE)   + CString(";") + IntegerToString(FW_NORMAL)

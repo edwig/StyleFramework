@@ -18,7 +18,7 @@
 //
 #pragma once
 
-// Default gray color fro the styling framework
+// Default gray color from the styling framework
 #define FRAME_DEFAULT_COLOR       RGB(0x7F,0x7F,0x7F)
 
 #define Lime1             RGB(0x75, 0xC0, 0x1F)   // Lime color
@@ -96,7 +96,7 @@
 #define SpinButtonActive     RGB(0xC5, 0xC8, 0xDF)
 
 #define VkTextInActive       RGB(0xa0, 0xa3, 0xa2)
-#define UsersBackground      RGB(0xED, 0xF3, 0xF6)
+#define UsersBackground      RGB(0xED, 0xF3, 0xF6) // RGB(0xFF, 0xFF, 0xFF) // 
 
 namespace ThemeColor 
 {

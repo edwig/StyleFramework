@@ -75,7 +75,6 @@ BEGIN_MESSAGE_MAP(StyleDialog,CDialog)
   ON_WM_NCRBUTTONUP()
   ON_WM_NCLBUTTONDBLCLK()
   ON_WM_NCMOUSELEAVE()
-  ON_WM_CTLCOLOR()
   ON_WM_SIZE()
   ON_WM_PAINT()
   ON_WM_NCCALCSIZE()
@@ -908,7 +907,7 @@ StyleDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
                           }
                           break;
   }
-  return m_defaultBrush;
+  return CDialog::OnCtlColor(pDC,pWnd,nCtlColor);
 }
 
 void 

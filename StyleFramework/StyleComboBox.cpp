@@ -182,7 +182,7 @@ StyleComboBox::CreateEditControl()
   m_itemControl->ModifyStyle(0,WS_BORDER);
   m_itemControl->SetBorderSize(3);
   m_itemControl->SetComboBox(this);
-  m_itemControl->InitSkin();
+  m_itemControl->InitSkin(true);
   m_itemControl->GetSkin()->SetMouseCapture(FALSE,TME_HOVER);
   m_itemControl->SetInitCorrectly();
   m_itemControl->SetAutoComplete();
