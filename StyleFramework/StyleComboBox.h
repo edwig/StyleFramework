@@ -338,3 +338,4 @@ private:
 // SUPPORT FOR DynamicDataEXchange in Dialogs
 void AFXAPI DDX_Control (CDataExchange* pDX,int nIDC,StyleComboBox& p_control);
 void WINAPI DDX_CBString(CDataExchange* pDX,int nIDC,StyleComboBox& p_control,CString& p_text);
+void WINAPI DDX_CBIndex (CDataExchange* pDX,int nIDC,StyleComboBox& p_control,int& p_index);

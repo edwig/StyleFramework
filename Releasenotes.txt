@@ -14,8 +14,7 @@ Version of 24-06-2021
 ---------------------
 1) StyleEdit boxes that are **NOT** multiline are now created without a style frame
    to greatly reduce the number of GDI objects in an application
-   Only multiline StyleEdit objects and the item control of the StyleCombobox 
-   still have a styling framework
+   Only multiline StyleEdit objects still have a styling framework
 
 Version of 02-05-2021
 ---------------------

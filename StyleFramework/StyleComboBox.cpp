@@ -182,8 +182,7 @@ StyleComboBox::CreateEditControl()
   m_itemControl->ModifyStyle(0,WS_BORDER);
   m_itemControl->SetBorderSize(3);
   m_itemControl->SetComboBox(this);
-  m_itemControl->InitSkin(true);
-  m_itemControl->GetSkin()->SetMouseCapture(FALSE,TME_HOVER);
+  m_itemControl->InitSkin();
   m_itemControl->SetInitCorrectly();
   m_itemControl->SetAutoComplete();
 }
@@ -1117,7 +1116,14 @@ StyleComboBox::OnSize(UINT nType, int cx, int cy)
     rect.right -= rect.Height() - 1;
 
     SkinScrollWnd* frame = m_itemControl->GetSkin();
-    frame->MoveWindow(&rect);
+    if(frame)
+    {
+      frame->MoveWindow(&rect);
+    }
+    else
+    {
+      m_itemControl->MoveWindow(&rect);
+    }
   }
 }
 
@@ -2535,5 +2541,25 @@ void WINAPI DDX_CBString(CDataExchange* pDX,int nIDC,StyleComboBox& p_control,CS
   else
   {
     p_control.SetWindowText(p_text);
+  }
+}
+
+void WINAPI DDX_CBIndex(CDataExchange* pDX,int nIDC,StyleComboBox& p_control,int& p_index)
+{
+  CComboBox& parent = reinterpret_cast<CComboBox&>(p_control);
+  DDX_Control(pDX,nIDC,parent);
+  p_control.InitSkin();
+
+  if(pDX->m_bSaveAndValidate)
+  {
+    CString text;
+    p_control.GetWindowText(text);
+    p_index = atoi(text);
+  }
+  else
+  {
+    CString text;
+    text.Format("%d",p_index);
+    p_control.SetWindowText(text);
   }
 }

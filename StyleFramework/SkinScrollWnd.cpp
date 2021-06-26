@@ -224,6 +224,15 @@ SkinWndScroll(CWnd* p_wnd,int p_bordersize /*=0*/,int p_clientBias /*=0*/)
   // Re-Apply the original owner
   p_wnd->SetOwner(owner);
 
+  if(owner != nullptr)
+  {
+    DWORD dwExStyle = owner->GetExStyle();
+    if((dwExStyle & WS_EX_CONTROLPARENT) != 0)
+    {
+      frame->ModifyStyleEx(0,WS_EX_CONTROLPARENT);
+      frame->m_wndLimit.ModifyStyleEx(0,WS_EX_CONTROLPARENT);
+    }
+  }
   return frame;
 }
 

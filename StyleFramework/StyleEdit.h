@@ -138,10 +138,10 @@ protected:
   afx_msg void    OnLButtonUp  (UINT   nFlags,CPoint point);
   afx_msg LRESULT OnDoubleClick(WPARAM wParam,LPARAM lParam);
   afx_msg void    OnPaint();
-  afx_msg void    OnNcPaint();
   afx_msg HBRUSH  CtlColor(CDC* pDC, UINT nCtlColor);
   afx_msg void    OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
   afx_msg void    OnWindowPosChanged(WINDOWPOS* lpwndpos);
+  afx_msg void    OnNcCalcSize(BOOL calcValidRects,NCCALCSIZE_PARAMS* params);
 public:
   afx_msg void    OnMouseMove (UINT   nFlags,CPoint point);
   afx_msg LRESULT OnMouseHover(WPARAM wParam,LPARAM lParam);
@@ -161,7 +161,7 @@ private:
   void     CreateBackgroundEmptyBrush(DWORD p_color);
   void     DrawPasswordEye();
   void     DrawErrorExclamation();
-  void     StyleNcPaint(DWORD p_color);
+  void     StyleNcPaint(DWORD p_color,DWORD p_inner);
   void     DrawBox(CRect& rect,DWORD p_color,int p_penstyle = PS_SOLID,DWORD p_background = NO_BACKGROUND_COLOR);
 
   CString  m_tooltip;     // Tooltip on the contents

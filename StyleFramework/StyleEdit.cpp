@@ -48,7 +48,7 @@ BEGIN_MESSAGE_MAP(StyleEdit,CEdit)
   ON_WM_SHOWWINDOW()
   ON_WM_LBUTTONDOWN()
   ON_WM_LBUTTONUP()
-  ON_WM_NCPAINT()
+  ON_WM_NCCALCSIZE()
   ON_MESSAGE(WM_MOUSEHOVER,           OnMouseHover)
   ON_MESSAGE(WM_MOUSELEAVE,           OnMouseLeave)
   ON_MESSAGE(WM_LBUTTONDBLCLK,        OnDoubleClick)
@@ -195,8 +195,8 @@ StyleEdit::SetErrorState(bool p_error,LPCTSTR p_tip /*=""*/)
   if(skin)
   {
     skin->OnNcPaint();
-    DrawEditFrame();
   }
+  DrawEditFrame();
 }
 
 void
@@ -717,44 +717,50 @@ StyleEdit::DrawEditFrame()
   }
   else
   {
-    StyleNcPaint(color);
+    StyleNcPaint(color,skinborder);
   }
   DrawPasswordEye();
   DrawErrorExclamation();
 }
 
 void
-StyleEdit::OnNcPaint()
+StyleEdit::StyleNcPaint(DWORD p_color,DWORD p_inner)
 {
-  if(GetWindowLongPtr(m_hWnd,GWLP_USERDATA) == NULL)
-  {
-    COLORREF color = FRAME_DEFAULT_COLOR;
-    int bordersize = 1;
-    bool  readonly = false;
-
-    GetDrawFrameColor(color,bordersize,readonly);
-    StyleNcPaint(color);
-  }
-}
-
-void
-StyleEdit::StyleNcPaint(DWORD p_color)
-{
+  int inner = 1;
   CRect window;
   GetWindowRect(window);
   window.OffsetRect(-window.left,-window.top);
   // All CEdit(View) objects are offsetted in al screen re-scalings
   // It works, but totally undocumented by Microsoft.
   window.OffsetRect(-2,-2);
+  if(m_combo)
+  {
+    window.OffsetRect(-1,-1);
+    inner = 3;
+  }
 
   // Paint the outer frame
   DrawBox(window,p_color);
 
   // Paint the inner frame
-  window.DeflateRect(1,1);
-  bool readonly = (GetStyle() & ES_READONLY) || !IsWindowEnabled();
-  COLORREF back = readonly ? UsersBackground : Assistant0;
-  DrawBox(window,back);
+  for(auto num = 0;num < inner;++num)
+  {
+    window.DeflateRect(1,1);
+    DrawBox(window,p_inner);
+  }
+}
+
+void
+StyleEdit::OnNcCalcSize(BOOL calcValidRects,NCCALCSIZE_PARAMS* params)
+{
+  if(GetSkin() == nullptr)
+  {
+    params->rgrc[0].top    += 3;
+    params->rgrc[0].left   += 3;
+    params->rgrc[0].bottom -= 3;
+    params->rgrc[0].right  -= 3;
+  }
+  CEdit::OnNcCalcSize(calcValidRects,params);
 }
 
 void
