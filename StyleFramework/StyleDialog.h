@@ -126,6 +126,8 @@ protected:
   CRect     m_closeRect   { 0,0,0,0 };  // Close    button rectangle
   // drag rectangle
   CRect     m_captionRect { 0,0,0,0 };
+  // Original window size
+  CRect     m_originalSize{ 0,0,0,0 };
   // caption bar 
   bool      m_caption     { true  };
   bool      m_closeButton { true  };

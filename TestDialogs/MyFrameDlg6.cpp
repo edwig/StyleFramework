@@ -48,6 +48,7 @@ MyFrameDlg6::OnInitDialog()
   SetSysMenu(IDR_MENU4);
   ShowSysMenu();
 
+  UpdateData(FALSE);
   SetCanResize();
 
   return InitFirstFocus();
@@ -65,8 +66,9 @@ MyFrameDlg6::SetupDynamicLayout()
 
   HWND list1 = m_list1.GetSkin()->GetSafeHwnd();
   HWND list2 = m_list2.GetSkin()->GetSafeHwnd();
+  HWND edit  = m_edit.GetSafeHwnd();
 
-  manager.AddItem(m_edit,        manager.MoveNone(),                          manager.SizeHorizontal(100));
+  manager.AddItem(edit,          manager.MoveNone(),                          manager.SizeHorizontal(100));
   manager.AddItem(m_buttonAdd,   manager.MoveHorizontal(100),                 manager.SizeNone());
   manager.AddItem(list1,         manager.MoveNone(),                          manager.SizeHorizontalAndVertical(50,100));
   manager.AddItem(list2,         manager.MoveHorizontal(50),                  manager.SizeHorizontalAndVertical(50,100));

@@ -320,6 +320,8 @@ StyleDialog::SetCanResize(bool p_resize)
     // Do not bother: it's already 'ON'
     return;
   }
+  GetWindowRect(m_originalSize);
+
   if(p_resize)
   {
     SetupDynamicLayout();
@@ -747,6 +749,11 @@ StyleDialog::OnNcLButtonDown(UINT nFlags, CPoint point)
 
     case HTCAPTION:
     {
+      if(GetStyle() & WS_MAXIMIZE)
+      {
+        return;
+      }
+
       SetWindowPos(&CWnd::wndTop,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE|SWP_SHOWWINDOW|SWP_NOSENDCHANGING|SWP_DRAWFRAME);
 
       CPoint lastpoint(point);
@@ -777,7 +784,7 @@ StyleDialog::OnNcLButtonDown(UINT nFlags, CPoint point)
     case HTBOTTOMLEFT:
     case HTBOTTOMRIGHT:
     {
-      if(!m_canResize)
+      if(!m_canResize || (GetStyle() & WS_MAXIMIZE))
       {
         return;
       }
@@ -814,7 +821,12 @@ StyleDialog::OnNcLButtonDown(UINT nFlags, CPoint point)
                                 window.right  += cursor.x - lastpoint.x;
                                 break;
           }
-          SetWindowPos(nullptr,window.left,window.top,window.Width(),window.Height(),SWP_NOZORDER | SWP_DRAWFRAME);
+          if(window.Width()  >= m_originalSize.Width() &&
+             window.Height() >= m_originalSize.Height())
+          {
+
+            SetWindowPos(nullptr, window.left, window.top, window.Width(), window.Height(), SWP_NOZORDER | SWP_DRAWFRAME);
+          }
           lastpoint = cursor;
         }
       }
@@ -1124,7 +1136,7 @@ StyleDialog::OnNcPaint()
 LRESULT 
 StyleDialog::OnNcHitTest(CPoint point)
 {
-  if ((GetStyle() & WS_POPUP) == 0)
+  if((GetStyle() & WS_POPUP) == 0)
   {
     return CDialog::OnNcHitTest(point);
   }
@@ -1149,8 +1161,10 @@ StyleDialog::OnNcHitTest(CPoint point)
   {
     return HTMENU;
   }
-  if(m_caption)
+
+  if(!(GetStyle() & WS_MAXIMIZE))
   {
+
     window.OffsetRect(-window.left, -window.top);
     if(point.x <= window.left + SIZEMARGIN)
     {
@@ -1184,10 +1198,11 @@ StyleDialog::OnNcHitTest(CPoint point)
     {
       return HTTOP;
     }
-    if(m_captionRect.PtInRect(point))
-    {
-      return HTCAPTION;
-    }
+  }
+
+  if (m_caption && (m_captionRect.PtInRect(point)))
+  {
+    return HTCAPTION;
   }
   return HTNOWHERE;
 }

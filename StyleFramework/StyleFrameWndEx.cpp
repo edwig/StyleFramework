@@ -405,6 +405,10 @@ StyleFrameWndEx::OnNcLButtonDown(UINT nFlags, CPoint point)
     case HTMENU:  MenuFromPoint(point);
                   break;
     case HTCAPTION:
+                  if(GetStyle() & WS_MAXIMIZE)
+                  {
+                    return;
+                  }
                   SetWindowPos(&CWnd::wndTop,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE|SWP_SHOWWINDOW|SWP_NOSENDCHANGING|SWP_DRAWFRAME);
 
                   CPoint lastpoint(point);
@@ -766,38 +770,41 @@ LRESULT StyleFrameWndEx::OnNcHitTest(CPoint point)
 
   // BORDERS
 
-  window.OffsetRect(-window.left, -window.top);
-  if (point.x <= window.left + SIZEMARGIN)
+  if (!(GetStyle() & WS_MAXIMIZE))
   {
+    window.OffsetRect(-window.left, -window.top);
+    if (point.x <= window.left + SIZEMARGIN)
+    {
+      if (point.y >= window.bottom - SIZEMARGIN)
+      {
+        return HTBOTTOMLEFT;
+      }
+      if (point.y <= window.top + SIZEMARGIN)
+      {
+        return HTTOPLEFT;
+      }
+      return HTLEFT;
+    }
+    if (point.x >= window.right - 2 * SIZEMARGIN)
+    {
+      if (point.y >= window.bottom - SIZEMARGIN)
+      {
+        return HTBOTTOMRIGHT;
+      }
+      if (point.y <= window.top + SIZEMARGIN)
+      {
+        return HTTOPRIGHT;
+      }
+      return HTRIGHT;
+    }
     if (point.y >= window.bottom - SIZEMARGIN)
     {
-      return HTBOTTOMLEFT;
+      return HTBOTTOM;
     }
     if (point.y <= window.top + SIZEMARGIN)
     {
-      return HTTOPLEFT;
+      return HTTOP;
     }
-    return HTLEFT;
-  }
-  if (point.x >= window.right - 2 * SIZEMARGIN)
-  {
-    if (point.y >= window.bottom - SIZEMARGIN)
-    {
-      return HTBOTTOMRIGHT;
-    }
-    if (point.y <= window.top + SIZEMARGIN)
-    {
-      return HTTOPRIGHT;
-    }
-    return HTRIGHT;
-  }
-  if (point.y >= window.bottom - SIZEMARGIN)
-  {
-    return HTBOTTOM;
-  }
-  if (point.y <= window.top + SIZEMARGIN)
-  {
-    return HTTOP;
   }
   if (m_captionRect.PtInRect(point))
   {

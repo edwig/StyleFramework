@@ -185,6 +185,9 @@ StyleComboBox::CreateEditControl()
   m_itemControl->InitSkin();
   m_itemControl->SetInitCorrectly();
   m_itemControl->SetAutoComplete();
+
+  // Trigger the NCCALCSIZE procedure
+  m_itemControl->SetWindowPos(nullptr,rect.left,rect.top,rect.Width(),rect.Height(),SWP_FRAMECHANGED);
 }
 
 void 

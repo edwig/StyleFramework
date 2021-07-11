@@ -10,6 +10,14 @@
 //
 // RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES
 
+VERSION OF 11-07-2021
+---------------------
+1) You can only drag the edges of dialogs and FrameWnd's if they are not in the WS_MAXIMIZE 
+   state. This was done to avoid horrible drawing bugs. And it's the normal MS-Windows behaviour
+2) Dialogs can now resize to a LARGER size, but never to a SMALLER size as defined in the *.rc file
+   This is done, so that controls do not obscure each other on the screen.
+3) After resizing, the combobox edit boxes again paint correctly and not with a double border.
+
 Version of 24-06-2021
 ---------------------
 1) StyleEdit boxes that are **NOT** multiline are now created without a style frame

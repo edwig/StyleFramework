@@ -730,13 +730,17 @@ StyleEdit::StyleNcPaint(DWORD p_color,DWORD p_inner)
   CRect window;
   GetWindowRect(window);
   window.OffsetRect(-window.left,-window.top);
-  // All CEdit(View) objects are offsetted in al screen re-scalings
+
+  // All CEdit(View) objects are get an offset in all screen re-scalings
   // It works, but totally undocumented by Microsoft.
-  window.OffsetRect(-2,-2);
   if(m_combo)
   {
-    window.OffsetRect(-1,-1);
+    window.OffsetRect(-4,-4);
     inner = 3;
+  }
+  else
+  {
+    window.OffsetRect(-2, -2);
   }
 
   // Paint the outer frame
@@ -753,14 +757,14 @@ StyleEdit::StyleNcPaint(DWORD p_color,DWORD p_inner)
 void
 StyleEdit::OnNcCalcSize(BOOL calcValidRects,NCCALCSIZE_PARAMS* params)
 {
-  if(GetSkin() == nullptr)
+  CEdit::OnNcCalcSize(calcValidRects,params);
+  if(GetSkin() == nullptr && m_combo)
   {
     params->rgrc[0].top    += 3;
     params->rgrc[0].left   += 3;
     params->rgrc[0].bottom -= 3;
     params->rgrc[0].right  -= 3;
   }
-  CEdit::OnNcCalcSize(calcValidRects,params);
 }
 
 void
@@ -1331,6 +1335,10 @@ StyleEdit::OnSize(UINT nType, int cx, int cy)
       skin->MoveWindow(frame.left, frame.top, frame.Width(), frame.Height());
       skin->RepositionControlWindow();
     }
+  }
+  else
+  {
+    Invalidate();
   }
 }
 
