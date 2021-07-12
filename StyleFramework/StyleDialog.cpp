@@ -67,6 +67,7 @@ StyleDialog::StyleDialog(UINT  p_IDTemplate
 }
 
 BEGIN_MESSAGE_MAP(StyleDialog,CDialog)
+  ON_WM_CREATE()
   ON_WM_ERASEBKGND()
   ON_WM_CTLCOLOR()
   ON_MESSAGE(WM_CTLCOLORSTATIC,OnCtlColorStatic)
@@ -113,6 +114,13 @@ StyleDialog::OnInitDialog()
     InitStatusBar();
   }
   return InitFirstFocus();
+}
+
+int
+StyleDialog::OnCreate(LPCREATESTRUCT p_create)
+{
+  p_create->dwExStyle |= WS_EX_CONTROLPARENT;
+  return CDialog::OnCreate(p_create);
 }
 
 void
