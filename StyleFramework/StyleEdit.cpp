@@ -555,7 +555,10 @@ StyleEdit::OnChar(UINT p_char,UINT p_repetitions,UINT p_flags)
   }
 
   // DEFAULT ACTION WITH THIS CHAR
-  CEdit::OnChar(p_char,p_repetitions,p_flags);
+  if(m_mutable || p_char < VK_SPACE)
+  {
+    CEdit::OnChar(p_char,p_repetitions,p_flags);
+  }
 
   // See if text is cleared
   CEdit::GetWindowText(text);
@@ -651,6 +654,18 @@ StyleEdit::DrawFrame()
       color    = ThemeColor::_Color1;   // In the style color
     }
   }
+  else
+  {
+    if(m_colorBackground != FRAME_DEFAULT_COLOR)
+    {
+      color = m_colorBackground;
+    }
+    // Do not interfere with these DrawEditFrame cases
+    if(m_borderSize == 3 || m_borderSize == 4)
+    {
+      return;
+    }
+  }
   DrawBox(rcItem,color,penstyle,back);
 }
 
@@ -708,6 +723,10 @@ StyleEdit::DrawEditFrame()
     {
       skinborder = m_colorBackground;
     }
+    if(m_colorBorder)
+    {
+      skinborder = m_colorBorder;
+    }
   }
 
   if(skin)
@@ -741,6 +760,10 @@ StyleEdit::StyleNcPaint(DWORD p_color,DWORD p_inner)
   else
   {
     window.OffsetRect(-2, -2);
+    if(m_borderSize > 0 && m_borderSize < STYLE_SINGLELN_BORDER)
+    {
+      inner = m_borderSize;
+    }
   }
 
   // Paint the outer frame

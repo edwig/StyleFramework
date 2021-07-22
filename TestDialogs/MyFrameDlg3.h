@@ -34,10 +34,14 @@ protected:
   CString       m_string6;
   CString       m_string7;
 
+  CString       m_status;
+
   StyleEdit     m_edit4;
   StyleEdit     m_edit5;
   StyleEdit     m_edit6;
   StyleEdit     m_edit7;
+
+  StyleEdit     m_editStatus;
 
   StyleButton   m_buttonMutations;
   StyleButton   m_directoryEdit4;

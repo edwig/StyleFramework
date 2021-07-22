@@ -32,6 +32,7 @@ void MyFrameDlg3::DoDataExchange(CDataExchange* pDX)
   DDX_Control(pDX, IDC_EDIT5,     m_edit5,m_string5);
   DDX_Control(pDX, IDC_EDIT6,     m_edit6,m_string6);
   DDX_Control(pDX, IDC_EDIT7,     m_edit7,m_string7);
+  DDX_Control(pDX, IDC_STATUS,    m_editStatus,m_status);
 
   // Buttons after the fields
   DDX_Control(pDX, IDC_BUTTON,    m_buttonMutations);
@@ -82,6 +83,14 @@ MyFrameDlg3::OnInitDialog()
   // m_string7 = "Testing";
   m_edit7.SetPassword();
   m_edit7.SetEmpty(true,"Enter password");
+
+  // Our status field
+  m_status = "The current status";
+  m_editStatus.SetMutable(false);
+  m_editStatus.SetTextColor(RGB(255,0,0));
+  m_editStatus.SetBorderColor(RGB(255,0,0));  // Purple
+  m_editStatus.SetBkColor(RGB(179,253,184)); 
+  m_editStatus.SetBorderSize(2);
 
   UpdateData(FALSE);
   return TRUE;

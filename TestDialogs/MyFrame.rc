@@ -23,7 +23,6 @@
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -63,16 +62,6 @@ BEGIN
     END
 END
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
-STRINGTABLE
-BEGIN
-    IDS_ABOUTBOX            "&About MyFrame..."
-END
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -186,6 +175,7 @@ BEGIN
     EDITTEXT        IDC_EDIT7,60,152,109,14,ES_AUTOHSCROLL
     DEFPUSHBUTTON   "OK",IDOK,186,271,55,14
     PUSHBUTTON      "Cancel",IDCANCEL,254,271,58,14
+    EDITTEXT        IDC_STATUS,60,174,109,14,ES_AUTOHSCROLL
 END
 
 IDD_DIALOG4 DIALOGEX 0, 0, 312, 286
@@ -597,8 +587,20 @@ END
 
 IDB_TABICONS            BITMAP                  "res\\TabIcons.bmp"
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_ABOUTBOX            "&About MyFrame..."
+END
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
+
 
 
 #ifndef APSTUDIO_INVOKED
