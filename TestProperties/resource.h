@@ -28,7 +28,7 @@
 #define IDB_MLD_UITROEP                 153
 #define IDR_MELDINGEN                   180
 
-#define IDC_BOODSCHAP                    10
+#define IDC_BOODSCHAP                    20
 #define IDC_TOAST                        11
 #define IDC_MONTH                        12
 

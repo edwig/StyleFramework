@@ -45,7 +45,7 @@ INT_PTR
 StyleMessageBox(CWnd*  p_parent
                ,LPCSTR p_message
                ,LPCSTR p_title
-               ,int    p_styles         /*= MB_OK*/
+               ,long   p_styles         /*= MB_OK*/
                ,bool*  p_doNotShowAgain /*= nullptr*/)
 {
   MessageDialog dlg(p_parent,p_title,p_message,p_styles,p_doNotShowAgain);

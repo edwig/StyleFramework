@@ -141,7 +141,7 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
 	{
 		return;
 	}
-  m_rectHover = (lpHoverRect != NULL) ? lpHoverRect : rectTitle;
+  m_rectHover = (lpHoverRect != NULL) ? (CRect)lpHoverRect : rectTitle;
   m_rectHover.right++; m_rectHover.bottom++;
 
 	m_pParentWnd->ClientToScreen( m_rectHover );

@@ -10,6 +10,11 @@
 //
 // RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES
 
+VERSION OF 10-08-2021
+---------------------
+1) Library is updated to MS-Windows SDK 10 (latest) and C++ ISO 2020 (latest)
+2) Fixed a bug in StyleMessageBox so that ENTER works again with the default button.
+
 VERSION OF 11-07-2021
 ---------------------
 1) You can only drag the edges of dialogs and FrameWnd's if they are not in the WS_MAXIMIZE 

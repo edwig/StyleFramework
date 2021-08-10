@@ -115,7 +115,7 @@ namespace ThemeColor
   extern UINT g_msg_changed;
 
   const  unsigned NO_OF_THEMES = 6;
-  extern char*    theme_names[];
+  extern const char* theme_names[];
   extern COLORREF _Color1;
   extern COLORREF _Color2;
   extern COLORREF _Color3;

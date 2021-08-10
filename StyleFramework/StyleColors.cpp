@@ -39,7 +39,7 @@ COLORREF ThemeColor::_Color3 = Skyblue3;
 COLORREF ThemeColor::_Color4 = SkyblueHeader;
 Themes   ThemeColor::_theme  = ThemeColor::Themes::ThemeSkyblue;
 
-char* ThemeColor::theme_names[NO_OF_THEMES] =
+const char* ThemeColor::theme_names[NO_OF_THEMES] =
 {
    "Lime"
   ,"Skyblue"
