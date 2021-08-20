@@ -1128,7 +1128,7 @@ StyleEdit::OnDoubleClick(WPARAM wParam, LPARAM lParam)
     SetErrorState(false,"");
     Invalidate();
     // Set-off the content checks by sending a KILLFOCUS notify
-    CWnd* dialog = GetSkin()->GetParent();
+    CWnd* dialog = GetSkin() ? GetSkin()->GetParent() : GetParent();
     dialog->PostMessage(WM_COMMAND,MAKELONG(GetDlgCtrlID(),EN_KILLFOCUS),(LPARAM)GetSafeHwnd());
   }
   return 0;
