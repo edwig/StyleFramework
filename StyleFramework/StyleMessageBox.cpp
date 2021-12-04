@@ -361,7 +361,7 @@ void MessageDialog::DoDataExchange(CDataExchange* pDX)
 {
   StyleDialogCA::DoDataExchange(pDX);
 
-  DDX_Control(pDX, IDC_BOODSCHAP, m_edit);
+  DDX_Control(pDX,IDC_BOODSCHAP,m_edit);
 }
 
 // Init buttons
@@ -400,20 +400,36 @@ MessageDialog::PreTranslateMessage(MSG* pMsg)
   {
     case WM_KEYDOWN:
     case WM_SYSKEYDOWN:
-      if (pMsg->wParam == 13 || pMsg->wParam == 32)
+      if(pMsg->wParam == VK_RETURN || pMsg->wParam == VK_SPACE)
       {
-        if (StyleButton* button = dynamic_cast<StyleButton*>(GetFocus()))
+        if(StyleButton* button = dynamic_cast<StyleButton*>(GetFocus()))
         { 
           EndDialog(button->GetDlgCtrlID());
         }
         return TRUE;
       }
+      if(pMsg->wParam == VK_LEFT)
+      {
+        if(StyleButton* button = dynamic_cast<StyleButton*>(GetFocus()))
+        {
+          GotoControl(-1);
+          return TRUE;
+        }
+      }
+      if(pMsg->wParam == VK_RIGHT)
+      {
+        if(StyleButton* button = dynamic_cast<StyleButton*>(GetFocus()))
+        {
+          GotoControl(1);
+          return TRUE;
+        }
+      }
       for (int i = 0; i < MAX_LABELS; ++i)
       {
         // Find the label that begins with this character
-        if (!m_label[i].IsEmpty() && (m_button[i]->GetStyle() & WS_DISABLED) == 0)
+        if(!m_label[i].IsEmpty() && (m_button[i]->GetStyle() & WS_DISABLED) == 0)
         {
-          if (tolower(m_label[i].GetAt(0)) == tolower((int) pMsg->wParam))
+          if(tolower(m_label[i].GetAt(0)) == tolower((int) pMsg->wParam))
           {
             EndDialog(i + ID_OFFSET);
             return TRUE;
@@ -437,6 +453,64 @@ MessageDialog::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
   {
     AfxMessageBox(er,MB_OK | MB_ICONERROR);
     return 0;
+  }
+}
+
+// Go to the Next/Previous control on the message box
+void 
+MessageDialog::GotoControl(int p_direction)
+{
+  // Are we on the text of the message dialog
+  bool onText = (&m_edit == reinterpret_cast<CEdit*>(GetFocus()));
+  int focusButton = 0;
+
+  // Count the number of buttons
+  int maxButton = 0;
+  for(int ind = 0; ind < MAX_LABELS; ++ind)
+  {
+    if(!m_label[ind].IsEmpty())
+    {
+      ++maxButton;
+    }
+    else break;
+  }
+
+  if(onText)
+  {
+    if(p_direction > 0)
+    {
+      // We are on the text and go to the first button
+      focusButton = 0;
+    }
+    else
+    {
+      focusButton = maxButton - 1;
+    }
+  }
+  else
+  {
+    for(int ind = 0; ind < maxButton; ++ind)
+    {
+      StyleButton* button = reinterpret_cast<StyleButton*>(GetFocus());
+      if(m_button[ind] == button)
+      {
+        if(button->GetStyle() & BS_DEFPUSHBUTTON)
+        {
+          button->ModifyStyle(BS_DEFPUSHBUTTON,0);
+        }
+        focusButton = ind + p_direction;
+        break;
+      }
+    }
+  }
+
+  if(focusButton < 0 || focusButton == maxButton)
+  {
+    m_edit.SetFocus();
+  }
+  else
+  {
+    m_button[focusButton]->SetFocus();
   }
 }
 
@@ -932,7 +1006,6 @@ MessageDialog::OnInitDialog()
       m_button[i]->SetFont(m_font);
       // For the next button
       buttonBegin += buttonWidth + OFFSET;
-
     }
   }
   // Recalculate the window size

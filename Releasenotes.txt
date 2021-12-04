@@ -10,6 +10,11 @@
 //
 // RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES
 
+VERSION OF 04-12-2021
+---------------------
+1) Updated to VS2022
+2) Better handling of the default button in a StyleMessageBox
+
 VERSION OF 10-08-2021
 ---------------------
 1) Library is updated to MS-Windows SDK 10 (latest) and C++ ISO 2020 (latest)

@@ -110,6 +110,8 @@ private:
   void SuppressFromNowOn();
   // Flash our application and message box
   void FlashMessageBox();
+  // Go to the Next/Previous control on the message box
+  void GotoControl(int p_direction);
 
   // DATA
   CFont*        m_font;                       // Font we use for the message
