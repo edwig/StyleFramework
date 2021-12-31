@@ -491,7 +491,15 @@ StyleEdit::EnableWindow(BOOL p_enable)
 {
   BOOL result = CWnd::EnableWindow(p_enable);
   bool enable = p_enable && !(GetStyle() & ES_READONLY);
-  COLORREF back = enable ? RGB(255, 255, 255) : ClrEditDisabledBack;
+  COLORREF back = m_colorBackground;
+
+  if(m_colorBackground == FRAME_DEFAULT_COLOR ||
+     m_colorBackground == ClrEditDisabledBack ||
+     m_colorBackground == RGB(255,255,255))
+  {
+    back = enable ? RGB(255,255,255) : ClrEditDisabledBack;
+  }
+
   SetBkColor(back);
   SkinScrollWnd* skin = GetSkin();
   if(skin)

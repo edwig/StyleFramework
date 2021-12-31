@@ -388,7 +388,7 @@ StyleDialog::SetTheme(ThemeColor::Themes p_theme)
 
   // Broadcast the change to all top level windows
   DWORD components = BSM_APPLICATIONS;
-  BroadcastSystemMessage(BSF_POSTMESSAGE,&components,g_msg_changed,0,p_theme);
+  BroadcastSystemMessage(BSF_POSTMESSAGE,&components,g_msg_changed,0,(int)p_theme);
 
   // Change our colors
   ThemeColor::SetTheme(p_theme);
@@ -502,7 +502,7 @@ void
 StyleDialog::LoadStyleTheme()
 {
   RegistryManager manager;
-  int th = manager.GetRegistryInteger(STYLECOLORS_KEY,STYLECOLORS_THEME,ThemeColor::Themes::ThemeSkyblue);
+  int th = manager.GetRegistryInteger(STYLECOLORS_KEY,STYLECOLORS_THEME,(int)ThemeColor::Themes::ThemeSkyblue);
   ThemeColor::Themes theme = (ThemeColor::Themes)th;
   ThemeColor::SetTheme(theme);
 

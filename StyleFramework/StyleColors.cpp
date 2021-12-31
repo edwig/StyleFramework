@@ -53,12 +53,12 @@ void ThemeColor::SetTheme(Themes pTheme)
 {
   switch (pTheme)
   {
-    case ThemeLime:         ThemeColor::SetColors(Lime1,        Lime2,        Lime3,        LimeHeader);        break;
-    case ThemeSkyblue:      ThemeColor::SetColors(Skyblue1,     Skyblue2,     Skyblue3,     SkyblueHeader);     break;
-    case ThemePurple:       ThemeColor::SetColors(Purple1,      Purple2,      Purple3,      PurpleHeader);      break;
-    case ThemeModerateGray: ThemeColor::SetColors(ModerateGray1,ModerateGray2,ModerateGray3,ModerateGrayHeader);break;
-    case ThemePureGray:     ThemeColor::SetColors(PureGray1,    PureGray2,    PureGray3,    PureGrayHeader);    break;
-    case ThemeBlackWhite:   ThemeColor::SetColors(BlackWhite1,  BlackWhite2,  BlackWhite3,  BlackWhiteHeader);  break;
+    case Themes::ThemeLime:         ThemeColor::SetColors(Lime1,        Lime2,        Lime3,        LimeHeader);        break;
+    case Themes::ThemeSkyblue:      ThemeColor::SetColors(Skyblue1,     Skyblue2,     Skyblue3,     SkyblueHeader);     break;
+    case Themes::ThemePurple:       ThemeColor::SetColors(Purple1,      Purple2,      Purple3,      PurpleHeader);      break;
+    case Themes::ThemeModerateGray: ThemeColor::SetColors(ModerateGray1,ModerateGray2,ModerateGray3,ModerateGrayHeader);break;
+    case Themes::ThemePureGray:     ThemeColor::SetColors(PureGray1,    PureGray2,    PureGray3,    PureGrayHeader);    break;
+    case Themes::ThemeBlackWhite:   ThemeColor::SetColors(BlackWhite1,  BlackWhite2,  BlackWhite3,  BlackWhiteHeader);  break;
     default:                return;
   }
   _theme = pTheme;
@@ -94,5 +94,5 @@ ThemeColor::GetScrollbarBitmap()
       g_scrollbars[index] = (HBITMAP)bmp.Detach();
     }
   }
-  return g_scrollbars[_theme];
+  return g_scrollbars[(int)ThemeColor::_theme];
 }

@@ -149,6 +149,7 @@ StyleButton::StyleButton()
             ,m_error(false)
             ,m_defaultButton(false)
             ,m_style(0)
+            ,m_bold(false)
 {
 }
 
@@ -158,6 +159,7 @@ StyleButton::StyleButton(CString p_type, bool pInError)
             ,m_mandatory(false)
             ,m_defaultButton(false)
             ,m_style(0)
+            ,m_bold(false)
 {
   TranslateStyle(p_type);
 }
@@ -592,7 +594,7 @@ StyleButton::Draw(CDC*    pDC
   // Paint the text
   pDC->SetTextColor(textcolor);
 
-  CFont* org = pDC->SelectObject(&STYLEFONTS.DialogTextFont);
+  CFont* org = pDC->SelectObject(m_bold ? &STYLEFONTS.DialogTextFontBold : &STYLEFONTS.DialogTextFont);
   pDC->DrawText(txt, &rect, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
   pDC->SelectObject(org);
 }

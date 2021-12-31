@@ -192,7 +192,7 @@ void
 StyleFrameWndEx::LoadStyleTheme()
 {
   RegistryManager manager;
-  int th = manager.GetRegistryInteger(STYLECOLORS_KEY,STYLECOLORS_THEME,ThemeColor::Themes::ThemeSkyblue);
+  int th = manager.GetRegistryInteger(STYLECOLORS_KEY,STYLECOLORS_THEME,(int)ThemeColor::Themes::ThemeSkyblue);
   ThemeColor::Themes theme = (ThemeColor::Themes)th;
   ThemeColor::SetTheme(theme);
 

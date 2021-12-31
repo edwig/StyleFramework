@@ -100,7 +100,7 @@
 
 namespace ThemeColor 
 {
-  typedef enum _themes
+  enum class Themes
   {
     ThemeLime,          // Theme in color Lime
     ThemeSkyblue,       // Theme in color Skyblue
@@ -108,8 +108,7 @@ namespace ThemeColor
     ThemeModerateGray,  // Theme in color ModerateGray
     ThemePureGray,      // Theme in color PureGray
     ThemeBlackWhite     // Theme in color BlackWhite
-  }
-  Themes;
+  };
 
   // Message that styles have changed
   extern UINT g_msg_changed;
