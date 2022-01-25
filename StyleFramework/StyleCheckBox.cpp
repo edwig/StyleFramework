@@ -206,9 +206,9 @@ StyleCheckbox::Draw(CWnd* p_wnd
 
     if ((p_state & BST_CHECKED) != 0)
     {
-      p_dc->MoveTo(mark.CenterPoint().x - WS(4), mark.CenterPoint().y - WS(1));
-      p_dc->LineTo(mark.CenterPoint().x - WS(1), mark.CenterPoint().y + WS(3));
-      p_dc->LineTo(mark.CenterPoint().x + WS(4), mark.CenterPoint().y - WS(4));
+      p_dc->MoveTo(mark.CenterPoint().x - WS(6), mark.CenterPoint().y - WS(1));
+      p_dc->LineTo(mark.CenterPoint().x - WS(2), mark.CenterPoint().y + WS(3));
+      p_dc->LineTo(mark.CenterPoint().x + WS(5), mark.CenterPoint().y - WS(4));
     }
     else if ((p_state & BST_INDETERMINATE) != 0)
     {
