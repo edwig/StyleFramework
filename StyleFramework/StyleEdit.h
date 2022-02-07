@@ -163,6 +163,7 @@ private:
   void     DrawErrorExclamation();
   void     StyleNcPaint(DWORD p_color,DWORD p_inner);
   void     DrawBox(CRect& rect,DWORD p_color,int p_penstyle = PS_SOLID,DWORD p_background = NO_BACKGROUND_COLOR);
+  void     TrySelectWord();
 
   CString  m_tooltip;     // Tooltip on the contents
   CString  m_emptyText;   // Background text in case the field is empty: hint what to fill in

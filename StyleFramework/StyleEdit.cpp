@@ -1091,6 +1091,7 @@ StyleEdit::OnDoubleClick(WPARAM wParam, LPARAM lParam)
   // Do we have the calendar style?
   if(m_calendar == false)
   {
+    TrySelectWord();
     return 0;
   }
   // May we edit the field?
@@ -1439,6 +1440,34 @@ StyleEdit::OnWindowPosChanged(WINDOWPOS* pos)
   }
 }
 
+// Try to select a word after double clicking in the text
+void
+StyleEdit::TrySelectWord()
+{
+  int startPos = -1;
+  int endPos   = -1;
+  GetSel(startPos,endPos);
+
+  if(startPos >= 0 && endPos >= 0 && startPos == endPos)
+  {
+    CString text;
+    GetWindowText(text);
+    if(isspace(text[startPos]))
+    {
+      return;
+    }
+    while(startPos >= 0 && isalnum(text[startPos])) 
+    {
+      --startPos;
+    }
+    while(endPos < text.GetLength() && isalnum(text[endPos]))
+    {
+      ++endPos;
+    }
+    SetSel(++startPos,endPos);
+  }
+}
+
 //////////////////////////////////////////////////////////////////////////
 //
 // SUPPORT FOR DynamicDataEXchange in Dialogs
@@ -1447,7 +1476,9 @@ StyleEdit::OnWindowPosChanged(WINDOWPOS* pos)
 
 void WINAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleEdit& p_editControl)
 {
+#ifdef _DEBUG
   StyleMessageBox(nullptr,"Use one of the DDX_StyleEdit functions!","ERROR",MB_OK|MB_ICONERROR);
+#endif
   // Keep on running on empty
   CString empty;
   DDX_Control(pDX,nIDC,p_editControl,empty);
