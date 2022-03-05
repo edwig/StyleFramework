@@ -45,6 +45,7 @@
 #include "StyleComboBox.h"        // CComboBox        -> StyleComboBox
 #include "StyleEdit.h"            // CEdit            -> StyleEdit
 #include "StyleGridCtrl.h"        // CGridCtrl        -> StyleGridCtrl
+#include "StyleGroupBox.h"        // CButton          -> StyleGroupBox
 #include "StyleHyperlink.h"       // CLinkCtrl        -> StyleHyperlink
 #include "StyleListBox.h"         // CListBox         -> StyleListBox
 #include "StyleListCtrl.h"        // CListCtrl        -> StyleListCtrl

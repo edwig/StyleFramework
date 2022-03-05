@@ -33,11 +33,31 @@ using namespace ThemeColor;
 UINT ThemeColor::g_msg_changed = 0;
 
 // Put default theme to Loyalty
-COLORREF ThemeColor::_Color1 = Skyblue1;
-COLORREF ThemeColor::_Color2 = Skyblue2;
-COLORREF ThemeColor::_Color3 = Skyblue3;
-COLORREF ThemeColor::_Color4 = SkyblueHeader;
-Themes   ThemeColor::_theme  = ThemeColor::Themes::ThemeSkyblue;
+Themes   ThemeColor::_theme   = ThemeColor::Themes::ThemeSkyblue;
+
+const int ThemeColor::theme_colors[NO_OF_COLORS][NO_OF_THEMES] =
+{
+ /* LIME            SKYBLUE         PURPLE          MODERATE-GRAY      PURE-GRAY       BLACK-WHITE,     DARK-THEME  */
+  { Lime1,          Skyblue1,       Purple1,        ModerateGray1,     PureGray1,      BlackWhite1,     Dark1               }  // AccentColor1
+ ,{ Lime2,          Skyblue2,       Purple2,        ModerateGray2,     PureGray2,      BlackWhite2,     Dark2               }  // AccentColor2
+ ,{ Lime3,          Skyblue3,       Purple3,        ModerateGray3,     PureGray3,      BlackWhite3,     Dark3               }  // AccentColor3
+ ,{ LimeHeader,     SkyblueHeader,  PurpleHeader,   ModerateGrayHeader,PureGrayHeader, BlackWhiteHeader,DarkHeader          }  // AccentColor4
+ ,{ UsersBackground,UsersBackground,UsersBackground,UsersBackground,   UsersBackground,UsersBackground, DarkBackground      }  // ColorWindowFrame
+ ,{ Assistant0,     Assistant0,     Assistant0,     Assistant0,        Assistant0,     Assistant0,      DarkCtrlBackground  }  // ColorCtrlBackground
+ ,{ ClrEditText,    ClrEditText,    ClrEditText,    ClrEditText,       ClrEditText,    ClrEditText,     ClrEditDark         }  // ColorEditText
+ ,{ ClrEditText,    ClrEditText,    ClrEditText,    ClrEditText,       ClrEditText,    ClrEditText,     ClrEditDarkHover    }  // ColorEditHover
+ ,{ ClrEditText,    ClrEditText,    ClrEditText,    ClrEditText,       ClrEditText,    ClrEditText,     ClrEditDark         }  // ColorLabelText
+ ,{ ComboBoxActive, ComboBoxActive, ComboBoxActive, ComboBoxActive,    ComboBoxActive, ComboBoxActive,  ComboBoxDActive     }  // ColorComboActive
+ ,{ ComboBoxDropped,ComboBoxDropped,ComboBoxDropped,ComboBoxDropped,   ComboBoxDropped,ComboBoxDropped, ComboBoxDDropped    }  // ColorComboDropped
+ ,{ GroupBoxLine,   GroupBoxLine,   GroupBoxLine,   GroupBoxLine,      GroupBoxLine,   GroupBoxLine,    GroupBoxLine,       }  // ColorGroupLine
+ ,{ UsersBackground,UsersBackground,UsersBackground,UsersBackground,   UsersBackground,UsersBackground, DarkCtrlBackground  }  // ColorButtonBackground
+ ,{ Lime3,          Skyblue3,       Purple3,        ModerateGray3,     PureGray3,      BlackWhite3,     DarkButtonText      }  // ColorButtonText
+};
+
+int ThemeColor::GetColor(Colors p_color)
+{
+  return ThemeColor::theme_colors[(int)p_color][(int)ThemeColor::_theme];
+}
 
 const char* ThemeColor::theme_names[NO_OF_THEMES] =
 {
@@ -47,30 +67,12 @@ const char* ThemeColor::theme_names[NO_OF_THEMES] =
   ,"Moderate gray"
   ,"Pure gray"
   ,"Black and White"
+  ,"Dark theme"
 };
 
 void ThemeColor::SetTheme(Themes pTheme)
 {
-  switch (pTheme)
-  {
-    case Themes::ThemeLime:         ThemeColor::SetColors(Lime1,        Lime2,        Lime3,        LimeHeader);        break;
-    case Themes::ThemeSkyblue:      ThemeColor::SetColors(Skyblue1,     Skyblue2,     Skyblue3,     SkyblueHeader);     break;
-    case Themes::ThemePurple:       ThemeColor::SetColors(Purple1,      Purple2,      Purple3,      PurpleHeader);      break;
-    case Themes::ThemeModerateGray: ThemeColor::SetColors(ModerateGray1,ModerateGray2,ModerateGray3,ModerateGrayHeader);break;
-    case Themes::ThemePureGray:     ThemeColor::SetColors(PureGray1,    PureGray2,    PureGray3,    PureGrayHeader);    break;
-    case Themes::ThemeBlackWhite:   ThemeColor::SetColors(BlackWhite1,  BlackWhite2,  BlackWhite3,  BlackWhiteHeader);  break;
-    default:                return;
-  }
   _theme = pTheme;
-}
-
-
-void ThemeColor::SetColors(COLORREF pColor1, COLORREF pColor2, COLORREF pColor3, COLORREF pColor4)
-{
-  _Color1 = pColor1;
-  _Color2 = pColor2;
-  _Color3 = pColor3;
-  _Color4 = pColor4;
 }
 
 Themes ThemeColor::GetTheme()

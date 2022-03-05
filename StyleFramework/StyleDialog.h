@@ -88,7 +88,8 @@ protected:
   afx_msg int     OnCreate(LPCREATESTRUCT p_create);
   afx_msg BOOL    OnEraseBkgnd(CDC* pDC);
   afx_msg HBRUSH  OnCtlColor(CDC* pDC,CWnd* pWnd,UINT nCtlColor);
-  afx_msg LPARAM  OnCtlColorStatic(WPARAM wParam,LPARAM lParam);
+  afx_msg LPARAM  OnCtlColorStatic (WPARAM wParam,LPARAM lParam);
+  afx_msg LPARAM  OnCtlColorListBox(WPARAM wParam,LPARAM lParam);
   afx_msg void    OnNcMouseMove(UINT nFlags, CPoint point);
   afx_msg void    OnNcLButtonDown(UINT nFlags, CPoint point);
   afx_msg void    OnNcRButtonUp(UINT nFlags, CPoint point);
@@ -115,6 +116,7 @@ protected:
   afx_msg void    OnStyleModerateGray();
   afx_msg void    OnStylePureGray();
   afx_msg void    OnStyleBlackWhite();
+  afx_msg void    OnStyleDark();
   
   bool      m_error       { false   };  // Dialog is in an error state?
   bool      m_down        { false   };  // mouse pressed in m_closeRect

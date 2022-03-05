@@ -20,8 +20,9 @@
 #define IDB_SCROLLBAR4                  141
 #define IDB_SCROLLBAR5                  142
 #define IDB_SCROLLBAR6                  143
-#define IDD_CALENDAR                    144
-#define IDI_CALENDAR                    145
+#define IDB_SCROLLBAR7                  144
+#define IDD_CALENDAR                    145
+#define IDI_CALENDAR                    146
 #define IDB_MLD_STOP                    150
 #define IDB_MLD_INFO                    151
 #define IDB_MLD_VRAAG                   152

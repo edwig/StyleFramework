@@ -37,6 +37,14 @@ BEGIN_MESSAGE_MAP(MyFrameDlg6, StyleDialog)
   ON_BN_CLICKED   (IDC_LEGEN, &MyFrameDlg6::OnBnClickedLegen)
   ON_BN_CLICKED   (IDOK,      &MyFrameDlg6::OnBnClickedOk)
   ON_BN_CLICKED   (IDCANCEL,  &MyFrameDlg6::OnBnClickedCancel)
+
+  ON_COMMAND      (ID_THEMA_LIME,      OnStyleLime)
+  ON_COMMAND      (ID_THEMA_SKYBLUE,   OnStyleSkyblue)
+  ON_COMMAND      (ID_THEMA_PURPLE,    OnStylePurple)
+  ON_COMMAND      (ID_THEMA_MODERATE,  OnStyleModerateGray)
+  ON_COMMAND      (ID_THEMA_PUREGRAY,  OnStylePureGray)
+  ON_COMMAND      (ID_THEMA_BLACKWHITE,OnStyleBlackWhite)
+  ON_COMMAND      (ID_THEMA_DARKTHEME, OnStyleDark)
 END_MESSAGE_MAP()
 
 BOOL

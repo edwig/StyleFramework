@@ -34,6 +34,7 @@ public:
 protected:
   bool    m_inPaint { false };
   void    DrawFrame();
+  void    CheckColors();
   
   virtual LRESULT WindowProc(UINT message,WPARAM wParam,LPARAM lParam) override;
 

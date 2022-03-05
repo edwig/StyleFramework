@@ -33,6 +33,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+using namespace ThemeColor;
+
 IMPLEMENT_DYNAMIC(StyleFrameWnd,CFrameWndEx)
 
 StyleFrameWnd::StyleFrameWnd()
@@ -490,7 +492,7 @@ void StyleFrameWnd::OnSize(UINT nType, int cx, int cy)
     }
     else
     {
-      border = MARGE;
+      border = MARGIN;
     }
 
     m_closeRect.SetRect(m_windowRectLocal.right - border -     WINCAPTIONHEIGHT, m_windowRectLocal.top, m_windowRectLocal.right - border,                        m_windowRectLocal.top + WINCAPTIONHEIGHT);
@@ -514,7 +516,7 @@ void StyleFrameWnd::OnSize(UINT nType, int cx, int cy)
 void 
 StyleFrameWnd::OnNcCalcSize(BOOL calcValidRects,NCCALCSIZE_PARAMS* p_params)
 {
-  int marge = MARGE;
+  int marge = MARGIN;
   p_params->rgrc[0].top += WINCAPTIONHEIGHT;
 
   if(GetStyle() & WS_MAXIMIZE)
@@ -562,8 +564,8 @@ StyleFrameWnd::OnNcPaint()
   if ((GetStyle() & WS_MAXIMIZE) == 0)
   {
     CRect r;
-    COLORREF bkgnd = ThemeColor::_Color1; // ClrWindowFrame;
-    int width = MARGE;
+    COLORREF bkgnd = ThemeColor::GetColor(Colors::AccentColor1); // ClrWindowFrame;
+    int width = MARGIN;
 
     r.SetRect(m_windowRectLocal.left,         m_windowRectLocal.top,           m_windowRectLocal.right,       m_windowRectLocal.top + width);
     dc.FillSolidRect(r, bkgnd);

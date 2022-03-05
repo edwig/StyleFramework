@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////
 //
-// File: StyleTreeCtrl.h
-// Function: Styling frame for CTreeCtrl object
+// File: StyleGroupBox.h
+// Function: Styling frame for a groupbox control
 //
 //   _____ _         _ _             ______                                           _    
 //  / ____| |       | (_)           |  ____|                                         | |   
@@ -17,34 +17,21 @@
 // For license: See the file "LICENSE.txt" in the root folder
 //
 #pragma once
-#include "SkinScrollWnd.h"
+#include "StyleColors.h"
 
-#define TREECONTROL_BORDER          1
-#define TREECONTROL_CLIENT_BIAS     0
-#define TREECONTROL_SCROLL_BIAS     0
-
-class StyleTreeCtrl : public CTreeCtrl
+class StyleGroupBox : public CWnd
 {
+  DECLARE_DYNAMIC(StyleGroupBox);
+
 public:
-  StyleTreeCtrl();
-  virtual ~StyleTreeCtrl();
+  StyleGroupBox();
+  virtual ~StyleGroupBox();
 
-  void InitSkin();
-  void ResetSkin();
-  void DrawFrame();
-  SkinScrollWnd* GetSkin();
-  void SetDirectInit(bool p_init);
+private:
+  void Internal_Paint(CDC* p_dc);
 
-protected:
-  bool    m_inPaint    { false };
-  bool    m_directInit { true  };
-
-  virtual LRESULT WindowProc(UINT message,WPARAM wParam,LPARAM lParam) override;
-  virtual void    PreSubclassWindow() override;
-          void    CheckColors();
+  DECLARE_MESSAGE_MAP()
 
   afx_msg void OnPaint();
-  afx_msg void OnSize(UINT nType, int cx, int cy);
-  afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
-  DECLARE_MESSAGE_MAP()
+
 };

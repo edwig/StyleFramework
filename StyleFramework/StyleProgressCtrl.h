@@ -124,6 +124,6 @@ private:
   int m_position  {   0 };          // Current position between lower and upper
   int m_state     { PBST_NORMAL };  // State we are in
   COLORREF m_background = (DWORD) NO_COLOR; // If no color, use ClrFrameBkGnd
-  COLORREF m_barcolor   = (DWORD) NO_COLOR; // If no color, use ThemeColor::_Color1
+  COLORREF m_barcolor   = (DWORD) NO_COLOR; // If no color, use ThemeColor::GetColor(Colors::AccentColor1)
 };
 

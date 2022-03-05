@@ -19,6 +19,8 @@
 #include "stdafx.h"
 #include "StyleProgressCtrl.h"
 
+using namespace ThemeColor;
+
 IMPLEMENT_DYNAMIC(StyleProgressCtrl,CWnd);
 
 BEGIN_MESSAGE_MAP(StyleProgressCtrl,CWnd)
@@ -158,7 +160,7 @@ StyleProgressCtrl::GetBkColor() const
 {
   if(m_background == NO_COLOR)
   {
-    return ClrFrameBkGnd;
+    return ThemeColor::GetColor(Colors::ColorCtrlBackground);// ClrFrameBkGnd;
   }
   // Explicitly set user color
   return m_background;
@@ -174,11 +176,11 @@ StyleProgressCtrl::GetBarColor() const
   }
   if(m_state == PBST_PAUSED)
   {
-    return ThemeColor::_Color3; // Lighter theme color
+    return ThemeColor::GetColor(Colors::AccentColor3); // Lighter theme color
   }
   if(m_barcolor == NO_COLOR)
   {
-    return ThemeColor::_Color1; // Our theme
+    return ThemeColor::GetColor(Colors::AccentColor1); // Our theme
   }
   return m_barcolor; // Explicitly set user color
 }

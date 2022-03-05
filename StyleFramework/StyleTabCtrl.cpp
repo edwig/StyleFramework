@@ -27,6 +27,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+using namespace ThemeColor;
+
 IMPLEMENT_DYNAMIC(StyleTabCtrl,CTabCtrl)
 
 StyleTabCtrl::StyleTabCtrl()
@@ -84,8 +86,8 @@ LPARAM
 StyleTabCtrl::OnCtlColorStatic(WPARAM wParam,LPARAM /*lParam*/)
 {
   HDC hdc = (HDC)wParam;
-  SetTextColor(hdc,InputTextActive);
-  SetBkColor(hdc,UsersBackground);
+  SetTextColor(hdc,ThemeColor::GetColor(Colors::ColorEditText));    // InputTextActive
+  SetBkColor  (hdc,ThemeColor::GetColor(Colors::ColorWindowFrame)); // UsersBackground
   return (LPARAM)(HBRUSH)m_brush;
 }
 
@@ -94,7 +96,7 @@ StyleTabCtrl::OnEraseBkgnd(CDC* pDC)
 {
   CRect rect;
   GetClientRect(&rect);
-  pDC->FillSolidRect(&rect,UsersBackground);
+  pDC->FillSolidRect(&rect,ThemeColor::GetColor(Colors::ColorWindowFrame)); // UsersBackground
   return TRUE;
 }
 
@@ -269,7 +271,6 @@ StyleTabCtrl::OnPaint()
       {
         COLORREF clrbkgnd;
         COLORREF clrtext;
-        // bool close = false;
 
         if (!active)
         {
@@ -280,7 +281,6 @@ StyleTabCtrl::OnPaint()
         {
           clrbkgnd = ClrTabBkGndSelected;
           clrtext  = ClrTabTextSelected;
-          // close = it->m_closable;
         }
         else if (ind == m_hover)
         {
@@ -340,8 +340,8 @@ StyleTabCtrl::OnPaint()
             points[3].y += tabHeaderNotch;
             points[1].y = points[0].y - tabHeaderNotch + 1;
             points[2].y = points[3].y - tabHeaderNotch + 1;
-            CBrush blank(ClrTabBkGndActive);
-            CPen   nopen(PS_SOLID,1,ClrTabBkGndActive);
+            CBrush blank(ThemeColor::GetColor(Colors::ColorWindowFrame));             // ClrTabBkGndActive
+            CPen   nopen(PS_SOLID,1,ThemeColor::GetColor(Colors::ColorWindowFrame));  // ClrTabBkGndActive
             dc->SelectObject(blank);
             dc->SelectObject(nopen);
             dc->Polygon(points, 4);

@@ -105,7 +105,7 @@ private:
   // Reset the buttons
   void ResetButtons();
   // Split labels strings and styles
-  void SpliLabelTextAndStyles(CString& p_labels);
+  void SplitLabelTextAndStyles(CString& p_labels);
   // Suppress this message, always ID_OK
   void SuppressFromNowOn();
   // Flash our application and message box

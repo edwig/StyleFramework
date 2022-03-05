@@ -32,6 +32,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+using namespace ThemeColor;
+
 IMPLEMENT_DYNAMIC(StyleDialogCA,CDialogEx);
 
 StyleDialogCA::StyleDialogCA(UINT nIDTemplate,CWnd* p_parent, bool caption /*=true*/)

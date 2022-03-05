@@ -134,6 +134,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+using namespace ThemeColor;
+
 // Spit out some messages as a sanity check for programmers
 #ifdef GRIDCONTROL_NO_TITLETIPS
 #pragma message(" -- CGridCtrl: No titletips for cells with large data")
@@ -1787,7 +1789,7 @@ void CGridCtrl::OnDraw(CDC* pDC)
 
 
   CPen pen;
-  pen.CreatePen(PS_SOLID,0,ThemeColor::_Color2); //m_crGridLineColour);
+  pen.CreatePen(PS_SOLID,0,ThemeColor::GetColor(Colors::AccentColor2)); //m_crGridLineColour);
   pDC->SelectObject(&pen);
 
   // draw vertical lines (drawn at ends of cells)

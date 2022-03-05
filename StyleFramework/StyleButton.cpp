@@ -31,6 +31,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+using namespace ThemeColor;
+
 //////////////////////////////////////////////////////////////////////////
 //
 // SERVICE FUNCTIONS FOR STYLE BUTTON
@@ -474,8 +476,8 @@ StyleButton::Draw(CDC*    pDC
       }
       else
       {
-        filling   = ClrControlNormal;
-        textcolor = ClrControlTextNormal;
+        filling   = ThemeColor::GetColor(Colors::ColorWindowFrame); // ClrControlNormal;
+        textcolor = ThemeColor::GetColor(Colors::AccentColor3);     // ClrControlTextNormal;
         outline   = ClrControlFrameNormal;
       }
     }
@@ -491,15 +493,15 @@ StyleButton::Draw(CDC*    pDC
       {
         if (over || (style & BS_DEFPUSHBUTTON))
         {
-          filling   = ClrControlDefault; 
+          filling   = ThemeColor::GetColor(Colors::AccentColor1);  // ClrControlDefault;
           textcolor = ClrControlTextHover;
           outline   = ClrControlFrameHover;
         }
         else
         {
-          filling   = ClrControlNormal;
-          textcolor = ClrControlTextNormal;
-          outline   = ThemeColor::_Color1; 
+          filling   = ThemeColor::GetColor(Colors::ColorCtrlBackground);   // ClrControlNormal;
+          textcolor = ThemeColor::GetColor(Colors::AccentColor1);          //ClrControlTextNormal;
+          outline   = ThemeColor::GetColor(Colors::AccentColor1); 
         }
       }
     }
@@ -518,9 +520,9 @@ StyleButton::Draw(CDC*    pDC
 
     else
     {
-      filling   = ClrControlNormal;
-      textcolor = ClrControlTextNormal;
-      outline   = ClrControlFrameNormal;
+      filling   = ThemeColor::GetColor(Colors::ColorButtonBackground);  // ClrControlNormal      = UsersBackground
+      textcolor = ThemeColor::GetColor(Colors::ColorButtonText);        // ClrControlTextNormal
+      outline   = ThemeColor::GetColor(Colors::AccentColor1);           // ClrControlFrameNormal
     }
   }
   else
@@ -530,11 +532,11 @@ StyleButton::Draw(CDC*    pDC
     textcolor = ClrControlTextDisabled;
   }
 
-  if (p_mandatory)
+  if(p_mandatory)
   {
-    outline = ClrEditFrameVerplicht;
+    outline = ThemeColor::NoWhite(ThemeColor::GetColor(Colors::AccentColor1)); //ClrEditFrameVerplicht;
   }
-  if (pInError)
+  if(pInError)
   {
     outline = ClrEditFrameError;
   }
@@ -559,7 +561,9 @@ StyleButton::Draw(CDC*    pDC
     {
       if (p_themeColor)
       {
-        CWSExpander(pDC, rect).DrawIcon(hicon, ClrFrameBkGnd,ComboBoxActive);
+        CWSExpander(pDC, rect).DrawIcon(hicon
+                                       ,ThemeColor::GetColor(Colors::ColorWindowFrame)
+                                       ,ThemeColor::GetColor(Colors::ColorComboActive));
         // Alternative without scaling
         // bmpRect.DeflateRect(1, 1);
         // br.DeleteObject();
@@ -583,7 +587,7 @@ StyleButton::Draw(CDC*    pDC
     }
     else
     {
-      CWSExpander(pDC, rect).DrawIcon(hicon, ClrFrameBkGnd, textcolor);
+      CWSExpander(pDC, rect).DrawIcon(hicon,ThemeColor::GetColor(Colors::ColorWindowFrame),textcolor);
       // Alternative without scaling
       // br.DeleteObject();
       // br.CreateSolidBrush(textcolor);

@@ -25,7 +25,7 @@
 #define WS(val)             MulDiv(val, CWindowDC(0).GetDeviceCaps(LOGPIXELSY), 96)
 #endif
 
-#define MARGE               MulDiv(  1, StyleFonts::logpixelsy(), 96)
+#define MARGIN              MulDiv(  1, StyleFonts::logpixelsy(), 96)
 #define PANELHEADERHEIGHT   MulDiv(  0, StyleFonts::logpixelsy(), 96)
 #define CAPTIONHEIGHT       MulDiv( 46, StyleFonts::logpixelsy(), 96)
 #define WINCAPTIONHEIGHT    MulDiv( 30, StyleFonts::logpixelsy(), 96)

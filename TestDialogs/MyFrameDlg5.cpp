@@ -112,7 +112,7 @@ MyFrameDlg5::OnLbnSelchangeList1()
   {
     CString text;
     m_list1.GetText(ind,text);
-    StyleMessageBox(this,text,"Line from list 1",MB_OK);
+    StyleMessageBox(this,text,"List 1",MB_OK);
   }
 }
 
@@ -124,7 +124,7 @@ MyFrameDlg5::OnLbnSelchangeList2()
   {
     CString text;
     m_list2.GetText(ind, text);
-    StyleMessageBox(this, text, "Line from list 2", MB_OK);
+    StyleMessageBox(this, text, "List 2", MB_OK);
   }
 }
 

@@ -192,6 +192,7 @@
     <ClInclude Include="StyleFrameWnd.h" />
     <ClInclude Include="StyleFrameWork.h" />
     <ClInclude Include="StyleGridCtrl.h" />
+    <ClInclude Include="StyleGroupBox.h" />
     <ClInclude Include="StyleHyperlink.h" />
     <ClInclude Include="StyleListBox.h" />
     <ClInclude Include="StyleListCtrl.h" />
@@ -243,6 +244,7 @@
     <ClCompile Include="StyleFormView.cpp" />
     <ClCompile Include="StyleFrameWnd.cpp" />
     <ClCompile Include="StyleGridCtrl.cpp" />
+    <ClCompile Include="StyleGroupBox.cpp" />
     <ClCompile Include="StyleHyperlink.cpp" />
     <ClCompile Include="StyleListBox.cpp" />
     <ClCompile Include="StyleListCtrl.cpp" />
@@ -295,6 +297,7 @@
     <Image Include="res\ScrollBar4.bmp" />
     <Image Include="res\ScrollBar5.bmp" />
     <Image Include="res\ScrollBar6.bmp" />
+    <Image Include="res\ScrollBar7.bmp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="WorkToDo.txt" />

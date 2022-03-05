@@ -27,6 +27,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+using namespace ThemeColor;
+
 /////////////////////////////////////////////////////////////////////////////
 // StyleGridCtrl
 
@@ -101,11 +103,39 @@ StyleGridCtrl::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 void
 StyleGridCtrl::DrawFrame()
 {
-  COLORREF color = ThemeColor::_Color1;
+  COLORREF color = ThemeColor::GetColor(Colors::AccentColor1);
   SkinScrollWnd* skin = (SkinScrollWnd*)GetWindowLongPtr(m_hWnd,GWLP_USERDATA);
   if(skin)
   {
     skin->DrawFrame(color);
+  }
+}
+
+void
+StyleGridCtrl::CheckColors()
+{
+  HWND hwnd = GetSafeHwnd();
+  int textColor = ThemeColor::GetColor(Colors::ColorEditText);
+  int backColor = ThemeColor::GetColor(Colors::ColorCtrlBackground);
+  if(GetTextColor() != textColor)
+  {
+    SetTextColor(textColor);
+  }
+  if(GetTextBkColor() != backColor)
+  {
+    SetTextBkColor(backColor);
+  }
+  if(GetGridBkColor() != backColor)
+  {
+    SetGridBkColor(backColor);
+  }
+  if(GetFixedTextColor() != textColor)
+  {
+    SetFixedTextColor(textColor);
+  }
+  if(GetFixedBkColor() != backColor)
+  {
+    SetFixedBkColor(backColor);
   }
 }
 
@@ -115,6 +145,7 @@ StyleGridCtrl::OnPaint()
   if(!m_inPaint)
   {
     m_inPaint = true;
+    CheckColors();
     CGridCtrl::OnPaint();
     DrawFrame();
     m_inPaint = false;

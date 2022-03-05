@@ -34,6 +34,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+using namespace ThemeColor;
+
 // Standard MS-Windows ComboBox focus dots
 bool g_StyleFxComboBoxDots = true;
 
@@ -95,6 +97,13 @@ StyleEdit::PreSubclassWindow()
 }
 
 void
+StyleEdit::ResetEditColors()
+{
+  m_colorBackground = FRAME_DEFAULT_COLOR;
+  m_colorText       = FRAME_DEFAULT_COLOR;
+}
+
+void
 StyleEdit::InitSkin(bool p_force /*=false*/)
 {
   // Test if init already done
@@ -102,12 +111,7 @@ StyleEdit::InitSkin(bool p_force /*=false*/)
   {
     return;
   }
-
-  // Set read-only color
-  if(!m_combo && GetStyle() & ES_READONLY)
-  {
-    SetBkColor(ClrFrameBkGnd);
-  }
+  ResetEditColors();
 
   DWORD style = GetStyle();
   DWORD exsty = GetExStyle();
@@ -131,6 +135,7 @@ StyleEdit::InitSkin(bool p_force /*=false*/)
   if(p_force || (style & ES_MULTILINE))
   {
     SkinWndScroll(this,border?m_borderSize:0);
+    GetSkin()->SetScrollbarBias(0);
   }
   m_initCorrectly = true;
 }
@@ -266,7 +271,7 @@ StyleEdit::SetBkColor(COLORREF p_colorBackground)
 void
 StyleEdit::SetBackgroundColorEmpty(COLORREF p_colorEmptyBackground)
 {
-  if(m_colorBackgroundEmpty != p_colorEmptyBackground)
+  if(p_colorEmptyBackground != FRAME_DEFAULT_COLOR)
   {
     m_colorBackgroundEmpty = p_colorEmptyBackground;
     CreateBackgroundEmptyBrush(p_colorEmptyBackground);
@@ -490,21 +495,9 @@ BOOL
 StyleEdit::EnableWindow(BOOL p_enable)
 {
   BOOL result = CWnd::EnableWindow(p_enable);
-  bool enable = p_enable && !(GetStyle() & ES_READONLY);
-  COLORREF back = m_colorBackground;
-
-  if(m_colorBackground == FRAME_DEFAULT_COLOR ||
-     m_colorBackground == ClrEditDisabledBack ||
-     m_colorBackground == RGB(255,255,255))
-  {
-    back = enable ? RGB(255,255,255) : ClrEditDisabledBack;
-  }
-
-  SetBkColor(back);
   SkinScrollWnd* skin = GetSkin();
   if(skin)
   {
-    skin->SetBorderColor(back);
     skin->OnNcPaint();
   }
   if(m_buddy)
@@ -604,6 +597,7 @@ StyleEdit::SetPassword(bool p_password /* = true */)
 void
 StyleEdit::OnPaint()
 {
+  ResetEditColors();
   CEdit::OnPaint();
   DrawEditFrame();
   DrawFrame();
@@ -631,7 +625,8 @@ StyleEdit::DrawFrame()
   GetClientRect(&rcItem);
 
   // Getting the color
-  DWORD color = readonly ? UsersBackground: Assistant0;
+  DWORD color = readonly ? ThemeColor::GetColor(Colors::ColorWindowFrame) 
+                         : ThemeColor::GetColor(Colors::ColorCtrlBackground);
   if(m_combo)
   {
     if(m_colorBackground != FRAME_DEFAULT_COLOR)
@@ -640,17 +635,17 @@ StyleEdit::DrawFrame()
     }
     else
     {
-      color = Assistant0;
+      color = ThemeColor::GetColor(Colors::ColorCtrlBackground); // Assistant0;
       if(readonly)
       {
-        color = UsersBackground;
+        color = ThemeColor::GetColor(Colors::ColorWindowFrame); // UsersBackground;
         if (m_combo->GetDroppedState())
         {
-          color = ComboBoxDropped;
+          color = ThemeColor::GetColor(Colors::ColorComboDropped); // ComboBoxDropped;
         }
         else if (m_over)
         {
-          color = ComboBoxActive;
+          color = ThemeColor::GetColor(Colors::ColorComboActive); // ComboBoxActive;
         }
       }
     }
@@ -659,7 +654,7 @@ StyleEdit::DrawFrame()
     {
       back     = color;
       penstyle = PS_DOT;                // Dotted line
-      color    = ThemeColor::_Color1;   // In the style color
+      color    = ThemeColor::GetColor(Colors::AccentColor1);   // In the style color
     }
   }
   else
@@ -680,22 +675,22 @@ StyleEdit::DrawFrame()
 void    
 StyleEdit::GetDrawFrameColor(COLORREF& p_color,int& p_bordersize,bool& p_readonly)
 {
-  p_color = m_colorBorder ? m_colorBorder : ThemeColor::_Color2;
+  p_color = m_colorBorder ? m_colorBorder : ThemeColor::GetColor(Colors::AccentColor2);
   p_bordersize = 1;
   p_readonly   = !IsWindowEnabled() || (GetStyle() & ES_READONLY);
 
-  if (m_error)
+  if(m_error)
   {
     p_color = ClrEditFrameError;
     p_bordersize++;
   }
   else if ((!m_combo && p_readonly) || (m_combo && !m_combo->IsWindowEnabled()))
   {
-    p_color = ThemeColor::_Color2;
+    p_color = ThemeColor::GetColor(Colors::AccentColor2);
   }
   else if (m_over || m_focus)
   {
-    p_color = m_colorBorderFocus ? m_colorBorderFocus : ThemeColor::_Color1;
+    p_color = m_colorBorderFocus ? m_colorBorderFocus : ThemeColor::GetColor(Colors::AccentColor1);
   }
 }
 
@@ -708,21 +703,22 @@ StyleEdit::DrawEditFrame()
   GetDrawFrameColor(color,bordersize,readonly);
 
   SkinScrollWnd* skin = (SkinScrollWnd*)GetWindowLongPtr(m_hWnd,GWLP_USERDATA);
-  DWORD skinborder = readonly ? ClrFrameBkGnd : RGB(0xFF,0xFF,0xFF);
+  DWORD skinborder = readonly ? ThemeColor::GetColor(Colors::ColorWindowFrame) 
+                              : ThemeColor::GetColor(Colors::ColorCtrlBackground);
 
   if(m_combo && readonly)
   {
     if(m_combo->GetDroppedState())
     {
-      skinborder = ComboBoxDropped;
+      skinborder = ThemeColor::GetColor(Colors::ColorComboDropped); // ComboBoxDropped;
     }
     else if(m_over)
     {
-      skinborder = ComboBoxActive;
+      skinborder = ThemeColor::GetColor(Colors::ColorComboActive); //ComboBoxActive;
     }
     else
     {
-      skinborder = ClrFrameBkGnd;
+      skinborder = ThemeColor::GetColor(Colors::ColorWindowFrame); // ClrFrameBkGnd;
     }
   }
   else
@@ -852,7 +848,7 @@ StyleEdit::DrawPasswordEye()
   int endy   = starty;
 
   // Getting the color for the eye
-  COLORREF color = (m_colorPasswordEye == FRAME_DEFAULT_COLOR) ? ThemeColor::_Color1 : m_colorPasswordEye;
+  COLORREF color = (m_colorPasswordEye == FRAME_DEFAULT_COLOR) ? ThemeColor::GetColor(Colors::AccentColor1) : m_colorPasswordEye;
 
   // Take a colored pen
   CPen pen;
@@ -899,7 +895,7 @@ StyleEdit::DrawErrorExclamation()
 
     CString text("!");
     LOGBRUSH logbrush;
-    COLORREF background = Assistant0;
+    COLORREF background = ThemeColor::GetColor(Colors::ColorCtrlBackground); //Assistant0;
     if(m_bkBrush.m_hObject)
     {
       m_bkBrush.GetLogBrush(&logbrush);
@@ -1154,36 +1150,36 @@ StyleEdit::CtlColor(CDC* pDC, UINT nCtlColor)
   }
 
   // Find background color
-  DWORD background = ClrEditBkgnd;
+  DWORD background = ThemeColor::GetColor(Colors::ColorCtrlBackground); // ClrEditBkgnd;
   if(readonly)
   {
-    background = ClrFrameBkGnd;
+    background = ThemeColor::GetColor(Colors::ColorWindowFrame); //ClrFrameBkGnd;
   }
   if(m_combo && readonly)
   {
     if(m_combo->GetDroppedState())
     {
-      background = ComboBoxDropped;
+      background = ThemeColor::GetColor(Colors::ColorComboDropped); // ComboBoxDropped;
     }
     else if(m_over)
     {
-      background = ComboBoxActive;
+      background = ThemeColor::GetColor(Colors::ColorComboActive); //ComboBoxActive;
     }
     else
     {
-      background = UsersBackground;
+      background = ThemeColor::GetColor(Colors::ColorWindowFrame);  //UsersBackground;
     }
   }
   else
   {
-    if (m_colorBackground != FRAME_DEFAULT_COLOR)
+    if(m_colorBackground != FRAME_DEFAULT_COLOR)
     {
       background = m_colorBackground;
     }
   }
 
   // Find foreground text color
-  DWORD foreground = ClrEditText;
+  DWORD foreground = ThemeColor::GetColor(Colors::ColorEditText); //ClrEditText;
   if(m_colorText != FRAME_DEFAULT_COLOR)
   {
     foreground = m_colorText;
@@ -1192,9 +1188,14 @@ StyleEdit::CtlColor(CDC* pDC, UINT nCtlColor)
   // Change attributes of the DC here
   if(m_empty && !readonly)
   {
+    DWORD colorBackgroundEmpty = ThemeColor::GetColor(Colors::ColorCtrlBackground);
+    if(m_colorBackgroundEmpty != FRAME_DEFAULT_COLOR)
+    {
+      colorBackgroundEmpty = m_colorBackgroundEmpty;
+    }
     pDC->SetTextColor(m_colorTextEmpty);
-    pDC->SetBkColor(m_colorBackgroundEmpty);
-    CreateBackgroundEmptyBrush(m_colorBackgroundEmpty);
+    pDC->SetBkColor(colorBackgroundEmpty);
+    CreateBackgroundEmptyBrush(colorBackgroundEmpty);
     return m_bkEmptyBrush;
   }
 	pDC->SetTextColor(foreground);
@@ -1476,9 +1477,7 @@ StyleEdit::TrySelectWord()
 
 void WINAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleEdit& p_editControl)
 {
-#ifdef _DEBUG
   StyleMessageBox(nullptr,"Use one of the DDX_StyleEdit functions!","ERROR",MB_OK|MB_ICONERROR);
-#endif
   // Keep on running on empty
   CString empty;
   DDX_Control(pDX,nIDC,p_editControl,empty);

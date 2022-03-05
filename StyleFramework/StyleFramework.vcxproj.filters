@@ -180,6 +180,9 @@
     <ClInclude Include="WinToastLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StyleGroupBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GrayWindow.cpp">
@@ -320,6 +323,9 @@
     <ClCompile Include="WinToastLib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StyleGroupBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StyleFramework.rc">
@@ -372,6 +378,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Icons\73_map-openen.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\ScrollBar7.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

@@ -156,6 +156,7 @@ protected:
   BOOL                  m_focus { FALSE   };
 
 private:
+  void     ResetEditColors();
   void     ResetFont();
   void     CreateBackgroundBrush(DWORD p_color);
   void     CreateBackgroundEmptyBrush(DWORD p_color);
@@ -193,8 +194,8 @@ private:
   // Colors
   COLORREF m_colorText            { FRAME_DEFAULT_COLOR };
   COLORREF m_colorBackground      { FRAME_DEFAULT_COLOR };
-  COLORREF m_colorTextEmpty       { RGB(0x8F,0x8F,0x8F) };  // Light gray
-  COLORREF m_colorBackgroundEmpty { RGB(0xFF,0xFF,0xFF) };
+  COLORREF m_colorTextEmpty       { RGB(0xAF,0xAF,0xAF) };  // Light gray
+  COLORREF m_colorBackgroundEmpty { FRAME_DEFAULT_COLOR };
   COLORREF m_colorPasswordEye     { FRAME_DEFAULT_COLOR };
   CBrush   m_bkBrush;
   CBrush   m_bkEmptyBrush;

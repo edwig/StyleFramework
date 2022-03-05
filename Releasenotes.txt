@@ -10,6 +10,12 @@
 //
 // RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES
 
+VERSION OF 05-03-2022
+---------------------
+1) The 'base version' of the new 'Dark mode'
+   Work needs still to be done on various controls (StyleListCtrl & StyleTabCtrl)
+   This is a very good example of what dark-mode will look like
+
 VERSION OF 04-12-2021
 ---------------------
 1) Updated to VS2022

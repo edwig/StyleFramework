@@ -255,7 +255,7 @@ MessageDialog::MessageDialog(CWnd*   p_parent
   {
     labels = GetStyleText(TXT_RETRY_CANCEL);      // "retry$ok cancel$can";
   }
-  SpliLabelTextAndStyles(labels);
+  SplitLabelTextAndStyles(labels);
 }
 
 MessageDialog::MessageDialog(CWnd*  p_parent
@@ -312,9 +312,13 @@ MessageDialog::MessageDialog(CWnd*  p_parent
     // (MB_ICONHAND | MB_ICONQUESTION | MB_ICONEXCLAMATION | MB_ICONASTERISK)
     if(style == MB_ICONASTERISK)     m_image = IDI_ASTERISK;
     if(style == MB_ICONEXCLAMATION)  m_image = IDI_EXCLAMATION;
-    if(style == MB_ICONHAND)         m_image = IDI_HAND;
     if(style == MB_ICONQUESTION)     m_image = IDI_QUESTION;
     if(style == MB_USERICON)         m_image = IDI_SHIELD;
+    if(style == MB_ICONHAND)
+    {
+      m_error = true;
+      m_image = IDI_HAND;
+    }
     if(m_image)
     {
       m_icon = LoadIcon(nullptr, m_image);
@@ -341,7 +345,7 @@ MessageDialog::MessageDialog(CWnd*  p_parent
     m_foreground = true;
   }
 
-  SpliLabelTextAndStyles(labels);
+  SplitLabelTextAndStyles(labels);
 }
 
 // Destructor
@@ -521,7 +525,7 @@ MessageDialog::GotoControl(int p_direction)
 // "buttontext$ab" -> label = "buttontext" style = "ab"
 //
 void
-MessageDialog::SpliLabelTextAndStyles(CString& p_labels)
+MessageDialog::SplitLabelTextAndStyles(CString& p_labels)
 {
   // Reset everything
   for (int i = 0; i < MAX_LABELS; ++i)

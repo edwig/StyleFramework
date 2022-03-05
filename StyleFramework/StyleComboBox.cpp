@@ -28,6 +28,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+using namespace ThemeColor;
+
 IMPLEMENT_DYNAMIC(StyleComboBox,CComboBox)
 
 StyleComboBox::StyleComboBox()
@@ -195,8 +197,8 @@ StyleComboBox::CreateListControl()
 {
   CRect rect(0,0,0,0);
   DWORD cbstyle = GetStyle();
-  DWORD style   = LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_POPUP | LBS_NOTIFY;
-  DWORD styleEx = WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
+  DWORD style   = LBS_OWNERDRAWFIXED | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_POPUP | LBS_NOTIFY;
+  DWORD styleEx = WS_EX_TOOLWINDOW   | WS_EX_TOPMOST;
 
   if(cbstyle & CBS_OWNERDRAWVARIABLE)
   {
@@ -1607,14 +1609,14 @@ StyleComboBox::OnPaint()
     this->GetClientRect(&rcItem);
 
     // Find the arrow color
-    COLORREF color = ThemeColor::_Color1;
+    COLORREF color = ThemeColor::GetColor(Colors::AccentColor1);
     if(m_arrowColor)
     {
       color = m_arrowColor;
     }
     else if(!this->IsWindowEnabled())
     {
-      color = ThemeColor::_Color2;
+      color = ThemeColor::GetColor(Colors::AccentColor2);
     }
 
     // Create pen
@@ -1625,14 +1627,14 @@ StyleComboBox::OnPaint()
     // Paint the button
     int size = rcItem.Height();
     CRect but(rcItem.right-size,rcItem.top,rcItem.right,rcItem.bottom);
-    DWORD background = ClrEditBkgnd;
+    DWORD background = ThemeColor::GetColor(Colors::ColorCtrlBackground); // ClrEditBkgnd;
     if(m_buttonDown)
     {
-      background = ComboBoxDropped;
+      background = ThemeColor::GetColor(Colors::ColorComboDropped); // ComboBoxDropped;
     }
     else if(m_itemControl->GetHoverOver())
     {
-      background = ComboBoxActive;
+      background = ThemeColor::GetColor(Colors::ColorComboActive); // ComboBoxActive;
     }
     dc->FillSolidRect(but, background);
     but.CenterPoint();
@@ -2298,9 +2300,17 @@ SCBListBox::OnMouseMove(UINT nFlags,CPoint point)
 
     if(PtInRect(rcItem,point))
     {
+      // Current item
+      CRect rcCurrent;
+      int current = GetCurSel();
+      GetItemRect(current, &rcCurrent);
+
       // Change selection
       SetCurSel(index);
-      GetSkin()->DrawFrame();
+      // Paint optimizations:
+      // Only redraw the changed items!
+      InvalidateRect(rcCurrent);
+      InvalidateRect(rcItem);
     }
   }
 }

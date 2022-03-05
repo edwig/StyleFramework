@@ -22,6 +22,8 @@
 #include "StyleUtilities.h"
 #include "StyleFonts.h"
 
+using namespace ThemeColor;
+
 StyleToast::StyleToast(int      p_style
                       ,int      p_position
                       ,CString  p_text1
@@ -67,7 +69,7 @@ StyleToast::OnInitDialog()
   m_foreground = RGB(  0,  0,  0);
   switch(m_style)
   {
-    case STYLE_TOAST_MESSAGE: m_background = ThemeColor::_Color1;
+    case STYLE_TOAST_MESSAGE: m_background = ThemeColor::GetColor(Colors::AccentColor1);
                               m_foreground = RGB(  0,  0,  0);
                               break;
     case STYLE_TOAST_WARNING: m_background = RGB(236,183,  0);

@@ -51,6 +51,12 @@
 #define BlackWhite3       RGB(0x00, 0x00, 0x00)
 #define BlackWhiteHeader  RGB(0x44, 0x58, 0x73)
 
+#define Dark1             RGB(0xBE, 0xBE, 0xBE)
+#define Dark2             RGB(0x99, 0x99, 0x99)
+#define Dark3             RGB(0x4D, 0x4D, 0x4D)
+#define DarkHeader        RGB(0x1F, 0x1F, 0x1F)
+#define DarkButtonText    RGB(0xDD, 0xDD, 0xDD)
+
 #define Assistant0    RGB(0xFF, 0xFF, 0xFF)
 #define Assistant1    RGB(0xFA, 0xFB, 0xFC)
 #define Assistant2    RGB(0xF5, 0xF8, 0xFB)
@@ -94,9 +100,16 @@
 #define ComboBoxActive       RGB(0xE5, 0xE8, 0xFF) 
 #define ComboBoxDropped      RGB(0xC5, 0xC8, 0xDF)
 #define SpinButtonActive     RGB(0xC5, 0xC8, 0xDF)
+#define ComboBoxDActive      RGB(0x72, 0x74, 0x7F) 
+#define ComboBoxDDropped     RGB(0x62, 0x64, 0x6F)
+
+
 
 #define VkTextInActive       RGB(0xa0, 0xa3, 0xa2)
 #define UsersBackground      RGB(0xED, 0xF3, 0xF6) // RGB(0xFF, 0xFF, 0xFF) // 
+#define DarkBackground       RGB(0x1F, 0x1F, 0x1F)
+#define DarkCtrlBackground   RGB(0x2F, 0x2F, 0x2F)
+#define GroupBoxLine         RGB(0xDC, 0xDC, 0xDC)
 
 namespace ThemeColor 
 {
@@ -107,22 +120,42 @@ namespace ThemeColor
     ThemePurple,        // Theme in color Purple
     ThemeModerateGray,  // Theme in color ModerateGray
     ThemePureGray,      // Theme in color PureGray
-    ThemeBlackWhite     // Theme in color BlackWhite
+    ThemeBlackWhite,    // Theme in color BlackWhite
+    ThemeDark,          // Theme in color DarkContrast
+    ThemeMax
+  };
+
+  enum class Colors
+  {
+    AccentColor1
+   ,AccentColor2
+   ,AccentColor3
+   ,AccentColor4
+   ,ColorWindowFrame
+   ,ColorCtrlBackground
+   ,ColorEditText
+   ,ColorEditHover
+   ,ColorLabelText
+   ,ColorComboActive
+   ,ColorComboDropped
+   ,ColorGroupLine
+   ,ColorButtonBackground
+   ,ColorButtonText
+   ,ColorMax
   };
 
   // Message that styles have changed
   extern UINT g_msg_changed;
 
-  const  unsigned NO_OF_THEMES = 6;
-  extern const char* theme_names[];
-  extern COLORREF _Color1;
-  extern COLORREF _Color2;
-  extern COLORREF _Color3;
-  extern COLORREF _Color4;
-  extern Themes   _theme;
+  constexpr unsigned NO_OF_THEMES = (int)Themes::ThemeMax;
+  constexpr unsigned NO_OF_COLORS = (int)Colors::ColorMax;
+  extern const char* theme_names [NO_OF_THEMES];
+  extern const int   theme_colors[NO_OF_COLORS][NO_OF_THEMES];
+  extern Themes     _theme;
+
   extern Themes   GetTheme();
   extern void     SetTheme(Themes pTheme);
-  extern void     SetColors(COLORREF pColor1, COLORREF pColor2, COLORREF pColor3, COLORREF pColor4);
+  extern int      GetColor(Colors p_color);
   static COLORREF NoWhite(COLORREF color) { return color == Assistant0 ? Assistant7 : color; }
   extern HBITMAP  GetScrollbarBitmap();
 }
@@ -133,10 +166,10 @@ namespace ThemeColor
 
 // Window
 #define ClrwindowTransparent      RGB(0xFF, 0x00, 0xFF)
-#define ClrWindowHeader           ThemeColor::_Color1 
+#define ClrWindowHeader           ThemeColor::GetColor(Colors::AccentColor1) 
 #define ClrWindowHeaderText       ClrWindowHeader == Assistant0 ? Assistant10 : Assistant0
-#define ClrWindowHeaderIcon       ThemeColor::_Color2 
-#define ClrWindowHeaderIconActive ThemeColor::_Color3 
+#define ClrWindowHeaderIcon       ThemeColor::GetColor(Colors::AccentColor2) 
+#define ClrWindowHeaderIconActive ThemeColor::GetColor(Colors::AccentColor3) 
 #define ClrWindowFrame            RGB(0x96, 0x96, 0x96) // 20% graying 
 #define ClrWindowFrameError       Accent3               // Red for errors
 #define ClrWindowFrameTextError   Assistant0
@@ -157,7 +190,7 @@ namespace ThemeColor
 
 // Frame
 #define ClrFrameFrame             Assistant7
-#define ClrFrameText              ThemeColor::_Color4
+#define ClrFrameText              ThemeColor::GetColor(Colors::AccentColor4)
 
 // Label
 #define ClrLabelTextNormal        Assistant10
@@ -175,7 +208,10 @@ namespace ThemeColor
 #define ClrEditFrameNormal        Assistant6
 #define ClrEditFrameError         Accent3
 #define ClrEditFrameHover         Assistant8
-#define ClrEditFrameVerplicht     ThemeColor::NoWhite(ThemeColor::_Color1)
+#define ClrEditFrameVerplicht     ThemeColor::NoWhite(ThemeColor::GetColor(Colors::AccentColor1))
+#define ClrEditDark               RGB(0xFF,0xFF,0xFF)
+#define ClrEditDarkHover          RGB(0x00,0x00,0xFF)
+
 
 // Buttoncontrol
 #define ClrControlFrameNormal     Assistant7
@@ -186,11 +222,11 @@ namespace ThemeColor
 #define ClrControlHover           Assistant5
 #define ClrControlPressed         Assistant6
 #define ClrControlDisabled        Assistant2
-#define ClrControlTextNormal      ThemeColor::_Color3
+#define ClrControlTextNormal      ThemeColor::GetColor(Colors::AccentColor3)
 #define ClrControlTextHover       Assistant9
 #define ClrControlTextPressed     Assistant9
 #define ClrControlTextDisabled    Assistant7
-#define ClrControlDefault         ThemeColor::_Color1
+#define ClrControlDefault         ThemeColor::GetColor(Colors::AccentColor1)
 
 // Checkbox
 #define ClrCheckBoxDefaultBkGrnd  UsersBackground
@@ -202,9 +238,9 @@ namespace ThemeColor
 #define ClrCheckboxHover          ClrCheckboxNormal
 #define ClrCheckboxFocus          ClrCheckboxNormal
 #define ClrCheckboxPressed        ClrCheckboxNormal
-#define ClrCheckboxTextNormal     ThemeColor::NoWhite(ThemeColor::_Color1)
-#define ClrCheckboxTextHover      ThemeColor::NoWhite(ThemeColor::_Color1)
-#define ClrCheckboxTextFocus      ThemeColor::NoWhite(ThemeColor::_Color1)
+#define ClrCheckboxTextNormal     ThemeColor::NoWhite(ThemeColor::GetColor(Colors::AccentColor1))
+#define ClrCheckboxTextHover      ThemeColor::NoWhite(ThemeColor::GetColor(Colors::AccentColor1))
+#define ClrCheckboxTextFocus      ThemeColor::NoWhite(ThemeColor::GetColor(Colors::AccentColor1))
 #define ClrCheckboxTextPressed    Assistant1
 
 // Edit 
@@ -212,9 +248,9 @@ namespace ThemeColor
 #define ClrControlDisabledBack    ClrEditDisabledBack
 
 // Scrollbar
-#define ClrScrollbarNormal        ThemeColor::NoWhite(ThemeColor::_Color2)
-#define ClrScrollbarHover         ThemeColor::NoWhite(ThemeColor::_Color1)
-#define ClrScrollbarPressed       ThemeColor::_Color3
+#define ClrScrollbarNormal        ThemeColor::NoWhite(ThemeColor::GetColor(Colors::AccentColor2))
+#define ClrScrollbarHover         ThemeColor::NoWhite(ThemeColor::GetColor(Colors::AccentColor1))
+#define ClrScrollbarPressed       ThemeColor::GetColor(Colors::AccentColor3)
 
 // TabControl
 #define ClrTabFrame               Assistant5
@@ -222,7 +258,7 @@ namespace ThemeColor
 #define ClrTabTextActive          TabTextActive
 #define ClrTabBkGndHover          Assistant4
 #define ClrTabTextHover           Assistant9
-#define ClrTabBkGndSelected       ThemeColor::NoWhite(ThemeColor::_Color1)
+#define ClrTabBkGndSelected       ThemeColor::NoWhite(ThemeColor::GetColor(Colors::AccentColor1))
 #define ClrTabTextSelected        TabTextSelected
 #define ClrTabBkGndInactive       ClrControlDisabledBack
 #define ClrTabTextInactive        TabTextInactive
