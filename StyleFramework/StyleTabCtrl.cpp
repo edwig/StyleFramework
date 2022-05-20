@@ -494,6 +494,7 @@ StyleTabCtrl::SelectTab(int p_tab)
       wnd->ShowWindow(p_tab == index ? SW_SHOW : SW_HIDE);
     }
   }
+  SetCurSel(p_tab);
 }
 
 CWnd* 
