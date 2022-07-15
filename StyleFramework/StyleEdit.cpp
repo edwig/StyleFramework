@@ -556,7 +556,7 @@ StyleEdit::OnChar(UINT p_char,UINT p_repetitions,UINT p_flags)
   }
 
   // DEFAULT ACTION WITH THIS CHAR
-  if(m_mutable || p_char < VK_SPACE)
+  if(m_mutable)
   {
     CEdit::OnChar(p_char,p_repetitions,p_flags);
   }
@@ -575,6 +575,25 @@ StyleEdit::OnChar(UINT p_char,UINT p_repetitions,UINT p_flags)
   // Try to draw the eye
   DrawPasswordEye();
   Invalidate();
+}
+
+BOOL
+StyleEdit::PreTranslateMessage(MSG* pMsg)
+{
+  // Make sure that the keystrokes continue to the appropriate handlers
+  if(pMsg->message == WM_KEYDOWN || pMsg->message == WM_KEYUP)
+  {
+    if(!m_mutable)
+    {
+      // Stop removing text from non-mutable fields
+      if(pMsg->wParam == VK_BACK || pMsg->wParam == VK_DELETE)
+      {
+        return TRUE;
+      }
+    }
+  }
+  // Standard pre-translate
+  return CEdit::PreTranslateMessage(pMsg);
 }
 
 void

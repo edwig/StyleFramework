@@ -129,6 +129,9 @@ public:
   void    GetDrawFrameColor(COLORREF& p_color,int& p_bordersize,bool& p_readonly);
 
 protected:
+  // Stop editing in non-mutable controls
+  virtual BOOL    PreTranslateMessage(MSG* pMsg) override;
+
   afx_msg void    OnMove(int x, int y);
   afx_msg void    OnSize(UINT nType, int cx, int cy);
   afx_msg void    OnShowWindow(BOOL bShow, UINT nStatus);
