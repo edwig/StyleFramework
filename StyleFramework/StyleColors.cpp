@@ -98,3 +98,13 @@ ThemeColor::GetScrollbarBitmap()
   }
   return g_scrollbars[(int)ThemeColor::_theme];
 }
+
+COLORREF
+ThemeColor::HalfTone(COLORREF color,double p_factor /*=0.5*/)
+{
+  int red   =  color >> 16;
+  int green = (color & 0xFF00) >> 8;
+  int blue  = (color & 0x00FF);
+
+  return RGB(red * p_factor,green * p_factor,blue * p_factor);
+}

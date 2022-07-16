@@ -158,6 +158,7 @@ namespace ThemeColor
   extern int      GetColor(Colors p_color);
   static COLORREF NoWhite(COLORREF color) { return color == Assistant0 ? Assistant7 : color; }
   extern HBITMAP  GetScrollbarBitmap();
+  extern COLORREF HalfTone(COLORREF color,double p_factor = 0.5);
 }
 
 // Where we store the styles in the registry of MS-Windows

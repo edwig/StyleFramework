@@ -135,7 +135,7 @@ StyleGridCtrl::CheckColors()
   }
   if(GetFixedBkColor() != backColor)
   {
-    SetFixedBkColor(backColor);
+    SetFixedBkColor(ThemeColor::HalfTone(backColor,0.9));
   }
 }
 

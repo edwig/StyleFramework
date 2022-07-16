@@ -133,6 +133,25 @@ void StyleHyperLink::PreSubclassWindow()
   CStatic::PreSubclassWindow();
 }
 
+void
+StyleHyperLink::SetTipText(LPCTSTR p_tipText)
+{
+  if(::IsWindow(GetSafeHwnd()) && ::IsWindow(m_ToolTip.GetSafeHwnd()))
+  {
+    // Update the tooltip
+    PositionWindow();
+    m_ToolTip.UpdateTipText(p_tipText,this,TOOLTIP_ID);
+  }
+  else
+  {
+    // Create the tooltip
+    CRect rect;
+    GetClientRect(rect);
+    m_ToolTip.Create(this);
+    m_ToolTip.AddTool(this,p_tipText,rect,TOOLTIP_ID);
+  }
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // StyleHyperLink message handlers
 

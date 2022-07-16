@@ -616,7 +616,6 @@ StyleEdit::SetPassword(bool p_password /* = true */)
 void
 StyleEdit::OnPaint()
 {
-  ResetEditColors();
   CEdit::OnPaint();
   DrawEditFrame();
   DrawFrame();

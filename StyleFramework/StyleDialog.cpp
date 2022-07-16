@@ -62,6 +62,8 @@ StyleDialog::StyleDialog(UINT  p_IDTemplate
   {
     LoadStyleTheme();
   }
+  m_defaultBrush.DeleteObject();
+  m_defaultBrush.CreateSolidBrush(ThemeColor::GetColor(Colors::ColorWindowFrame));
 }
 
 BEGIN_MESSAGE_MAP(StyleDialog,CDialog)
