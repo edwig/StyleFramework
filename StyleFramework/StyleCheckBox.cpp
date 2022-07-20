@@ -86,34 +86,34 @@ StyleCheckbox::Draw(CWnd* p_wnd
 
   if((p_style & WS_DISABLED) != 0)
   {
-    filling   = ThemeColor::GetColor(Colors::ColorCtrlBackground);      // ClrControlDisabledBack;
-    textcolor = ThemeColor::GetColor(Colors::ColorEditText);            // ClrControlDisabledFore;
+    filling   = ThemeColor::GetColor(Colors::ColorCtrlBackground);
+    textcolor = ThemeColor::GetColor(Colors::ColorEditText);
     outline   = ThemeColor::GetColor(Colors::AccentColor2);
   }
   else
   {
     if((p_state & BST_PUSHED) != 0)
     {
-      filling   = ThemeColor::GetColor(Colors::ColorCtrlBackground);    // ClrCheckboxPressed;
-      textcolor = ThemeColor::GetColor(Colors::ColorEditText);          // ClrCheckboxTextPressed;
+      filling   = ThemeColor::GetColor(Colors::ColorCtrlBackground);
+      textcolor = ThemeColor::GetColor(Colors::ColorEditText);
       outline   = ThemeColor::GetColor(Colors::AccentColor1);
     }
     else if((p_state & BST_FOCUS) != 0)
     {
-      filling   = ThemeColor::GetColor(Colors::ColorCtrlBackground);                // ClrCheckboxFocus;
-      textcolor = ThemeColor::NoWhite(ThemeColor::GetColor(Colors::AccentColor1));  // ClrCheckboxTextFocus;
+      filling   = ThemeColor::GetColor(Colors::ColorCtrlBackground);
+      textcolor = ThemeColor::NoWhite(ThemeColor::GetColor(Colors::AccentColor1));
       outline   = ThemeColor::GetColor(Colors::AccentColor1);
     }
     else if(p_hover)
     {
-      filling   = ThemeColor::GetColor(Colors::ColorCtrlBackground);                //ClrCheckboxHover;
-      textcolor = ThemeColor::NoWhite(ThemeColor::GetColor(Colors::AccentColor1));  // ClrCheckboxTextHover;
+      filling   = ThemeColor::GetColor(Colors::ColorCtrlBackground);
+      textcolor = ThemeColor::NoWhite(ThemeColor::GetColor(Colors::AccentColor1));
       outline   = ThemeColor::GetColor(Colors::AccentColor1);
     }
     else
     {
-      filling   = ThemeColor::GetColor(Colors::ColorCtrlBackground);  // ClrCheckboxNormal;
-      textcolor = ThemeColor::GetColor(Colors::ColorEditText);        // ClrCheckboxTextNormal;
+      filling   = ThemeColor::GetColor(Colors::ColorCtrlBackground);
+      textcolor = ThemeColor::GetColor(Colors::ColorEditText);
       outline   = ThemeColor::GetColor(Colors::AccentColor1);
     }
   }
@@ -128,7 +128,7 @@ StyleCheckbox::Draw(CWnd* p_wnd
   }
   if(p_inError)
   {
-    outline = ClrEditFrameError;
+    outline = ColorEditFrameError;
   }
 
   if ((p_style & BS_TYPEMASK) == BS_RADIOBUTTON || 
@@ -145,7 +145,7 @@ StyleCheckbox::Draw(CWnd* p_wnd
     CSize MySize(p_rect.Height() * FACTOR, p_rect.Height() * FACTOR);
     bitmap.CreateCompatibleBitmap(p_dc, MySize.cx, MySize.cy);
     dc.SelectObject(bitmap);
-    dc.FillSolidRect(0,0,MySize.cx,MySize.cy,ThemeColor::GetColor(Colors::ColorWindowFrame)); // ClrFrameBkGnd);
+    dc.FillSolidRect(0,0,MySize.cx,MySize.cy,ThemeColor::GetColor(Colors::ColorWindowFrame));
 
     // Draw the edge
     CPen pen;
@@ -229,7 +229,7 @@ StyleCheckbox::Draw(CWnd* p_wnd
       CPen pen;
       pen.CreatePen(PS_SOLID,1,textcolor);
       p_dc->SelectObject(pen);
-      p_dc->SetBkColor(ThemeColor::GetColor(Colors::ColorWindowFrame));  // ClrCheckBoxDefaultBkGrnd
+      p_dc->SetBkColor(ThemeColor::GetColor(Colors::ColorWindowFrame));
       p_dc->SelectObject(STYLEFONTS.DialogTextFont);
       p_dc->SetTextColor(textcolor);
       p_rect.left += WS(28);
@@ -251,7 +251,7 @@ StyleCheckbox::OnPaint()
     GetClientRect(rect);
 
     // Remove underlying MFC implementation
-    dc.FillSolidRect(rect, ThemeColor::GetColor(Colors::ColorWindowFrame)); // ClrCheckBoxDefaultBkGrnd
+    dc.FillSolidRect(rect, ThemeColor::GetColor(Colors::ColorWindowFrame));
 
     DWORD style = GetStyle();
     UINT  state = GetState();
@@ -280,7 +280,7 @@ StyleCheckbox::OnEraseBkgnd(CDC* pDC)
   {
     CRect rcChild;
     GetClientRect(rcChild);
-    pDC->FillSolidRect(0, 0, rcChild.Width(), rcChild.Height(),ThemeColor::GetColor(Colors::ColorWindowFrame));// ClrCheckBoxDefaultBkGrnd);
+    pDC->FillSolidRect(0, 0, rcChild.Width(), rcChild.Height(),ThemeColor::GetColor(Colors::ColorWindowFrame));
   }
   
   return TRUE;

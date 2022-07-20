@@ -184,7 +184,7 @@ void
 StyleEdit::SetErrorState(bool p_error,LPCTSTR p_tip /*=""*/)
 {
   m_error = p_error;
-  SetBorderColor(p_error ? ClrEditFrameError : 0);
+  SetBorderColor(p_error ? ColorEditFrameError : 0);
   if(p_error && p_tip)
   {
     StyleMessageBox(this,p_tip,GetStyleText(TXT_ERROR),MB_OK|MB_ICONERROR);
@@ -699,7 +699,7 @@ StyleEdit::GetDrawFrameColor(COLORREF& p_color,int& p_bordersize,bool& p_readonl
 
   if(m_error)
   {
-    p_color = ClrEditFrameError;
+    p_color = ColorEditFrameError;
     p_bordersize++;
   }
   else if ((!m_combo && p_readonly) || (m_combo && !m_combo->IsWindowEnabled()))
@@ -728,15 +728,15 @@ StyleEdit::DrawEditFrame()
   {
     if(m_combo->GetDroppedState())
     {
-      skinborder = ThemeColor::GetColor(Colors::ColorComboDropped); // ComboBoxDropped;
+      skinborder = ThemeColor::GetColor(Colors::ColorComboDropped);
     }
     else if(m_over)
     {
-      skinborder = ThemeColor::GetColor(Colors::ColorComboActive); //ComboBoxActive;
+      skinborder = ThemeColor::GetColor(Colors::ColorComboActive);
     }
     else
     {
-      skinborder = ThemeColor::GetColor(Colors::ColorWindowFrame); // ClrFrameBkGnd;
+      skinborder = ThemeColor::GetColor(Colors::ColorWindowFrame);
     }
   }
   else
@@ -920,7 +920,7 @@ StyleEdit::DrawErrorExclamation()
       background = logbrush.lbColor;
     }
     COLORREF oldbk = dc->SetBkColor(background);
-    COLORREF oldtx = dc->SetTextColor(ClrEditFrameError);
+    COLORREF oldtx = dc->SetTextColor(ColorEditFrameError);
     dc->DrawText(text, &rect, DT_CENTER|DT_VCENTER);
     dc->SetTextColor(oldtx);
     dc->SetBkColor(oldbk);
@@ -1168,24 +1168,24 @@ StyleEdit::CtlColor(CDC* pDC, UINT nCtlColor)
   }
 
   // Find background color
-  DWORD background = ThemeColor::GetColor(Colors::ColorCtrlBackground); // ClrEditBkgnd;
+  DWORD background = ThemeColor::GetColor(Colors::ColorCtrlBackground);
   if(readonly)
   {
-    background = ThemeColor::GetColor(Colors::ColorWindowFrame); //ClrFrameBkGnd;
+    background = ThemeColor::GetColor(Colors::ColorWindowFrame);
   }
   if(m_combo && readonly)
   {
     if(m_combo->GetDroppedState())
     {
-      background = ThemeColor::GetColor(Colors::ColorComboDropped); // ComboBoxDropped;
+      background = ThemeColor::GetColor(Colors::ColorComboDropped);
     }
     else if(m_over)
     {
-      background = ThemeColor::GetColor(Colors::ColorComboActive); //ComboBoxActive;
+      background = ThemeColor::GetColor(Colors::ColorComboActive);
     }
     else
     {
-      background = ThemeColor::GetColor(Colors::ColorWindowFrame);  //UsersBackground;
+      background = ThemeColor::GetColor(Colors::ColorWindowFrame);
     }
   }
   else
@@ -1197,7 +1197,7 @@ StyleEdit::CtlColor(CDC* pDC, UINT nCtlColor)
   }
 
   // Find foreground text color
-  DWORD foreground = ThemeColor::GetColor(Colors::ColorEditText); //ClrEditText;
+  DWORD foreground = ThemeColor::GetColor(Colors::ColorEditText);
   if(m_colorText != FRAME_DEFAULT_COLOR)
   {
     foreground = m_colorText;

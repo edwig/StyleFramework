@@ -644,7 +644,7 @@ SkinScrollWnd::OnNcPaint()
     readonly = (control->GetStyle() & ES_READONLY) > 0 || !control->IsWindowEnabled();
     if(readonly)
     {
-      color = ThemeColor::GetColor(Colors::ColorWindowFrame); //ClrFrameBkGnd;
+      color = ThemeColor::GetColor(Colors::ColorWindowFrame);
     }
   }
 

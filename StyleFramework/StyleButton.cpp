@@ -470,75 +470,75 @@ StyleButton::Draw(CDC*    pDC
     {
       if(over)
       {
-        filling   = ClrControlPressed;
-        textcolor = ClrControlTextPressed;
-        outline   = ClrControlFramePressed;
+        filling   = ThemeColor::GetColor(Colors::ColorControlPressed);
+        textcolor = ThemeColor::GetColor(Colors::ColorControlTextPressed);
+        outline   = ThemeColor::GetColor(Colors::ColorControlFramePressed);
       }
       else
       {
-        filling   = ThemeColor::GetColor(Colors::ColorWindowFrame); // ClrControlNormal;
-        textcolor = ThemeColor::GetColor(Colors::AccentColor3);     // ClrControlTextNormal;
-        outline   = ClrControlFrameNormal;
+        filling   = ThemeColor::GetColor(Colors::ColorWindowFrame);
+        textcolor = ThemeColor::GetColor(Colors::AccentColor3);
+        outline   = ThemeColor::GetColor(Colors::ColorControlFramePressed);
       }
     }
     else if (((state & BST_FOCUS) != 0) || (style & BS_DEFPUSHBUTTON) != 0)
     {
       if (pInError)
       {
-        filling   = ClrWindowFrameError;
-        textcolor = ClrWindowFrameTextError;
-        outline   = ClrWindowFrameError;
+        filling   = ColorWindowFrameError;
+        textcolor = ColorWindowFrameTextError;
+        outline   = ColorWindowFrameError;
       }
       else
       {
         if (over || (style & BS_DEFPUSHBUTTON))
         {
-          filling   = ThemeColor::GetColor(Colors::AccentColor1);  // ClrControlDefault;
-          textcolor = ClrControlTextHover;
-          outline   = ClrControlFrameHover;
+          filling   = ThemeColor::GetColor(Colors::AccentColor1);
+          textcolor = ThemeColor::GetColor(Colors::ColorControlTextHover);
+          outline   = ThemeColor::GetColor(Colors::ColorControlFrameHover);
         }
         else
         {
-          filling   = ThemeColor::GetColor(Colors::ColorCtrlBackground);   // ClrControlNormal;
-          textcolor = ThemeColor::GetColor(Colors::AccentColor1);          //ClrControlTextNormal;
+          filling   = ThemeColor::GetColor(Colors::ColorCtrlBackground);
+          textcolor = ThemeColor::GetColor(Colors::AccentColor1);
           outline   = ThemeColor::GetColor(Colors::AccentColor1); 
         }
       }
     }
     else if (over != 0)
     {
-      filling   = ClrControlHover;
-      textcolor = ClrControlTextHover;
-      outline   = ClrControlFrameHover;
+      filling   = ThemeColor::GetColor(Colors::ColorControlHover);
+      textcolor = ThemeColor::GetColor(Colors::ColorControlTextHover);
+      outline   = ThemeColor::GetColor(Colors::ColorControlFrameHover);
     }
     else if (p_default != 0)
     {
-      filling   = ClrControlHover;
-      textcolor = ClrControlTextHover;
-      outline   = ClrControlFrameHover;
+      filling   = ThemeColor::GetColor(Colors::ColorControlHover);
+      textcolor = ThemeColor::GetColor(Colors::ColorControlTextHover);
+      outline   = ThemeColor::GetColor(Colors::ColorControlFrameHover);
     }
 
     else
     {
-      filling   = ThemeColor::GetColor(Colors::ColorButtonBackground);  // ClrControlNormal      = UsersBackground
-      textcolor = ThemeColor::GetColor(Colors::ColorButtonText);        // ClrControlTextNormal
-      outline   = ThemeColor::GetColor(Colors::AccentColor1);           // ClrControlFrameNormal
+      filling   = ThemeColor::GetColor(Colors::ColorButtonBackground);
+      textcolor = ThemeColor::GetColor(Colors::ColorButtonText);
+      outline   = ThemeColor::GetColor(Colors::AccentColor1);
     }
   }
   else
   {
-    outline   = ClrControlFrameDisabled;
-    filling   = ClrControlDisabled;
-    textcolor = ClrControlTextDisabled;
+    outline   = ThemeColor::GetColor(Colors::ColorControlFrameDisabled);
+    filling   = ThemeColor::GetColor(Colors::ColorControlDisabled);
+    textcolor = ThemeColor::GetColor(Colors::ColorControlTextDisabled);
   }
 
   if(p_mandatory)
   {
-    outline = ThemeColor::NoWhite(ThemeColor::GetColor(Colors::AccentColor1)); //ClrEditFrameVerplicht;
+    outline = ThemeColor::NoWhite(ThemeColor::GetColor(Colors::AccentColor1));
   }
   if(pInError)
   {
-    outline = ClrEditFrameError;
+    outline = ColorEditFrameError;
   }
   // Draw the edge
   CBrush br(outline);

@@ -95,7 +95,7 @@ StyleDialog::OnInitDialog()
 {
   // Needed for the shadow border
   ModifyStyleEx(0, WS_EX_LAYERED);
-  SetLayeredWindowAttributes(ClrwindowTransparent, 0, LWA_COLORKEY);
+  SetLayeredWindowAttributes(ColorWindowTransparent, 0, LWA_COLORKEY);
 
   // Make room for the shadow border
   CRect window;
@@ -931,8 +931,8 @@ StyleDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
                           }
                           if(m_error)
                           {
-                            pDC->SetTextColor(ClrWindowMessageTextError);
-                            pDC->SetBkColor(ThemeColor::GetColor(Colors::ColorWindowFrame)); // ClrWindowMessageError);
+                            pDC->SetTextColor(ColorWindowMessageTextError);
+                            pDC->SetBkColor(ThemeColor::GetColor(Colors::ColorWindowFrame));
                           }
                           else
                           {
@@ -942,13 +942,13 @@ StyleDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
                           break;
     case CTLCOLOR_BTN:    if(m_error)
                           {
-                            pDC->SetTextColor(ClrWindowMessageTextError);
-                            pDC->SetBkColor(ThemeColor::GetColor(Colors::ColorWindowFrame)); // ClrWindowMessageError);
+                            pDC->SetTextColor(ColorWindowMessageTextError);
+                            pDC->SetBkColor(ThemeColor::GetColor(Colors::ColorWindowFrame));
                           }
                           else
                           {
-                            pDC->SetTextColor(ThemeColor::GetColor(Colors::ColorLabelText));   //ClrLabelTextNormal);
-                            pDC->SetBkColor  (ThemeColor::GetColor(Colors::ColorWindowFrame)); // ClrFrameBkGnd);
+                            pDC->SetTextColor(ThemeColor::GetColor(Colors::ColorLabelText));
+                            pDC->SetBkColor  (ThemeColor::GetColor(Colors::ColorWindowFrame));
                           }
                           break;
   }
@@ -1098,17 +1098,17 @@ StyleDialog::OnNcPaint()
     if(m_caption)
     {
       // Shadow frame    
-      dc.FillSolidRect(CRect(window.right - WINDOWSHADOWBORDER,   window.top,                         window.right,                        window.top + 2 * WINDOWSHADOWBORDER), ClrwindowTransparent);
-      dc.FillSolidRect(CRect(window.right - WINDOWSHADOWBORDER,   window.top + 2 * WINDOWSHADOWBORDER,window.right,                        window.bottom), ClrWindowFrame);
-      dc.FillSolidRect(CRect(window.left,                         window.bottom -  WINDOWSHADOWBORDER,window.left + 2 * WINDOWSHADOWBORDER,window.bottom), ClrwindowTransparent);
-      dc.FillSolidRect(CRect(window.left + 2 * WINDOWSHADOWBORDER,window.bottom -  WINDOWSHADOWBORDER,window.right    - WINDOWSHADOWBORDER,window.bottom), ClrWindowFrame);
+      dc.FillSolidRect(CRect(window.right - WINDOWSHADOWBORDER,   window.top,                         window.right,                        window.top + 2 * WINDOWSHADOWBORDER), ColorWindowTransparent);
+      dc.FillSolidRect(CRect(window.right - WINDOWSHADOWBORDER,   window.top + 2 * WINDOWSHADOWBORDER,window.right,                        window.bottom), ColorWindowGrayFrame);
+      dc.FillSolidRect(CRect(window.left,                         window.bottom -  WINDOWSHADOWBORDER,window.left + 2 * WINDOWSHADOWBORDER,window.bottom), ColorWindowTransparent);
+      dc.FillSolidRect(CRect(window.left + 2 * WINDOWSHADOWBORDER,window.bottom -  WINDOWSHADOWBORDER,window.right    - WINDOWSHADOWBORDER,window.bottom), ColorWindowGrayFrame);
 
       // caption bar
       CRect caption(m_captionRect);
-      dc.FillSolidRect(caption, m_error ? ClrWindowFrameError : ThemeColor::GetColor(Colors::AccentColor1));
+      dc.FillSolidRect(caption, m_error ? ColorWindowFrameError : ThemeColor::GetColor(Colors::AccentColor1));
 
       // title
-      dc.SetTextColor(m_error ? ClrWindowFrameTextError : ClrWindowHeaderText);
+      dc.SetTextColor(m_error ? ColorWindowFrameTextError : ColorWindowHeaderText);
       caption.right -= WINDOWCAPTIONHEIGHT;
       caption.right -= m_maxButton ? WINDOWCAPTIONHEIGHT : 0;
       caption.right -= m_minButton ? WINDOWCAPTIONHEIGHT : 0;
@@ -1141,7 +1141,7 @@ StyleDialog::OnNcPaint()
       }
       // window frame
       CPen pen;
-      pen.CreatePen(PS_SOLID, 1, m_error ? ClrWindowFrameError : ClrWindowFrame);
+      pen.CreatePen(PS_SOLID, 1, m_error ? ColorWindowFrameError : ColorWindowGrayFrame);
       HGDIOBJ orgpen = dc.SelectObject(pen);
       dc.MoveTo(window.right- WINDOWSHADOWBORDER-1, window.top    + WINDOWCAPTIONHEIGHT);
       dc.LineTo(window.right- WINDOWSHADOWBORDER-1, window.bottom - WINDOWSHADOWBORDER-1);
@@ -1162,7 +1162,7 @@ StyleDialog::OnNcPaint()
     else
     {
       // window frame
-      CBrush brush(m_error ? ClrWindowFrameError : ClrWindowFrame);
+      CBrush brush(m_error ? ColorWindowFrameError : ColorWindowGrayFrame);
       dc.FrameRect(window, &brush);
     }
   }
@@ -1262,13 +1262,16 @@ StyleDialog::ReDrawButton(LRESULT type)
 void 
 StyleDialog::DrawButton(CDC* pDC, CRect rect, LRESULT type)
 {
-  pDC->FillSolidRect(rect, ClrWindowHeader);
+  pDC->FillSolidRect(rect,ThemeColor::GetColor(Colors::AccentColor1));
   if (m_curhit == type)
   {
-    pDC->FillSolidRect(rect, m_down ? ClrControlPressed : ClrControlHover);
+    pDC->FillSolidRect(rect, m_down ? ThemeColor::GetColor(Colors::ColorControlPressed) 
+                                    : ThemeColor::GetColor(Colors::ColorControlHover));
   }
   CPen pen;
-  pen.CreatePen(PS_SOLID, 1, m_curhit == type ? m_down ? ClrControlTextPressed : ClrControlTextHover : ClrWindowHeaderIcon);
+  pen.CreatePen(PS_SOLID, 1, m_curhit == type ? m_down ? ThemeColor::GetColor(Colors::ColorControlTextPressed) 
+                                                       : ThemeColor::GetColor(Colors::ColorControlTextHover)
+                                                       : ColorWindowHeaderIcon);
   HGDIOBJ orgpen = pDC->SelectObject(pen);
 
   switch (type) 
@@ -1327,14 +1330,14 @@ StyleDialog::Button(CDC* pDC, CRect rect, LRESULT type,StyleDialog::BUTTONSTATE 
   switch (state) 
   {
     case BS_NORMAL:   // Fall through
-    case BS_DISABLED: pDC->FillSolidRect(rect, ClrWindowHeader);
-                      pen.CreatePen(PS_SOLID, 1, ClrWindowHeaderIcon);
+    case BS_DISABLED: pDC->FillSolidRect(rect, ColorWindowHeader);
+                      pen.CreatePen(PS_SOLID,1,ColorWindowHeaderIcon);
                       break;
-    case BS_HOVER:    pDC->FillSolidRect(rect, ClrControlHover);
-                      pen.CreatePen(PS_SOLID, 1, ClrControlTextHover);
+    case BS_HOVER:    pDC->FillSolidRect(rect, ThemeColor::GetColor(Colors::ColorControlHover));
+                      pen.CreatePen(PS_SOLID,1,ThemeColor::GetColor(Colors::ColorControlTextHover));
                       break;
-    case BS_PRESSED:  pDC->FillSolidRect(rect, ClrControlPressed);
-                      pen.CreatePen(PS_SOLID, 1, ClrControlTextPressed);
+    case BS_PRESSED:  pDC->FillSolidRect(rect, ThemeColor::GetColor(Colors::ColorControlPressed));
+                      pen.CreatePen(PS_SOLID,1,ThemeColor::GetColor(Colors::ColorControlTextPressed));
                       break;
     default:          assert(false);
                       return;

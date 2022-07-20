@@ -1627,14 +1627,14 @@ StyleComboBox::OnPaint()
     // Paint the button
     int size = rcItem.Height();
     CRect but(rcItem.right-size,rcItem.top,rcItem.right,rcItem.bottom);
-    DWORD background = ThemeColor::GetColor(Colors::ColorCtrlBackground); // ClrEditBkgnd;
+    DWORD background = ThemeColor::GetColor(Colors::ColorCtrlBackground);
     if(m_buttonDown)
     {
-      background = ThemeColor::GetColor(Colors::ColorComboDropped); // ComboBoxDropped;
+      background = ThemeColor::GetColor(Colors::ColorComboDropped);
     }
     else if(m_itemControl->GetHoverOver())
     {
-      background = ThemeColor::GetColor(Colors::ColorComboActive); // ComboBoxActive;
+      background = ThemeColor::GetColor(Colors::ColorComboActive);
     }
     dc->FillSolidRect(but, background);
     but.CenterPoint();

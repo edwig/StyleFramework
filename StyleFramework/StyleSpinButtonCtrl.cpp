@@ -174,7 +174,7 @@ StyleSpinButtonCtrl::OnPaint()
   COLORREF color = IsWindowEnabled() ? ThemeColor::GetColor(Colors::AccentColor1) : ThemeColor::GetColor(Colors::AccentColor2);
   if(m_error)
   {
-    color = ClrEditFrameError;
+    color = ColorEditFrameError;
   }
 
   CPen pen;

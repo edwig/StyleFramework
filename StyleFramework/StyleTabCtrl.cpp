@@ -33,14 +33,14 @@ IMPLEMENT_DYNAMIC(StyleTabCtrl,CTabCtrl)
 
 StyleTabCtrl::StyleTabCtrl()
 {
-  m_selColor   = ClrTabTextActive;
-  m_unselColor = ClrTabTextInactive;
+  m_selColor   = ThemeColor::GetColor(Colors::ColorTabTextActive);
+  m_unselColor = ThemeColor::GetColor(Colors::ColorTabTextInactive);
   m_font       = &STYLEFONTS.DialogTextFontBold;
   m_hover      = -1;
   m_notch      = false;
   m_offset     = 0;
 
-  m_brush.CreateSolidBrush(UsersBackground);
+  m_brush.CreateSolidBrush(ThemeColor::GetColor(Colors::ColorWindowFrame));
 }
 
 StyleTabCtrl::~StyleTabCtrl()
@@ -236,7 +236,7 @@ StyleTabCtrl::OnPaint()
     CRect rect;
 
     // Draw items    
-    // If the last item contained errors, Draw left line with "ClrWindowFrameError".
+    // If the last item contained errors, Draw left line with "ColorWindowFrameError".
     bool lastTabHasErrors = false;
     // int teller = 0;
     int count  = GetItemCount();
@@ -263,8 +263,8 @@ StyleTabCtrl::OnPaint()
 
       --rect.right;
       // Normal color and error color
-      CPen normalPen(PS_SOLID, 1, ClrTabFrame);
-      CPen errorPen (PS_SOLID, 1, ClrWindowFrameError);
+      CPen normalPen(PS_SOLID, 1, ThemeColor::GetColor(Colors::ColorTabFrame)); 
+      CPen errorPen (PS_SOLID, 1, ColorWindowFrameError);
       dc->SelectObject(GetErrorState(ind) ? errorPen : normalPen);
 
       if (dc->RectVisible(rect))
@@ -274,23 +274,23 @@ StyleTabCtrl::OnPaint()
 
         if (!active)
         {
-          clrbkgnd = ClrTabBkGndInactive;
-          clrtext  = ClrTabTextInactive;
+          clrbkgnd = ThemeColor::GetColor(Colors::ColorTabBkGndInactive);
+          clrtext  = ThemeColor::GetColor(Colors::ColorTabTextInactive);
         }
         else if (ind == cursel)
         {
-          clrbkgnd = ClrTabBkGndSelected;
-          clrtext  = ClrTabTextSelected;
+          clrbkgnd = ThemeColor::NoWhite(ThemeColor::GetColor(Colors::AccentColor1));
+          clrtext  = ThemeColor::GetColor(Colors::ColorTabTextSelected);
         }
         else if (ind == m_hover)
         {
-          clrbkgnd = ClrTabBkGndHover;
-          clrtext  = ClrTabTextHover;
+          clrbkgnd = ThemeColor::GetColor(Colors::ColorTabBkGndHover);
+          clrtext  = ThemeColor::GetColor(Colors::ColorTabTextHover);
         }
         else
         {
-          clrbkgnd = ClrTabBkGndActive;
-          clrtext  = ClrTabTextActive;
+          clrbkgnd = ThemeColor::GetColor(Colors::ColorTabBkGndActive);
+          clrtext  = ThemeColor::GetColor(Colors::ColorTabTextActive);
         }
 
         CBrush brush(clrbkgnd);
@@ -393,7 +393,7 @@ StyleTabCtrl::OnPaint()
       }
       lastTabHasErrors = GetErrorState(ind);
     }
-    CPen normalPen(PS_SOLID, 1, ClrTabFrame);
+    CPen normalPen(PS_SOLID,1,ThemeColor::GetColor(Colors::ColorTabFrame));
 
     if (!lastTabHasErrors)
     {
@@ -421,7 +421,7 @@ void
 StyleTabCtrl::PaintError(CDC* pDC, CRect rect)
 {
   HGDIOBJ  oldfont  = pDC->SelectObject(STYLEFONTS.ErrorTextFont);
-  COLORREF oldcolor = pDC->SetTextColor(ClrWindowFrameError);
+  COLORREF oldcolor = pDC->SetTextColor(ColorWindowFrameError);
   int      oldmode  = pDC->SetBkMode(TRANSPARENT);
 
   pDC->DrawText("!", &rect, DT_RIGHT | DT_SINGLELINE);

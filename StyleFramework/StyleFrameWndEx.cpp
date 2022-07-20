@@ -656,7 +656,7 @@ StyleFrameWndEx::OnNcPaint()
   if((GetStyle() & WS_MAXIMIZE) == 0)
   {
     CRect r;
-    COLORREF bkgnd = ThemeColor::GetColor(Colors::AccentColor1); // ClrWindowFrame;
+    COLORREF bkgnd = ThemeColor::GetColor(Colors::AccentColor1);
     int width = MARGIN;
 
     r.SetRect(m_windowRectLocal.left,         m_windowRectLocal.top,           m_windowRectLocal.right,       m_windowRectLocal.top + width);
@@ -670,11 +670,11 @@ StyleFrameWndEx::OnNcPaint()
   }
   
   // CAPTION BAR
-  dc.FillSolidRect(m_dragRect, ClrWindowHeader);
+  dc.FillSolidRect(m_dragRect,ThemeColor::GetColor(Colors::AccentColor1));
 
   // TITLE
   CFont* orgfont = dc.SelectObject(&STYLEFONTS.CaptionTextFont);
-  dc.SetTextColor(ClrWindowHeaderText);
+  dc.SetTextColor(ColorWindowHeaderText);
   CString titel;
   GetWindowText(titel);
   dc.DrawText(titel, m_captionRect, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
@@ -710,7 +710,8 @@ void
 StyleFrameWndEx::DrawIcon(CDC* pDC, int index)
 {
   // Fill icon rectangle
-  pDC->FillSolidRect(m_iconRects[index], index == m_selectedMenu ? ClrWindowHeader == ClrFrameBkGnd ? Assistant5 : ClrFrameBkGnd : ClrWindowHeader);
+  COLORREF frame = ThemeColor::GetColor(Colors::ColorWindowFrame);
+  pDC->FillSolidRect(m_iconRects[index], index == m_selectedMenu ? ColorWindowHeader == frame ? Assistant5 : frame : ColorWindowHeader);
 
   // Get position of the icon
   CRect rect = m_iconRects[index];
@@ -847,13 +848,16 @@ void StyleFrameWndEx::ReDrawButton(LRESULT type)
 
 void StyleFrameWndEx::DrawButton(CDC* pDC, CRect rect, LRESULT type)
 {
-  pDC->FillSolidRect(rect, ClrWindowHeader);
+  pDC->FillSolidRect(rect,ThemeColor::GetColor(Colors::AccentColor1));
   if (m_curhit == type)
   {
-    pDC->FillSolidRect(rect, m_down ? ClrControlPressed : ClrControlHover);
+    pDC->FillSolidRect(rect, m_down ? ThemeColor::GetColor(Colors::ColorControlPressed) 
+                                    : ThemeColor::GetColor(Colors::ColorControlHover));
   }
   CPen pen;
-  pen.CreatePen(PS_SOLID, 1, m_curhit == type ? m_down ? ClrControlTextPressed : ClrControlTextHover : ClrWindowHeaderIcon);
+  pen.CreatePen(PS_SOLID, 1, m_curhit == type ? m_down ? ThemeColor::GetColor(Colors::ColorControlTextPressed) 
+                                                       : ThemeColor::GetColor(Colors::ColorControlTextHover) 
+                                                       : ColorWindowHeaderIcon);
   HGDIOBJ orgpen = pDC->SelectObject(pen);
 
   switch (type) 

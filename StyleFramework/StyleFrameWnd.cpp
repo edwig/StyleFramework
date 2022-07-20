@@ -564,7 +564,7 @@ StyleFrameWnd::OnNcPaint()
   if ((GetStyle() & WS_MAXIMIZE) == 0)
   {
     CRect r;
-    COLORREF bkgnd = ThemeColor::GetColor(Colors::AccentColor1); // ClrWindowFrame;
+    COLORREF bkgnd = ThemeColor::GetColor(Colors::AccentColor1);
     int width = MARGIN;
 
     r.SetRect(m_windowRectLocal.left,         m_windowRectLocal.top,           m_windowRectLocal.right,       m_windowRectLocal.top + width);
@@ -578,13 +578,13 @@ StyleFrameWnd::OnNcPaint()
   }
   
   // caption bar
-  dc.FillSolidRect(m_dragRect, ClrWindowHeader);
+  dc.FillSolidRect(m_dragRect,ThemeColor::GetColor(Colors::AccentColor1));
 
   // title
   CRect titleRect(m_captionRect);
   titleRect.left += WINCAPTIONHEIGHT / 3;
   CFont* orgfont = dc.SelectObject(&STYLEFONTS.CaptionTextFont);
-  dc.SetTextColor(ClrWindowHeaderText);
+  dc.SetTextColor(ColorWindowHeaderText);
   CString titel;
   GetWindowText(titel);
   dc.DrawText(titel,titleRect,DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_EXPANDTABS|DT_NOPREFIX);
@@ -690,13 +690,16 @@ void StyleFrameWnd::ReDrawButton(LRESULT type)
 
 void StyleFrameWnd::DrawButton(CDC* pDC, CRect rect, LRESULT type)
 {
-  pDC->FillSolidRect(rect, ClrWindowHeader);
+  pDC->FillSolidRect(rect,ThemeColor::GetColor(Colors::AccentColor1));
   if (m_curhit == type)
   {
-    pDC->FillSolidRect(rect, m_down ? ClrControlPressed : ClrControlHover);
+    pDC->FillSolidRect(rect, m_down ? ThemeColor::GetColor(Colors::ColorControlPressed) 
+                                    : ThemeColor::GetColor(Colors::ColorControlHover));
   }
   CPen pen;
-  pen.CreatePen(PS_SOLID, 1, m_curhit == type ? m_down ? ClrControlTextPressed : ClrControlTextHover : ClrWindowHeaderIcon);
+  pen.CreatePen(PS_SOLID, 1, m_curhit == type ? m_down ? ThemeColor::GetColor(Colors::ColorControlTextPressed) 
+                                                       : ThemeColor::GetColor(Colors::ColorControlTextHover) 
+                                                       : ColorWindowHeaderIcon);
   HGDIOBJ orgpen = pDC->SelectObject(pen);
 
   switch(type) 

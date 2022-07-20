@@ -44,7 +44,8 @@ const int ThemeColor::theme_colors[NO_OF_COLORS][NO_OF_THEMES] =
  ,{ LimeHeader,     SkyblueHeader,  PurpleHeader,   ModerateGrayHeader,PureGrayHeader, BlackWhiteHeader,DarkHeader          }  // AccentColor4
  ,{ UsersBackground,UsersBackground,UsersBackground,UsersBackground,   UsersBackground,UsersBackground, DarkBackground      }  // ColorWindowFrame
  ,{ Assistant0,     Assistant0,     Assistant0,     Assistant0,        Assistant0,     Assistant0,      DarkCtrlBackground  }  // ColorCtrlBackground
- ,{ ClrEditText,    ClrEditText,    ClrEditText,    ClrEditText,       ClrEditText,    ClrEditText,     ClrEditDark         }  // ColorEditText
+ ,{ InputTextActive,InputTextActive,InputTextActive,InputTextActive,   InputTextActive,InputTextActive, ClrEditDark         }  // ColorEditText
+ ,{ Assistant0,     Assistant0,     Assistant0,     Assistant0,        Assistant0,     Assistant0,      Assistant10         }  // ColorEditBkgnd
  ,{ ClrEditText,    ClrEditText,    ClrEditText,    ClrEditText,       ClrEditText,    ClrEditText,     ClrEditDarkHover    }  // ColorEditHover
  ,{ ClrEditText,    ClrEditText,    ClrEditText,    ClrEditText,       ClrEditText,    ClrEditText,     ClrEditDark         }  // ColorLabelText
  ,{ ComboBoxActive, ComboBoxActive, ComboBoxActive, ComboBoxActive,    ComboBoxActive, ComboBoxActive,  ComboBoxDActive     }  // ColorComboActive
@@ -52,6 +53,25 @@ const int ThemeColor::theme_colors[NO_OF_COLORS][NO_OF_THEMES] =
  ,{ GroupBoxLine,   GroupBoxLine,   GroupBoxLine,   GroupBoxLine,      GroupBoxLine,   GroupBoxLine,    GroupBoxLine,       }  // ColorGroupLine
  ,{ UsersBackground,UsersBackground,UsersBackground,UsersBackground,   UsersBackground,UsersBackground, DarkCtrlBackground  }  // ColorButtonBackground
  ,{ Lime3,          Skyblue3,       Purple3,        ModerateGray3,     PureGray3,      BlackWhite3,     DarkButtonText      }  // ColorButtonText
+ ,{ Assistant5,     Assistant5,     Assistant5,     Assistant5,        Assistant5,     Assistant5,      Assistant5          }  // ColorControlHover
+ ,{ Assistant6,     Assistant6,     Assistant6,     Assistant6,        Assistant6,     Assistant6,      Assistant6          }  // ColorControlPressed
+ ,{ Assistant7,     Assistant7,     Assistant7,     Assistant7,        Assistant7,     Assistant7,      Assistant7          }  // ColorControlFramePressed
+ ,{ Assistant8,     Assistant8,     Assistant8,     Assistant8,        Assistant8,     Assistant8,      Assistant8          }  // ColorControlFrameHover
+ ,{ Assistant9,     Assistant9,     Assistant9,     Assistant9,        Assistant9,     Assistant9,      Assistant9          }  // ColorControlTextPressed
+ ,{ Assistant9,     Assistant9,     Assistant9,     Assistant9,        Assistant9,     Assistant9,      Assistant9          }  // ColorControlTextHover
+
+ ,{ Assistant6,     Assistant6,     Assistant6,     Assistant6,        Assistant6,     Assistant6,      Assistant6          }  // ColorControlFrameDisabled
+ ,{ Assistant2,     Assistant2,     Assistant2,     Assistant2,        Assistant2,     Assistant2,      Assistant2          }  // ColorControlDisabled
+ ,{ Assistant7,     Assistant7,     Assistant7,     Assistant7,        Assistant7,     Assistant7,      Assistant7          }  // ColorControlTextDisabled
+
+ ,{ TabTextActive,  TabTextActive,  TabTextActive,  TabTextActive,     TabTextActive,  TabTextActive,   TabTextActive       }  // ColorTabTextActive
+ ,{ TabTextInactive,TabTextInactive,TabTextInactive,TabTextInactive,   TabTextInactive,TabTextInactive, TabTextInactive     }  // ColorTabTextInactive
+ ,{ Assistant5,     Assistant5,     Assistant5,     Assistant5,        Assistant5,     Assistant5,      Assistant5          }  // ColorTabFrame
+ ,{ UsersBackground,UsersBackground,UsersBackground,UsersBackground,   UsersBackground,UsersBackground, DarkBackground      }  // ColorTabBkGndActive
+ ,{ UsersBackground,UsersBackground,UsersBackground,UsersBackground,   UsersBackground,UsersBackground, DarkBackground      }  // ColorTabBkGndInactive
+ ,{ TabTextSelected,TabTextSelected,TabTextSelected,TabTextSelected,   TabTextSelected,TabTextSelected, TabTextSelected     }  // ColorTabTextSelected
+ ,{ Assistant4,     Assistant4,     Assistant4,     Assistant4,        Assistant4,     Assistant4,      Assistant4          }  // ColorTabBkGndHover
+ ,{ Assistant9,     Assistant9,     Assistant9,     Assistant9,        Assistant9,     Assistant9,      Assistant9          }  // ColorTabTextHover
 };
 
 int ThemeColor::GetColor(Colors p_color)

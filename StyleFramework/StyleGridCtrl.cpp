@@ -114,7 +114,6 @@ StyleGridCtrl::DrawFrame()
 void
 StyleGridCtrl::CheckColors()
 {
-  HWND hwnd = GetSafeHwnd();
   int textColor = ThemeColor::GetColor(Colors::ColorEditText);
   int backColor = ThemeColor::GetColor(Colors::ColorCtrlBackground);
   if(GetTextColor() != textColor)
@@ -133,9 +132,10 @@ StyleGridCtrl::CheckColors()
   {
     SetFixedTextColor(textColor);
   }
-  if(GetFixedBkColor() != backColor)
+  int halftone = ThemeColor::HalfTone(backColor,0.9);
+  if(GetFixedBkColor() != halftone)
   {
-    SetFixedBkColor(ThemeColor::HalfTone(backColor,0.9));
+    SetFixedBkColor(halftone);
   }
 }
 

@@ -160,7 +160,7 @@ StyleProgressCtrl::GetBkColor() const
 {
   if(m_background == NO_COLOR)
   {
-    return ThemeColor::GetColor(Colors::ColorCtrlBackground);// ClrFrameBkGnd;
+    return ThemeColor::GetColor(Colors::ColorCtrlBackground);
   }
   // Explicitly set user color
   return m_background;
