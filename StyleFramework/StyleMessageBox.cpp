@@ -430,18 +430,20 @@ MessageDialog::PreTranslateMessage(MSG* pMsg)
       }
       for (int i = 0; i < MAX_LABELS; ++i)
       {
+        int ch = tolower((int)pMsg->wParam);
+
         // Find the label that begins with this character
         if(!m_label[i].IsEmpty() && (m_button[i]->GetStyle() & WS_DISABLED) == 0)
         {
-          if(tolower(m_label[i].GetAt(0)) == tolower((int) pMsg->wParam))
+          if(tolower(m_label[i].GetAt(0)) == ch)
           {
             EndDialog(i + ID_OFFSET);
             return TRUE;
           }
         }
       }
+      break;
   }
-
   return StyleDialogCA::PreTranslateMessage(pMsg);
 }
 
