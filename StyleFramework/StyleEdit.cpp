@@ -556,7 +556,7 @@ StyleEdit::OnChar(UINT p_char,UINT p_repetitions,UINT p_flags)
   }
 
   // DEFAULT ACTION WITH THIS CHAR
-  if(m_mutable)
+  if(m_mutable || p_char == VK_COPY)
   {
     CEdit::OnChar(p_char,p_repetitions,p_flags);
   }

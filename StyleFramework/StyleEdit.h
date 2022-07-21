@@ -39,6 +39,9 @@
 // For detecting the background color
 #define   NO_BACKGROUND_COLOR    0xFFFFFFFF
 
+// For the use of the CTRL-C combination
+#define   VK_COPY                0x03
+
 // Global functions to set your combobox style
 void  SetStyleFxComboBoxDots(bool p_dots = true);
 bool  GetStyleFxComboBoxDots();
