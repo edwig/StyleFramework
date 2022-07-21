@@ -10,6 +10,12 @@
 //
 // RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES
 
+VERSION OF 21-07-2022
+---------------------
+1) Closing of paint-resize bugs
+2) Closing of the StyleMessageBox bugs
+3) Closing of DEL/BACKSPACE keys issue of StyleEdit
+
 VERSION OF 05-03-2022
 ---------------------
 1) The 'base version' of the new 'Dark mode'
