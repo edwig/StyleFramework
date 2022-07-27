@@ -472,7 +472,6 @@ StyleComboBox::PositionDropList(int p_width,int p_height)
     skin->SetWindowPos(0,rc.left,rc.bottom - 1,p_width,p_height,SWP_NOREDRAW | SWP_NOACTIVATE);
   }
   m_listControl->ModifyStyle(0,WS_VISIBLE);
-  m_listControl->SetFocus();
   skin->SkinSetCapture();
   skin->SkinSetMouseTracking();
   skin->ShowWindow(SW_SHOW);
@@ -923,7 +922,6 @@ StyleComboBox::OnDropdown()
   ShowComboList();
   PostShowComboList();
   m_buttonDown = true;
-  m_listControl->SetFocus();
 }
 
 void
