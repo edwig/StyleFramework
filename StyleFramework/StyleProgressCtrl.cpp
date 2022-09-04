@@ -18,6 +18,7 @@
 //
 #include "stdafx.h"
 #include "StyleProgressCtrl.h"
+#include "StyleFonts.h"
 
 using namespace ThemeColor;
 
@@ -43,7 +44,6 @@ BOOL
 StyleProgressCtrl::Create(_In_ DWORD dwStyle, _In_ const RECT& rect, _In_ CWnd* pParentWnd, _In_ UINT nID)
 {
   CWnd* pWnd = this;
-  //return pWnd->Create(PROGRESS_CLASS, NULL, dwStyle, rect, pParentWnd, nID);
   return pWnd->Create("",nullptr,dwStyle,rect,pParentWnd,nID);
 }
 
@@ -414,6 +414,8 @@ StyleProgressCtrl::OnDrawProgress()
     int percentage = m_upper ? ((m_position * 100) / m_upper) : 0;
     showing.Format("%d %%",percentage);
     int mode = dc->SetBkMode(TRANSPARENT);
+    dc->SelectObject(&STYLEFONTS.DialogTextFont);
+    dc->SetTextColor(ThemeColor::GetColor(Colors::ColorEditText));
     dc->DrawText(showing,&rcItem,DT_CENTER|DT_VCENTER|DT_SINGLELINE|DT_NOPREFIX);
     dc->SetBkMode(mode);
   }

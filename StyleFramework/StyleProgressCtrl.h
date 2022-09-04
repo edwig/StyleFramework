@@ -129,7 +129,7 @@ private:
   int  m_step     {   1 };          // Step size per step of "StepIt"
   int  m_position {   0 };          // Current position between lower and upper
   int  m_state    { PBST_NORMAL };  // State we are in
-  bool m_showperc { false };        // Show percentage of progress
+  bool m_showperc { true };        // Show percentage of progress
   COLORREF m_background = (DWORD) NO_COLOR; // If no color, use ThemeColor::GetColor(Colors::WindowFrameBackground)
   COLORREF m_barcolor   = (DWORD) NO_COLOR; // If no color, use ThemeColor::GetColor(Colors::AccentColor1)
 };

@@ -69,8 +69,6 @@ MyFrameDlg7::OnInitDialog()
   m_buttonOK    .SetStyle("ok");
   m_buttonCancel.SetStyle("can");
 
-  m_progress1.SetShowPercentage(true);
-
   UpdateData(FALSE);
 
   return TRUE;
