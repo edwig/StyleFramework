@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////
 //
-// File: StyleStatic.h
-// Function: Extension of CStatic
+// File: StyleStaticToast.h
+// Function: Styling frame for a CTabCtrl
 //
 //   _____ _         _ _             ______                                           _    
 //  / ____| |       | (_)           |  ____|                                         | |   
@@ -20,31 +20,35 @@
 
 #define STATIC_BLACK  RGB(0,0,0)
 #define STATIC_WHITE  RGB(255,255,255)
-#define NO_COLOR      -1
 
-class StyleStatic: public CStatic
+class StyleStaticToast : public CStatic
 {
-  // Construction
+// Construction
 public:
-  StyleStatic();
-  virtual ~StyleStatic();
+  StyleStaticToast();
+  virtual ~StyleStaticToast();
 
-  void     SetLeftOffset(int p_offset);
-  void     SetTextColor(COLORREF crColor);	// This Function is to set the Color for the Text.
-  void     SetBkColor  (COLORREF crColor);	// This Function is to set the BackGround Color for the Text.
-  COLORREF GetTextColor();
-  COLORREF GetBkColor();
+	void SetLeftOffset(int p_offset);
+	void SetExtraText1(CString p_text);
+	void SetExtraText2(CString p_text);
 
-  // Generated message map functions
+	void SetTextColor(COLORREF crColor);	// This Function is to set the Color for the Text.
+	void SetBkColor  (COLORREF crColor);	// This Function is to set the BackGround Color for the Text.
+
+	// Generated message map functions
 protected:
+	int      GetPosition(int p_height);
 
-  COLORREF m_colorBackground = (DWORD) NO_COLOR;;   // Holds the Background Color for the Text
-  COLORREF m_colorText       = (DWORD) NO_COLOR;;   // Holds the Color for the Text
-  int      m_leftOffset { 0 };
+	CBrush   m_brushBackground;   // Holds Brush Color for the Static Text
+	COLORREF m_colorBackground;   // Holds the Background Color for the Text
+	COLORREF m_colorText;					// Holds the Color for the Text
+	CString  m_text1;
+	CString  m_text2;
+	int      m_leftOffset;
 
-  DECLARE_MESSAGE_MAP()
-    
-  afx_msg void OnPaint();
-  afx_msg void OnLButtonDown(UINT nFlags,CPoint point);
+	afx_msg void   OnPaint();
+	afx_msg void   OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg HBRUSH CtlColor(CDC* pDC, UINT nCtlColor);
+
+	DECLARE_MESSAGE_MAP()
 };
-#pragma once

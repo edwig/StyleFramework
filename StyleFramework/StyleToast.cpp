@@ -204,7 +204,7 @@ static void MoreThanOne(int h,int& y,bool up)
 static bool CalculateHorizontalSize(CDC* p_dc,CString& p_text,int& p_size,int p_max)
 {
   CSize size = p_dc->GetTextExtent(p_text);
-  int total  = size.cx + 4 * STANDAARDFONTSIZE;
+  int total  = size.cx + 4 * STANDARDFONTSIZE;
   if(total > p_size)
   {
     p_size = total;

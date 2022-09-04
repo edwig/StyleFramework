@@ -94,7 +94,7 @@ EXSTYLE WS_EX_APPWINDOW
 FONT 10, "Verdana", 400, 0, 0x0
 BEGIN
     PUSHBUTTON      "Standard",IDC_BUTTON_1,7,5,86,29
-    LTEXT           "Choose a color style ",IDC_STATIC,108,8,86,8
+    LTEXT           "Choose a color style ",IDC_ST_STYLE,108,8,86,8
     LTEXT           "Test a standard text box",IDC_STATIC,108,23,89,8
     COMBOBOX        IDC_COMBO_1,200,5,116,69,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_EDIT_1,200,20,116,14,ES_AUTOHSCROLL

@@ -966,7 +966,7 @@ StyleListBox::Internal_PaintItem(CDC* p_cdc,const RECT* rect,INT index,UINT acti
     if (!IsWindowEnabled()) dis.itemState |= ODS_DISABLED;
     dis.itemData      = (ULONG_PTR) GetItemDataPtr(index);
     dis.rcItem        = *rect;
-    TRACE("[%p]: drawitem %d (%s) action=%02x state=%02x rect=%s\n",GetSafeHwnd(),index,item_str, action, dis.itemState, DebugRect(rect));
+    // TRACE("[%p]: drawitem %d (%s) action=%02x state=%02x rect=%s\n",GetSafeHwnd(),index,item_str, action, dis.itemState, DebugRect(rect));
 
     // This is the reason we are here!
     // Standard MS-Windows sends this to the parent of the control so CMenu can have a go at it
