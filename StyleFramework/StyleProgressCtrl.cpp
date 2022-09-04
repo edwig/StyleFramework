@@ -205,6 +205,20 @@ StyleProgressCtrl::GetState() const
   return m_state;
 }
 
+// Retrieves whether we should show the progress
+bool 
+StyleProgressCtrl::GetShowPercentage() const
+{
+  return m_showperc;
+}
+
+// Sets the showing of the progress in percentage
+bool
+StyleProgressCtrl::SetShowPercentage(bool p_show)
+{
+  return m_showperc = p_show;
+}
+
 // Sets the progress bar control to marquee mode.
 BOOL 
 StyleProgressCtrl::SetMarquee(_In_ BOOL fMarqueeMode, _In_ int nInterval)
@@ -375,22 +389,35 @@ StyleProgressCtrl::OnDrawProgress()
   // This is our progress
   if(m_upper > m_lower)
   {
+    CRect progress(rcItem);
     if(vertical)
     {
       int newTop = (m_position * rcItem.Height()) / (m_upper - m_lower);
-      rcItem.top = rcItem.bottom - newTop;
+      progress.top = rcItem.bottom - newTop;
     }
     else
     {
       int newRight = (m_position * rcItem.Width()) / (m_upper - m_lower);
-      rcItem.right = rcItem.left + newRight;
+      progress.right = rcItem.left + newRight;
     }
-    dc->FillSolidRect(rcItem,GetBarColor());
+    dc->FillSolidRect(progress,GetBarColor());
   }
   else
   {
     // No progress possible (divide by zero would ensue)
   }
+
+  // Show the percentage on horizontal progress bars
+  if(m_showperc && !vertical)
+  {
+    CString showing;
+    int percentage = m_upper ? ((m_position * 100) / m_upper) : 0;
+    showing.Format("%d %%",percentage);
+    int mode = dc->SetBkMode(TRANSPARENT);
+    dc->DrawText(showing,&rcItem,DT_CENTER|DT_VCENTER|DT_SINGLELINE|DT_NOPREFIX);
+    dc->SetBkMode(mode);
+  }
+
   // Done with DC
   ReleaseDC(dc);
 }

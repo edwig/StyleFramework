@@ -99,6 +99,12 @@ public:
   // Retrieves the state of the progress bar.
   int GetState() const;
 
+  // Retrieves whether we should show the progress
+  bool GetShowPercentage() const;
+
+  // Sets the showing of the progress in percentage
+  bool SetShowPercentage(bool p_show);
+
   // OPERATIONS:
   // THIS IS WHAT WE DO!
 
@@ -118,11 +124,12 @@ private:
   void DrawMarquee(CDC* p_dc,CRect& p_rect,bool p_vertical);
   void OnDrawProgress();
 
-  int m_lower     {   0 };          // Lower bound of the indicated range
-  int m_upper     { 100 };          // Upper bound of the indicated range
-  int m_step      {   1 };          // Step size per step of "StepIt"
-  int m_position  {   0 };          // Current position between lower and upper
-  int m_state     { PBST_NORMAL };  // State we are in
+  int  m_lower    {   0 };          // Lower bound of the indicated range
+  int  m_upper    { 100 };          // Upper bound of the indicated range
+  int  m_step     {   1 };          // Step size per step of "StepIt"
+  int  m_position {   0 };          // Current position between lower and upper
+  int  m_state    { PBST_NORMAL };  // State we are in
+  bool m_showperc { false };        // Show percentage of progress
   COLORREF m_background = (DWORD) NO_COLOR; // If no color, use ThemeColor::GetColor(Colors::WindowFrameBackground)
   COLORREF m_barcolor   = (DWORD) NO_COLOR; // If no color, use ThemeColor::GetColor(Colors::AccentColor1)
 };

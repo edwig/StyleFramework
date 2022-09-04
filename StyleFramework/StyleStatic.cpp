@@ -33,10 +33,10 @@ static char THIS_FILE[] = __FILE__;
 
 StyleStatic::StyleStatic()
 {
-	m_leftOffset			= 2 * STANDAARDFONTSIZE;
-	m_colorBackground = ::GetSysColor(COLOR_3DFACE); // Initializing the Background Color to the system face color.
-	m_colorText				= STATIC_BLACK; // Initializing the text to Black
-	m_brushBackground.CreateSolidBrush(m_colorBackground); // Create the Brush Color for the Background.
+  m_leftOffset      = 2 * STANDAARDFONTSIZE;
+  m_colorBackground = ::GetSysColor(COLOR_3DFACE); // Initializing the Background Color to the system face color.
+  m_colorText       = STATIC_BLACK; // Initializing the text to Black
+  m_brushBackground.CreateSolidBrush(m_colorBackground); // Create the Brush Color for the Background.
 }
 
 StyleStatic::~StyleStatic()
@@ -44,9 +44,9 @@ StyleStatic::~StyleStatic()
 }
 
 BEGIN_MESSAGE_MAP(StyleStatic, CStatic)
-	ON_WM_PAINT()
-	ON_WM_CTLCOLOR_REFLECT()
-	ON_WM_LBUTTONDOWN()
+  ON_WM_PAINT()
+  ON_WM_CTLCOLOR_REFLECT()
+  ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -54,11 +54,11 @@ END_MESSAGE_MAP()
 
 HBRUSH StyleStatic::CtlColor(CDC* pDC, UINT nCtlColor) 
 {
-	UNUSED_ALWAYS(nCtlColor);
-	HBRUSH hbr;
-	hbr = (HBRUSH)m_brushBackground;		// Passing a Handle to the Brush
-	pDC->SetBkColor(m_colorBackground); // Setting the Color of the Text Background to the one passed by the Dialog
-	pDC->SetTextColor(m_colorText);			// Setting the Text Color to the one Passed by the Dialog
+  UNUSED_ALWAYS(nCtlColor);
+  HBRUSH hbr;
+  hbr = (HBRUSH)m_brushBackground;		// Passing a Handle to the Brush
+  pDC->SetBkColor(m_colorBackground); // Setting the Color of the Text Background to the one passed by the Dialog
+  pDC->SetTextColor(m_colorText);			// Setting the Text Color to the one Passed by the Dialog
 
 	return hbr;
 }
@@ -66,35 +66,35 @@ HBRUSH StyleStatic::CtlColor(CDC* pDC, UINT nCtlColor)
 void 
 StyleStatic::SetLeftOffset(int p_offset)
 {
-	m_leftOffset = WS(p_offset);
+  m_leftOffset = WS(p_offset);
 }
 
 void 
 StyleStatic::SetExtraText1(CString p_text)
 {
-	m_text1 = p_text;
+  m_text1 = p_text;
 }
 
 void 
 StyleStatic::SetExtraText2(CString p_text)
 {
-	m_text2 = p_text;
+  m_text2 = p_text;
 }
 
 void 
 StyleStatic::SetBkColor(COLORREF crColor)
 {
-	m_colorBackground = crColor;									// Passing the value passed by the dialog to the member variable for Background Color
-	m_brushBackground.DeleteObject();							// Deleting any Previous Brush Colors if any existed.
-	m_brushBackground.CreateSolidBrush(crColor);	// Creating the Brush Color For the Static Text Background
-	RedrawWindow();
+  m_colorBackground = crColor;                  // Passing the value passed by the dialog to the member variable for Background Color
+  m_brushBackground.DeleteObject();             // Deleting any Previous Brush Colors if any existed.
+  m_brushBackground.CreateSolidBrush(crColor);  // Creating the Brush Color For the Static Text Background
+  RedrawWindow();
 }
 
 void 
 StyleStatic::SetTextColor(COLORREF crColor)
 {
-	m_colorText = crColor; // Passing the value passed by the dialog to the member variable for Text Color
-	RedrawWindow();
+  m_colorText = crColor; // Passing the value passed by the dialog to the member variable for Text Color
+  RedrawWindow();
 }
 
 int

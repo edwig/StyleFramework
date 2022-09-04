@@ -69,6 +69,8 @@ MyFrameDlg7::OnInitDialog()
   m_buttonOK    .SetStyle("ok");
   m_buttonCancel.SetStyle("can");
 
+  m_progress1.SetShowPercentage(true);
+
   UpdateData(FALSE);
 
   return TRUE;
@@ -102,7 +104,7 @@ MyFrameDlg7::OnTimer(UINT_PTR nID)
     m_progress1.GetRange(lower,upper);
 
     // Ready?
-    if (index == upper)
+    if(index >= upper)
     {
       KillTimer(1);
     }

@@ -10,6 +10,11 @@
 //
 // RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES
 
+VERSION OF XX-09-2022
+---------------------
+1) Added percentage to the StyleProgressCtrl
+
+
 VERSION OF 21-07-2022
 ---------------------
 1) Closing of paint-resize bugs

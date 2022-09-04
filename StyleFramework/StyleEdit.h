@@ -172,10 +172,10 @@ private:
   void     DrawBox(CRect& rect,DWORD p_color,int p_penstyle = PS_SOLID,DWORD p_background = NO_BACKGROUND_COLOR);
   void     TrySelectWord();
 
-  CString  m_tooltip;     // Tooltip on the contents
-  CString  m_emptyText;   // Background text in case the field is empty: hint what to fill in
-  int      m_startChar;
-  int      m_endChar;
+  CString  m_tooltip;                     // Tooltip on the contents
+  CString  m_emptyText;                   // Background text in case the field is empty: hint what to fill in
+  int      m_startChar { 0 };             // Start of current selection
+  int      m_endChar   { 0 };             // End   of current selection
 
   // Flags
   bool     m_initCorrectly{ false };      // Correctly initialized
