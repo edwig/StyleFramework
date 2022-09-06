@@ -39,6 +39,12 @@ StyleProgressCtrl::~StyleProgressCtrl()
   DestroyWindow();
 }
 
+void
+StyleProgressCtrl::PreSubclassWindow()
+{
+  ScaleControl(this);
+}
+
 // Generic creator
 BOOL 
 StyleProgressCtrl::Create(_In_ DWORD dwStyle, _In_ const RECT& rect, _In_ CWnd* pParentWnd, _In_ UINT nID)

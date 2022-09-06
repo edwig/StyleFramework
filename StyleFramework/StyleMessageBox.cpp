@@ -17,10 +17,6 @@
 // For license: See the file "LICENSE.txt" in the root folder
 //
 #include "stdafx.h"
-#include "StyleMessageBox.h"
-#include "StyleUtilities.h"
-#include "StyleFonts.h"
-#include "StyleTexts.h"
 #include <map>
 
 #ifdef _DEBUG
@@ -30,7 +26,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 const int    OFFSET               =   8;    // Spaces between controls and texts
-const int    EXTRA_LINESPACING    =  14;    // Extra space for "Do not show again" checkbox 
+const int    EXTRA_LINESPACING    =  14;    // Extra space for "Do not show again" check box 
 const int    ID_OFFSET            =  10;    // Keep away from IDOK / IDCANCEL
 const double ButtonWidthFactor    =   8;    // With of a button in "W"-letters
 const int    FOREGROUND_TIMER     = 100;    // Timer (higher then number of labels)

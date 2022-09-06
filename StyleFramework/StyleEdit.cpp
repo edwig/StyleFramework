@@ -17,15 +17,6 @@
 // For license: See the file "LICENSE.txt" in the root folder
 //
 #include "stdafx.h"
-#include "StyleEdit.h"
-#include "StyleColors.h"
-#include "StyleFonts.h"
-#include "StyleCalendar.h"
-#include "StyleMessageBox.h"
-#include "StyleComboBox.h"
-#include "SkinScrollWnd.h"
-#include "StyleSpinButtonCtrl.h"
-#include "StyleTexts.h"
 #include <winuser.h>
 
 #ifdef _DEBUG
@@ -90,6 +81,8 @@ StyleEdit::~StyleEdit()
 void
 StyleEdit::PreSubclassWindow()
 {
+  ScaleControl(this);
+
   if(m_directInit)
   {
     InitSkin();

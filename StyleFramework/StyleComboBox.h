@@ -307,16 +307,17 @@ public:
   void    ResetCurSel();
   void    SetMultiSelect(bool p_multi);
 
-  afx_msg void OnLButtonDown(UINT nFlags,CPoint point);
-  afx_msg void OnLButtonUp  (UINT nFlags,CPoint point);
-  afx_msg void OnMouseMove  (UINT nFlags,CPoint point);
-  afx_msg void OnActivate(UINT nState,CWnd* pWndOther,BOOL pMinimized);
-  afx_msg void OnSetFocus(CWnd* pOldWnd);
+  afx_msg void    OnLButtonDown(UINT nFlags,CPoint point);
+  afx_msg void    OnLButtonUp  (UINT nFlags,CPoint point);
+  afx_msg void    OnMouseMove  (UINT nFlags,CPoint point);
+  afx_msg void    OnActivate(UINT nState,CWnd* pWndOther,BOOL pMinimized);
+  afx_msg void    OnSetFocus(CWnd* pOldWnd);
 
   DECLARE_MESSAGE_MAP()
 
 private:
   virtual BOOL PreTranslateMessage(MSG* pMsg) override;
+  virtual void PreSubclassWindow() override;
 
   void HandleDoubleClick(CPoint point);
   void ShowMultiSelection();

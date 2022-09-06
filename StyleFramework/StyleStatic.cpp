@@ -17,10 +17,6 @@
 // For license: See the file "LICENSE.txt" in the root folder
 //
 #include "stdafx.h"
-#include "StyleStatic.h"
-#include "StyleFonts.h"
-#include "StyleColors.h"
-#include "StyleMacros.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -43,6 +39,12 @@ BEGIN_MESSAGE_MAP(StyleStatic,CStatic)
   ON_WM_PAINT()
   ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
+
+void
+StyleStatic::PreSubclassWindow()
+{
+  ScaleControl(this);
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // StyleStatic message handlers

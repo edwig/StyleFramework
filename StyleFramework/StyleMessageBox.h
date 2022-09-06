@@ -17,10 +17,10 @@
 // For license: See the file "LICENSE.txt" in the root folder
 //
 #pragma once
-#include "resource.h"
 #include "StyleDialogCA.h"
-#include "StyleCheckbox.h"
 #include "StyleButton.h"
+#include "StyleCheckbox.h"
+#include "resource.h"
 
 // Windows message to press the "Do not show again" checkbox
 #define ID_SUPPRESS (WM_USER + 1959)

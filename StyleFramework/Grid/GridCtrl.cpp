@@ -6234,13 +6234,14 @@ void CGridCtrl::OnMouseMove(UINT /*nFlags*/,CPoint point)
               && GetCellRect(idCurrentCell.row, idCurrentCell.col, CellRect) )
           {
 //						TRACE0("Showing TitleTip\n");
-            	m_TitleTip.Show(TextRect
-                              ,pCell->GetTipText()
-                              ,0
-                              ,CellRect
-                              ,pCell->GetFont()
-                              ,GetTitleTipTextClr()
-                              ,GetTitleTipBackClr());
+            	m_TitleTip.Show(this
+                             ,TextRect
+                             ,pCell->GetTipText()
+                             ,0
+                             ,CellRect
+                             ,pCell->GetFont()
+                             ,GetTitleTipTextClr()
+                             ,GetTitleTipBackClr());
           }
         }
       }

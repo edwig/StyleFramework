@@ -79,9 +79,12 @@ BOOL StyleHyperLink::PreTranslateMessage(MSG* pMsg)
 
 void StyleHyperLink::PreSubclassWindow() 
 {
+  ScaleControl(this);
+  SetFont(&STYLEFONTS.DialogTextFont);
+
   // We want to get mouse clicks via STN_CLICKED
   DWORD dwStyle = GetStyle();
-  ::SetWindowLong(GetSafeHwnd(), GWL_STYLE, dwStyle | SS_NOTIFY);
+  ::SetWindowLong(GetSafeHwnd(),GWL_STYLE,dwStyle | SS_NOTIFY);
     
   // Set the URL as the window text
   if (m_strURL.IsEmpty())

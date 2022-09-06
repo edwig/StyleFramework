@@ -20,6 +20,15 @@
 
 #define SFX_VERSION "1.0.1"       // Current SFX version number
 
+// Setting the size factor
+// To be called in your main program or InitInstance **BEFORE** you create any dialog or window
+bool SetSFXSizeFactor(int p_factor);
+int  GetSFXSizeFactor();
+
+// General resize a windows rectangle
+void SFXResizeByFactor(CRect& p_rect);
+void SFXResizeByFactor(int& p_x,int& p_y,int& p_w,int& p_h);
+
 // General headers
 #include "StyleColors.h"
 #include "StyleFonts.h"
@@ -71,7 +80,7 @@
 #define SFX_CONFIGURATION "R"
 #endif 
 
-#ifndef SQL_COMPONENTS_NOAUTOLINK
+#ifndef STYLEFRAMEWORK_NOAUTOLINK
 #pragma comment(lib,"StyleFramework_"                        SFX_PLATFORM SFX_CONFIGURATION ".lib")
 #pragma message("Automatically linking with StyleFramework_" SFX_PLATFORM SFX_CONFIGURATION ".lib")
 #endif 

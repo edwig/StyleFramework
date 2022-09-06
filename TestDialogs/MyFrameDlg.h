@@ -36,6 +36,17 @@ private:
   StyleButton m_buttonTabs;
   StyleButton m_buttonOK;
   StyleButton m_buttonCancel;
+
+  StyleStatic m_staticElement;
+  StyleStatic m_staticCombo;
+  StyleStatic m_staticEdit;
+  StyleStatic m_staticMulti;
+  StyleStatic m_staticList;
+  StyleStatic m_staticTree;
+  StyleStatic m_staticProgress;
+  StyleStatic m_staticGrid;
+  StyleStatic m_staticTab;
+
 public:
   afx_msg void OnEnChangeText();
   afx_msg void OnBnClickedTest1();

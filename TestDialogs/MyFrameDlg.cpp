@@ -52,6 +52,18 @@ void MyFrameDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TEST7, m_buttonTest7);
 	DDX_Control(pDX, IDC_GRID,  m_buttonGrid);
 	DDX_Control(pDX, IDC_TABS,  m_buttonTabs);
+
+  DDX_Control(pDX, IDC_ST_ELEMEN,   m_staticElement);
+  DDX_Control(pDX, IDC_ST_COMBO,    m_staticCombo);
+  DDX_Control(pDX, IDC_ST_EDIT,     m_staticEdit);
+  DDX_Control(pDX, IDC_ST_MULTI,    m_staticMulti);
+  DDX_Control(pDX, IDC_ST_LIST,     m_staticList);
+  DDX_Control(pDX, IDC_ST_TREE,     m_staticTree);
+  DDX_Control(pDX, IDC_ST_PROGRESS, m_staticProgress);
+  DDX_Control(pDX, IDC_ST_GRID,     m_staticGrid);
+  DDX_Control(pDX, IDC_ST_TAB,      m_staticTab);
+
+
 	DDX_Control(pDX, IDOK,      m_buttonOK);
 	DDX_Control(pDX, IDCANCEL,  m_buttonCancel);
 }

@@ -28,6 +28,7 @@ class StyleStatic: public CStatic
 public:
   StyleStatic();
   virtual ~StyleStatic();
+  virtual void PreSubclassWindow() override;
 
   void     SetLeftOffset(int p_offset);
   void     SetTextColor(COLORREF crColor);	// This Function is to set the Color for the Text.

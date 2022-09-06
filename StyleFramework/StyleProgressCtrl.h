@@ -119,6 +119,8 @@ protected:
   afx_msg void   OnNcPaint();
 
 private:
+  virtual void PreSubclassWindow() override;
+
   void BoundsCheck();
   void DrawFrame(CDC* p_dc);
   void DrawMarquee(CDC* p_dc,CRect& p_rect,bool p_vertical);

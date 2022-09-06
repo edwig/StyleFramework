@@ -95,7 +95,7 @@ FONT 10, "Verdana", 400, 0, 0x0
 BEGIN
     PUSHBUTTON      "Standard",IDC_BUTTON_1,7,5,86,29
     LTEXT           "Choose a color style ",IDC_ST_STYLE,108,8,86,8
-    LTEXT           "Test a standard text box",IDC_STATIC,108,23,89,8
+    LTEXT           "Test a standard text box",IDC_ST_STD,108,23,89,8
     COMBOBOX        IDC_COMBO_1,200,5,116,69,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_EDIT_1,200,20,116,14,ES_AUTOHSCROLL
     GROUPBOX        "Choose one of these",IDC_GROUP1,7,46,93,84
@@ -120,18 +120,18 @@ STYLE DS_SETFONT | WS_POPUP | WS_VISIBLE | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 FONT 10, "Verdana", 400, 0, 0x0
 BEGIN
-    LTEXT           "Color styles",IDC_STATIC,7,8,65,8
+    LTEXT           "Color styles",IDC_ST_COLOR,7,8,65,8
     COMBOBOX        IDC_COMBO_1,81,6,236,30,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Multi selection",IDC_STATIC,7,29,66,8
+    LTEXT           "Multi selection",IDC_ST_MULTI,7,29,66,8
     COMBOBOX        IDC_COMBO_2,81,27,236,30,CBS_DROPDOWN | CBS_OWNERDRAWFIXED | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Enabled / Disabled",IDC_STATIC,7,51,66,8
+    LTEXT           "Enabled / Disabled",IDC_ST_ENAB,7,51,66,8
     CONTROL         "",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,81,50,8,10
-    COMBOBOX        IDC_COMBO_3,92,49,225,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Enter a number (10)",IDC_STATIC,7,72,71,8
+    COMBOBOX        IDC_COMBO_3,92,49,225,92,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Enter a number (10)",IDC_ST_NUM10,7,72,71,8
     CONTROL         "",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,81,71,8,10
     EDITTEXT        IDC_EDIT1,92,70,58,14,ES_AUTOHSCROLL
     CONTROL         "",IDC_SPIN1,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,150,70,9,14
-    LTEXT           "Enter a number (20)",IDC_STATIC,7,93,71,8
+    LTEXT           "Enter a number (20)",IDC_ST_NUM20,7,93,71,8
     CONTROL         "",IDC_CHECK3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,81,92,8,10
     EDITTEXT        IDC_EDIT2,92,91,58,14,ES_AUTOHSCROLL
     CONTROL         "",IDC_SPIN2,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_ARROWKEYS,150,91,9,14
@@ -139,7 +139,7 @@ BEGIN
     PUSHBUTTON      "&Cancel",IDCANCEL,235,284,81,14
     PUSHBUTTON      "Error State",IDC_ERROR,235,91,82,14
     LTEXT           "Visit Edwig on GitHub",IDC_HYPERLINK,81,116,134,8
-    LTEXT           "Testing the link:",IDC_STATIC,7,116,66,8
+    LTEXT           "Testing the link:",IDC_ST_TEST,7,116,66,8
 END
 
 IDD_GRIDDIALOG DIALOGEX 0, 0, 423, 416
@@ -247,23 +247,23 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,177,231,63,14
     EDITTEXT        IDC_TEXT,7,7,233,14,ES_AUTOHSCROLL
     PUSHBUTTON      "Test dialog elements",IDC_TEST1,133,30,107,14
-    LTEXT           "Various dialog elements",IDC_STATIC,7,33,120,8
+    LTEXT           "Various dialog elements",IDC_ST_ELEMEN,7,33,120,8
     PUSHBUTTON      "Combo boxes",IDC_TEST2,133,50,107,14
-    LTEXT           "Multi selectie combo box",IDC_STATIC,7,53,120,8
+    LTEXT           "Multi selectie combo box",IDC_ST_COMBO,7,53,120,8
     PUSHBUTTON      "Edit boxes",IDC_TEST3,133,71,107,14
-    LTEXT           "Edit boxes and styles",IDC_STATIC,7,74,120,8
+    LTEXT           "Edit boxes and styles",IDC_ST_EDIT,7,74,120,8
     PUSHBUTTON      "Multiline & resize",IDC_TEST4,133,92,107,14
-    LTEXT           "Edit boxes multi lines",IDC_STATIC,7,95,120,8
+    LTEXT           "Edit boxes multi lines",IDC_ST_MULTI,7,95,120,8
     PUSHBUTTON      "List box",IDC_TEST5,133,113,107,14
-    LTEXT           "List boxes && resize",IDC_STATIC,7,116,120,8
+    LTEXT           "List boxes && resize",IDC_ST_LIST,7,116,120,8
     PUSHBUTTON      "Tree controls",IDC_TEST6,133,134,107,14
-    LTEXT           "Tree controls && borders",IDC_STATIC,7,137,120,8
+    LTEXT           "Tree controls && borders",IDC_ST_TREE,7,137,120,8
     PUSHBUTTON      "Progress control",IDC_TEST7,133,153,107,14
-    LTEXT           "Progress control && marquee",IDC_STATIC,7,156,120,8
+    LTEXT           "Progress control && marquee",IDC_ST_PROGRESS,7,156,120,8
     PUSHBUTTON      "Grid dialog",IDC_GRID,133,174,107,14
-    LTEXT           "Maunder grid",IDC_STATIC,7,177,120,8
+    LTEXT           "Maunder grid",IDC_ST_GRID,7,177,120,8
     PUSHBUTTON      "Tab control",IDC_TABS,133,194,107,14
-    LTEXT           "Tabulate control",IDC_STATIC,7,197,120,8
+    LTEXT           "Tabulate control",IDC_ST_TAB,7,197,120,8
 END
 
 

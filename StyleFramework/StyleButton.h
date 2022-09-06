@@ -32,6 +32,7 @@ public:
   StyleButton(CString p_type,bool pInError = false);
   virtual  ~StyleButton();
   virtual   BOOL DestroyWindow() override;
+  virtual   void PreSubclassWindow() override;
   BOOL      EnableWindow(BOOL p_enable = TRUE);
 
   // SETTERS

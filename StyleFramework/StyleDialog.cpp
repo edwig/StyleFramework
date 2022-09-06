@@ -20,15 +20,6 @@
 // For license: See the file "LICENSE.txt" in the root folder
 //
 #include "stdafx.h"
-#include "StyleDialog.h"
-#include "StyleColors.h"
-#include "GrayWindow.h"
-#include "StyleFonts.h"
-#include "StyleMacros.h"
-#include "SkinScrollWnd.h"
-#include "StyleMessageBox.h"
-#include "StyleComboBox.h"
-#include "StyleHyperlink.h"
 #include "RegistryManager.h"
 
 #ifdef _DEBUG
@@ -121,7 +112,14 @@ int
 StyleDialog::OnCreate(LPCREATESTRUCT p_create)
 {
   p_create->dwExStyle |= WS_EX_CONTROLPARENT;
-  return CDialog::OnCreate(p_create);
+  int res = CDialog::OnCreate(p_create);
+
+  CRect rect;
+  GetWindowRect(&rect);
+  SFXResizeByFactor(rect);
+  MoveWindow(&rect);
+
+  return res;
 }
 
 void

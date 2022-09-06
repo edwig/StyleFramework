@@ -42,6 +42,12 @@ BEGIN_MESSAGE_MAP(StyleGroupBox,CWnd)
   ON_WM_PAINT()
 END_MESSAGE_MAP()
 
+void
+StyleGroupBox::PreSubclassWindow()
+{
+  ScaleControl(this);
+}
+
 static HRGN SetControlClipping(HDC hdc, const RECT* rect)
 {
   RECT rc = *rect;

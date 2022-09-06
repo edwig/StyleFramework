@@ -65,6 +65,8 @@ StyleListBox::PreSubclassWindow()
   ASSERT((style & LBS_OWNERDRAWVARIABLE) == 0);
   ASSERT((style & LBS_MULTICOLUMN)       == 0);
 
+  ScaleControl(this);
+
   if(m_directInit)
   {
     InitSkin();
@@ -81,6 +83,9 @@ StyleListBox::InitSkin(int p_borderSize /*=1*/,int p_clientBias /*=0*/)
   if(m_skin == nullptr)
   {
     SetFont(&STYLEFONTS.DialogTextFont);
+    int height = GetItemHeight(0);
+    SetItemHeight(0,(height * GetSFXSizeFactor()) / 100);
+
     m_skin = SkinWndScroll(this,p_borderSize,p_clientBias);
   }
 }

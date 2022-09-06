@@ -18,11 +18,6 @@
 // For license: See the file "LICENSE.txt" in the root folder
 //
 #include "stdafx.h"
-#include "StyleFrameWndEx.h"
-#include "StyleFonts.h"
-#include "StyleButton.h"
-#include "StyleColors.h"
-#include "StyleMacros.h"
 #include "RegistryManager.h"
 #include "resource.h"
 #include <afxglobalutils.h>

@@ -19,11 +19,6 @@
 //
 #include "stdafx.h"
 #include <afxole.h>
-#include "StyleMDIFrameWnd.h"
-#include "StyleFonts.h"
-#include "StyleButton.h"
-#include "StyleColors.h"
-#include "StyleMacros.h"
 #include "RegistryManager.h"
 #include "resource.h"
 #include <afxglobalutils.h>

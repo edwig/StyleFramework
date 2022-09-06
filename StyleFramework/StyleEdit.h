@@ -17,8 +17,6 @@
 // For license: See the file "LICENSE.txt" in the root folder
 //
 #pragma once
-#include "StyleColors.h"
-#include "StyleMacros.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CSG_TextEdit window
@@ -59,7 +57,6 @@ public:
   virtual ~StyleEdit();
 
   virtual void PreSubclassWindow() override;
-// 
 
   // OPERATIONS
   void InitSkin(bool p_force = false);

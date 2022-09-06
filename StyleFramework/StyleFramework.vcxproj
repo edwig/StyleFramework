@@ -248,6 +248,7 @@
     <ClCompile Include="StyleDIB.cpp" />
     <ClCompile Include="StyleFormView.cpp" />
     <ClCompile Include="StyleFrameWnd.cpp" />
+    <ClCompile Include="StyleFramework.cpp" />
     <ClCompile Include="StyleGridCtrl.cpp" />
     <ClCompile Include="StyleGroupBox.cpp" />
     <ClCompile Include="StyleHyperlink.cpp" />

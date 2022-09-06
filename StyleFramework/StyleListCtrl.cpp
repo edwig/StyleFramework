@@ -52,6 +52,8 @@ END_MESSAGE_MAP()
 void
 StyleListCtrl::PreSubclassWindow()
 {
+  ScaleControl(this);
+
   if(m_directInit)
   {
     InitSkin();
