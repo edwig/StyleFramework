@@ -14,7 +14,7 @@ VERSION OF XX-09-2022
 ---------------------
 1) Added percentage to the StyleProgressCtrl
 2) Added a StyleStatic for the CStatic (Old StyleStatic is renamed to StyleStaticToast)
-
+3) The initial DPI of the appliction will be detected automatically
 
 VERSION OF 21-07-2022
 ---------------------

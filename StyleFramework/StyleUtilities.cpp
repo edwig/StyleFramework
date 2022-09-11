@@ -215,5 +215,8 @@ ScaleControl(CWnd* p_wnd)
     parent->ScreenToClient(rect);
   }
   SFXResizeByFactor(rect);
-  p_wnd->MoveWindow(rect);
+  // p_wnd->MoveWindow(rect);
+  SetWindowPos(p_wnd->GetSafeHwnd(),p_wnd->GetSafeHwnd()
+              ,rect.left,rect.top,rect.Width(),rect.Height()
+              ,SWP_NOZORDER|SWP_NOACTIVATE);
 }

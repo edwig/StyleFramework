@@ -49,6 +49,12 @@ BEGIN_MESSAGE_MAP(StyleStaticToast, CStatic)
   ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
+void
+StyleStaticToast::PreSubclassWindow()
+{
+  ScaleControl(this);
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // StyleStaticToast message handlers
 

@@ -55,6 +55,7 @@ StyleToast::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(StyleToast,CDialog)
+  ON_WM_CREATE()
   ON_WM_TIMER()
   ON_WM_CTLCOLOR()
   ON_STN_CLICKED(IDC_TOAST,OnClicked)
@@ -100,6 +101,19 @@ StyleToast::OnInitDialog()
   PumpMessage();
 
   return TRUE;
+}
+
+int
+StyleToast::OnCreate(LPCREATESTRUCT p_create)
+{
+  int res = CDialog::OnCreate(p_create);
+
+  CRect rect;
+  GetWindowRect(&rect);
+  SFXResizeByFactor(rect);
+  MoveWindow(&rect);
+
+  return res;
 }
 
 void

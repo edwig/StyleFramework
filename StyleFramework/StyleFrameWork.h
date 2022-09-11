@@ -20,9 +20,31 @@
 
 #define SFX_VERSION "1.0.1"       // Current SFX version number
 
+class StylingFramework
+{
+public:
+  StylingFramework();
+
+  // Set sizing in percentage (96 DPI = 100 %)
+  bool SetSizeFactorX(int p_factor);
+  bool SetSizeFactorY(int p_factor);
+  // Getting the sizing factor
+  int  GetSizeFactorX();
+  int  GetSizeFactorY();
+
+private:
+  // Pre-calculate the DPI scaling factor
+  void SFXCalculateDPI();
+
+  StylingFramework* m_instance { nullptr };
+  int m_factor_x { 100 };
+  int m_factor_y { 100 };
+};
+
+
 // Setting the size factor
 // To be called in your main program or InitInstance **BEFORE** you create any dialog or window
-bool SetSFXSizeFactor(int p_factor);
+bool SetSFXSizeFactor(int p_factorX,int p_factorY);
 int  GetSFXSizeFactor();
 
 // General resize a windows rectangle

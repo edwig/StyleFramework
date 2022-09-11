@@ -73,6 +73,7 @@ public:
   virtual void DoDataExchange(CDataExchange* pDX) override;
   virtual BOOL OnInitDialog() override;
 
+  afx_msg int     OnCreate(LPCREATESTRUCT p_create);
   afx_msg void    OnSize(UINT nType, int x, int y);
   afx_msg void    OnClicked();
   afx_msg void    OnTimer(UINT_PTR nIDEvent);
