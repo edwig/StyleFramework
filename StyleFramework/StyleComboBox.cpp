@@ -124,13 +124,14 @@ StyleComboBox::PreSubclassWindow()
   SetFont(&STYLEFONTS.DialogTextFont);
   ScaleControl(this);
 
+  // Remove default box and list
   // Getting the default combobox implementation
   COMBOBOXINFO info;
   memset(&info,0,sizeof(COMBOBOXINFO));
   info.cbSize  = sizeof(COMBOBOXINFO);
   ::GetComboBoxInfo(m_hWnd,&info);
 
-  // Remove the extra parts (but only the EXTRA edit box)
+  // Remove the extra parts 
   if(info.hwndItem && info.hwndItem != m_hWnd)
   {
     ::DestroyWindow(info.hwndItem);
@@ -209,7 +210,7 @@ StyleComboBox::CreateEditControl()
   m_itemControl->SetAutoComplete();
 
   // Trigger the NCCALCSIZE procedure
-  m_itemControl->SetWindowPos(nullptr,rect.left,rect.top,rect.Width(),rect.Height(),SWP_FRAMECHANGED);
+  m_itemControl->SetWindowPos(&CWnd::wndTop,rect.left,rect.top,rect.Width(),rect.Height(),SWP_FRAMECHANGED);
 }
 
 void 
@@ -245,6 +246,21 @@ StyleComboBox::CreateListControl()
   {
     m_listControl->GetSkin()->SetScrollbarBias(0);
     m_listControl->GetSkin()->SetMouseCapture(TRUE,TME_HOVER);
+  }
+}
+
+// Needs to be called when created dynamic and not through a resource *.rc file
+// Call directly after InitSkin()
+void
+StyleComboBox::ReadjustDynamic()
+{
+  for(CWnd* wnd = GetWindow(GW_CHILD); wnd != NULL; wnd = wnd->GetNextWindow(GW_HWNDNEXT))
+  {
+    if(wnd != m_itemControl)
+    {
+      wnd->DestroyWindow();
+      break;
+    }
   }
 }
 
@@ -1180,14 +1196,36 @@ StyleComboBox::DeleteString(UINT nIndex)
 int
 StyleComboBox::FindString(int nStartAfter,LPCTSTR lpszString) const
 {
-  if(nStartAfter < -1) nStartAfter = -1;
-  return m_listControl->FindString(nStartAfter,lpszString);
+  if(nStartAfter < -1)
+  {
+    nStartAfter = -1;
+  }
+  int len = (int) strlen(lpszString);
+  CString text;
+  for(int ind = 0;ind < m_listControl->GetCount();++ind)
+  {
+    m_listControl->GetText(ind,text);
+    if(text.Left(len).CompareNoCase(lpszString) == 0)
+    {
+      return ind;
+    }
+  }
+  return -1;
 }
 
 int   
 StyleComboBox::FindStringExact(int nIndexStart,LPCTSTR lpszFind) const
 {
-  return m_listControl->FindStringExact(nIndexStart,lpszFind);
+  CString text;
+  for(int ind = 0;ind < m_listControl->GetCount(); ++ind)
+  {
+    m_listControl->GetText(ind,text);
+    if(text.CompareNoCase(lpszFind) == 0)
+    {
+      return ind;
+    }
+  }
+  return -1;
 }
 
 BOOL  
@@ -1620,7 +1658,7 @@ StyleComboBox::OnPaint()
 {
   PAINTSTRUCT paint;
   CDC* dc = BeginPaint(&paint);
-  if(dc)
+  if(dc && m_itemControl)
   {
     m_itemControl->OnComboBoxPaint();
 
@@ -1942,6 +1980,9 @@ SCBTextEdit::OnKillFocus(CWnd* p_new)
   }
   CEdit::OnKillFocus(p_new);
   DrawFrame();
+
+  // Now propagate to the combo box above
+  m_combo->OnKillFocus();
 }
 
 BOOL
