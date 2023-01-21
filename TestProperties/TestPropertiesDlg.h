@@ -27,7 +27,6 @@ public:
 protected:
 	void InitTabs();
 
-	HICON         m_hIcon;
 	CString       m_type;
 	StyleEdit     m_editType;
 	StyleButton	  m_buttonOK;

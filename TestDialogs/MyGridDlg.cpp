@@ -54,6 +54,7 @@ MyGridDlg::OnInitDialog()
   StyleDialog::OnInitDialog();
   SetWindowText("My Grid testing dialog");
   SetSysMenu(IDR_MENU4);
+  SetAboutBoxAndIcon(IDM_ABOUTBOX,IDS_ABOUTBOX);
 
   m_buttonOK.SetStyle("ok");
   m_buttonCancel.SetStyle("can");

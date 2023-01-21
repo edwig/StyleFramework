@@ -1,7 +1,7 @@
 #pragma once
 // TestPage1 dialog
 
-class TestPage2 : public StyleDialog
+class TestPage2 : public StyleTab
 {
   DECLARE_DYNAMIC(TestPage2)
 

@@ -55,6 +55,7 @@ MyFrameDlg6::OnInitDialog()
   ShowMinMaxButton();
   SetSysMenu(IDR_MENU4);
   ShowSysMenu();
+  SetAboutBoxAndIcon(IDM_ABOUTBOX,IDS_ABOUTBOX);
 
   UpdateData(FALSE);
   SetCanResize();

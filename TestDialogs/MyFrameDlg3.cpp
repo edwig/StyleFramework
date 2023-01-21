@@ -70,6 +70,7 @@ MyFrameDlg3::OnInitDialog()
   SetWindowText("Testing the StyleEditText control");
   ShowMinMaxButton(true,false);
   SetSysMenu(IDR_MENU4);
+  SetAboutBoxAndIcon(IDM_ABOUTBOX,IDS_ABOUTBOX);
 
   RegisterTooltips();
 

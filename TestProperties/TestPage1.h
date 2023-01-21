@@ -2,7 +2,7 @@
 
 // TestPage1 dialog
 
-class TestPage1 : public StyleDialog
+class TestPage1 : public StyleTab
 {
 	DECLARE_DYNAMIC(TestPage1)
 

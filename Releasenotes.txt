@@ -10,6 +10,17 @@
 //
 // RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES
 
+VERSION OF 21-01-2023
+---------------------
+1) Added the StyleTab for replacament of StyleDialog in a Tab-control
+2) Added the setting of an environment variable in RegistryManager
+3) Re-work on the WinToast to be able to supply standard MBCS strings
+4) Expansion of the StyleDialog to provide standard methods for things normally
+   generated in the MFC wizards
+   - SetAboutBoxAndIcon
+   - OnQueryDragIcon
+   - IsIconic painting in the OnPaint
+
 VERSION OF 11-09-2022
 ---------------------
 1) Added percentage to the StyleProgressCtrl

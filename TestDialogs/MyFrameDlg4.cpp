@@ -56,6 +56,7 @@ MyFrameDlg4::OnInitDialog()
   
   ShowMinMaxButton();
   SetSysMenu(IDR_MENU4);
+  SetAboutBoxAndIcon(IDM_ABOUTBOX,IDS_ABOUTBOX);
 
   m_buttonError .SetStyle("rem");
   m_buttonOK    .SetStyle("ok");

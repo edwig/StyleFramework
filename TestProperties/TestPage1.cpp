@@ -7,10 +7,10 @@
 
 // TestPage1 dialog
 
-IMPLEMENT_DYNAMIC(TestPage1,StyleDialog)
+IMPLEMENT_DYNAMIC(TestPage1,StyleTab)
 
 TestPage1::TestPage1(CWnd* p_parent /*=nullptr*/)
-	        :StyleDialog(IDD_TESTPAGE1, p_parent)
+	        :StyleTab(IDD_TESTPAGE1, p_parent)
 {
 }
 
@@ -20,7 +20,7 @@ TestPage1::~TestPage1()
 
 void TestPage1::DoDataExchange(CDataExchange* pDX)
 {
-	StyleDialog::DoDataExchange(pDX);
+	StyleTab::DoDataExchange(pDX);
 	DDX_Control(pDX,IDC_EDIT1,m_editTest1,m_test1);
 	DDX_Control(pDX,IDC_EDIT2,m_editTest2,m_test2);
 	DDX_Control(pDX,IDC_EDIT3,m_editTest3,m_test3);
@@ -31,7 +31,7 @@ void TestPage1::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX,IDC_EDIT8,m_editTest8,m_test8);
 }
 
-BEGIN_MESSAGE_MAP(TestPage1,StyleDialog)
+BEGIN_MESSAGE_MAP(TestPage1,StyleTab)
 	ON_EN_KILLFOCUS(IDC_EDIT1,OnEnKillfocusEdit1)
 	ON_EN_KILLFOCUS(IDC_EDIT2,OnEnKillfocusEdit2)
 	ON_EN_KILLFOCUS(IDC_EDIT3,OnEnKillfocusEdit3)
@@ -45,7 +45,7 @@ END_MESSAGE_MAP()
 BOOL
 TestPage1::OnInitDialog()
 {
-	StyleDialog::OnInitDialog();
+	StyleTab::OnInitDialog();
 
 
 	return FALSE;

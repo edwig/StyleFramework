@@ -230,7 +230,7 @@ StyleListBox::SetItemPointer(int p_index,void* p_data)
   if(line && (line != (ListBoxColorLine*) LB_ERR) && line->m_magic == LIST_MAGIC)
   {
     try
-  {
+    {
       delete line;
     }
     catch(...) {}
@@ -355,8 +355,8 @@ StyleListBox::DeleteItem(LPDELETEITEMSTRUCT p_deleteItemStruct)
   if(line && (line != (ListBoxColorLine*) LB_ERR) && line->m_magic == LIST_MAGIC)
   {
     try
-  {
-    delete line;
+    {
+      delete line;
       SetItemDataPtr(p_deleteItemStruct->itemID,nullptr);
     }
     catch(...){}
@@ -401,8 +401,8 @@ StyleListBox::DeleteString(int p_number)
     if(line && (line != (ListBoxColorLine*) LB_ERR) && line->m_magic == LIST_MAGIC)
     {
       try
-    {
-      delete line;
+      {
+        delete line;
         SetItemDataPtr(p_number,nullptr);
       }
       catch(...){}
@@ -830,8 +830,8 @@ StyleListBox::RemoveLineInfo()
     if(line && (line != (ListBoxColorLine*) LB_ERR) && line->m_magic == LIST_MAGIC)
     {
       try
-    {
-      delete line;
+      {
+        delete line;
         SetItemDataPtr(index,nullptr);
       }
       catch(...){}

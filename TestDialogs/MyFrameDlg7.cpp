@@ -65,6 +65,7 @@ MyFrameDlg7::OnInitDialog()
   SetWindowText("Testing the progress control");
   SetSysMenu(IDR_MENU4);
   ShowMinMaxButton(true, false);
+  SetAboutBoxAndIcon(IDM_ABOUTBOX,IDS_ABOUTBOX);
 
   m_buttonOK    .SetStyle("ok");
   m_buttonCancel.SetStyle("can");

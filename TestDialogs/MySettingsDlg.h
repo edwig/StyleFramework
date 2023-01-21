@@ -22,7 +22,6 @@ protected:
 
                                                     // Implementation
 protected:
-  HICON           m_icon;
   StyleButton     m_buttonOK;
   StyleButton     m_buttonCancel;
 
@@ -34,9 +33,6 @@ protected:
   afx_msg int     OnCreate(LPCREATESTRUCT lpCreateStruct);
   afx_msg void    OnDestroy();
   afx_msg void    OnSysCommand(UINT nID, LPARAM lParam);
-  afx_msg void    OnPaint();
-  afx_msg HCURSOR OnQueryDragIcon();
-  afx_msg void    OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
 
   DECLARE_MESSAGE_MAP()
 };
