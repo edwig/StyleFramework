@@ -654,10 +654,13 @@ StyleDialog::OnCtlColorListBox(WPARAM wParam, LPARAM lParam)
 void
 StyleDialog::OnActivate(UINT nState,CWnd* pWndOther,BOOL bMinimized)
 {
+  if(m_canActivate)
+  {
   CDialog::OnActivate(nState,pWndOther,bMinimized);
   if(nState == WA_ACTIVE || nState == WA_CLICKACTIVE)
   {
     ReDrawFrame();
+    }
   }
 }
 

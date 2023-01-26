@@ -240,7 +240,7 @@ StyleComboBox::CreateListControl()
     style |= LBS_EXTENDEDSEL;
     m_listControl->SetMultiSelect(m_multiselect = true);
   }
-  m_listControl->CreateEx(styleEx,"LISTBOX","",style,rect,GetDesktopWindow(),0);
+  m_listControl->CreateEx(styleEx,"LISTBOX","",style,rect,CWnd::FromHandle(::GetDesktopWindow()),0);
   m_listControl->InitSkin();
   if(m_listControl->GetSkin())
   {
