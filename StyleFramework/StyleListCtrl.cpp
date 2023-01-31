@@ -52,8 +52,8 @@ END_MESSAGE_MAP()
 void
 StyleListCtrl::PreSubclassWindow()
 {
+  CMFCListCtrl::PreSubclassWindow();
   ScaleControl(this);
-
   if(m_directInit)
   {
     InitSkin();
@@ -210,4 +210,3 @@ StyleListCtrl::OnShowWindow(BOOL bShow, UINT nStatus)
     CMFCListCtrl::OnShowWindow(bShow, nStatus);
   }
 }
-
