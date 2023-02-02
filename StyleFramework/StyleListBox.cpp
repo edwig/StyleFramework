@@ -83,7 +83,7 @@ StyleListBox::InitSkin(int p_borderSize /*=1*/,int p_clientBias /*=0*/)
   if(m_skin == nullptr)
   {
     SetFont(&STYLEFONTS.DialogTextFont);
-    int height = GetItemHeight(0);
+    int height = LISTBOX_ITEMHEIGTH;
     SetItemHeight(0,(height * GetSFXSizeFactor()) / 100);
 
     m_skin = SkinWndScroll(this,p_borderSize,p_clientBias);
@@ -219,7 +219,7 @@ StyleListBox::AppendString(LPCSTR p_string,COLORREF p_foreground,COLORREF p_back
     }
     UpdateWidth(p_string);
     AdjustScroll();
-}
+  }
   return result;
 }
 
@@ -277,7 +277,7 @@ StyleListBox::DrawItem(LPDRAWITEMSTRUCT p_drawItemStruct)
   COLORREF foreground(FRAME_DEFAULT_COLOR);
   COLORREF background(FRAME_DEFAULT_COLOR);
   // Getting our foreground/background colors
-  ListBoxColorLine* line = reinterpret_cast<ListBoxColorLine*>(GetItemDataPtr(p_drawItemStruct->itemID));
+  ListBoxColorLine* line = reinterpret_cast<ListBoxColorLine*>(p_drawItemStruct->itemData);
   if(!line || (line == (ListBoxColorLine*)LB_ERR) || line->m_magic != LIST_MAGIC)
   {
     return;
@@ -947,106 +947,61 @@ StyleListBox::Internal_Paint(CDC* p_cdc)
 void 
 StyleListBox::Internal_PaintItem(CDC* p_cdc,const RECT* rect,INT index,UINT action,BOOL ignoreFocus)
 {
-  const char* item_str = NULL;
-  int nb_items = GetCount();
-  int style    = GetStyle();
+  int  nb_items = GetCount();
+  bool selected = GetSel(index);
+  bool focused  = GetCaretIndex() == index;
+  bool enabled  = IsWindowEnabled();
 
-  ListBoxColorLine* line = reinterpret_cast<ListBoxColorLine*>(GetItemDataPtr(index));
-  if(line && (line != (ListBoxColorLine*) LB_ERR) && line->m_magic == LIST_MAGIC)
-  {
-    item_str = line->m_text.GetString();
-  }
-  else
-  {
-    TRACE("called with an out of bounds index %d (Total: %d) in owner draw, Not good.\n",index,GetCount());
-    return;
-  }
-  BOOL selected = GetSel(index);
-  BOOL focused  = GetCaretIndex() == index;
+  ListBoxColorLine  line;
+  ListBoxColorLine* line_ptr = &line;
+  DRAWITEMSTRUCT    dis;
 
   if(GetStyle() & (LBS_OWNERDRAWFIXED | LBS_OWNERDRAWVARIABLE))
   {
-    DRAWITEMSTRUCT dis;
-    RECT r;
 
-    if (index >= nb_items)
+    line_ptr = reinterpret_cast<ListBoxColorLine*>(GetItemDataPtr(index));
+    if(!line_ptr || (line_ptr == (ListBoxColorLine*) LB_ERR) || line_ptr->m_magic != LIST_MAGIC)
     {
-      if(action == ODA_FOCUS)
-      {
-        p_cdc->DrawFocusRect(rect);
-      }
-      else
-      {
-        TRACE("called with an out of bounds index %d(%d) in owner draw, Not good.\n", index, nb_items);
-      }
+      TRACE("called with an out of bounds index %d (Total: %d) in owner draw, Not good.\n",index,GetCount());
       return;
     }
-
-    GetClientRect(&r);
-
-    dis.CtlType       = ODT_LISTBOX;
-    dis.CtlID         = (UINT)GetWindowLongPtrW(GetSafeHwnd(), GWLP_ID);
-    dis.hwndItem      = GetSafeHwnd();
-    dis.itemAction    = action;
-    dis.hDC           = p_cdc->GetSafeHdc();
-    dis.itemID        = index;
-    dis.itemState     = 0;
-    if (selected)     dis.itemState |= ODS_SELECTED;
-    if (focused)      dis.itemState |= ODS_FOCUS;
-    if (!IsWindowEnabled()) dis.itemState |= ODS_DISABLED;
-    dis.itemData      = (ULONG_PTR) GetItemDataPtr(index);
-    dis.rcItem        = *rect;
-    // TRACE("[%p]: drawitem %d (%s) action=%02x state=%02x rect=%s\n",GetSafeHwnd(),index,item_str, action, dis.itemState, DebugRect(rect));
-
-    // This is the reason we are here!
-    // Standard MS-Windows sends this to the parent of the control so CMenu can have a go at it
-    // But the standard desktop does NOT reflect the MEASUREITEM/DRAWITEM messages
-    // So we send it directly to ourselves!!!!!!
-    // 
-    // SendMessage(GetParent()->GetSafeHwnd(),WM_DRAWITEM,(WPARAM)dis.CtlID,(LPARAM)&dis);
-    SendMessage(WM_DRAWITEM,(WPARAM)dis.CtlID,(LPARAM)&dis);
   }
   else
   {
-    COLORREF oldText = 0, oldBk = 0;
+    // Get the text from the control
+    CListBox::GetText(index,line.m_text);
+  }
 
-    if (action == ODA_FOCUS)
+  if (index >= nb_items)
+  {
+    if(action == ODA_FOCUS)
     {
       p_cdc->DrawFocusRect(rect);
-      return;
-    }
-    if (selected)
-    {
-      oldBk   = p_cdc->SetBkColor  (GetSysColor(COLOR_HIGHLIGHT));
-      oldText = p_cdc->SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
-    }
-
-    TRACE("[%p]: painting %d (%s) action=%02x rect=%s\n",GetSafeHwnd(),index,item_str,action,DebugRect(rect));
-    if(!item_str)
-    {
-      p_cdc->ExtTextOut(rect->left + 1, rect->top, ETO_OPAQUE | ETO_CLIPPED, rect, NULL, 0, NULL);
-    }
-    else if(style & LBS_USETABSTOPS)
-    {
-      int nb_tabs = 0;
-      int* tabs = nullptr;
-
-      /* Output empty string to paint background in the full width. */
-      p_cdc->ExtTextOut   (rect->left + 1, rect->top,ETO_OPAQUE | ETO_CLIPPED, rect, NULL, 0, NULL);
-      p_cdc->TabbedTextOut(rect->left + 1, rect->top, item_str, lstrlen(item_str),nb_tabs,tabs,0);
     }
     else
     {
-      p_cdc->ExtTextOut(rect->left + 1, rect->top, ETO_OPAQUE | ETO_CLIPPED, rect, item_str, (UINT)strlen(item_str), NULL);
+      TRACE("called with an out of bounds index %d(%d) in owner draw, Not good.\n", index, nb_items);
     }
-    if(selected)
-    {
-      p_cdc->SetBkColor(oldBk);
-      p_cdc->SetTextColor(oldText);
-    }
-    if(focused)
-    {
-      p_cdc->DrawFocusRect(rect);
-    }
+    return;
   }
+  dis.CtlType       = ODT_LISTBOX;
+  dis.CtlID         = (UINT)GetWindowLongPtrW(GetSafeHwnd(), GWLP_ID);
+  dis.hwndItem      = GetSafeHwnd();
+  dis.itemAction    = action;
+  dis.hDC           = p_cdc->GetSafeHdc();
+  dis.itemID        = index;
+  dis.itemState     = 0;
+  if (selected)     dis.itemState |= ODS_SELECTED;
+  if (focused)      dis.itemState |= ODS_FOCUS;
+  if (!enabled)     dis.itemState |= ODS_DISABLED;
+  dis.itemData      = (ULONG_PTR) line_ptr;
+  dis.rcItem        = *rect;
+  // TRACE("[%p]: drawitem %d (%s) action=%02x state=%02x rect=%s\n",GetSafeHwnd(),index,item_str, action, dis.itemState, DebugRect(rect));
+
+  // This is the reason we are here!
+  // Standard MS-Windows sends this to the parent of the control so CMenu can have a go at it
+  // But the standard desktop does NOT reflect the MEASUREITEM/DRAWITEM messages
+  // So we send it directly to ourselves!!!!!!
+  // 
+  SendMessage(WM_DRAWITEM,(WPARAM)dis.CtlID,(LPARAM)&dis);
 }
