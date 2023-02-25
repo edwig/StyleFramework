@@ -81,6 +81,7 @@ protected:
   void    Button(CDC* pDC, CRect rect, LRESULT type, BUTTONSTATE state = BS_NORMAL, bool max = true);
   void    PerformMenu();
   void    InitStatusBar();
+  void    EraseGripper();
 
   DECLARE_MESSAGE_MAP();
 
