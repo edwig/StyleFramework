@@ -827,10 +827,11 @@ StyleDialog::OnNcLButtonDown(UINT nFlags, CPoint point)
       SetWindowPos(&CWnd::wndTop,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE|SWP_SHOWWINDOW|SWP_NOSENDCHANGING|SWP_DRAWFRAME);
 
       CPoint lastpoint(point);
+      CPoint moved(point);
       CRect window;
       GetWindowRect(window);
-      point.x -= window.left;
-      point.y -= window.top;
+      moved.x -= window.left;
+      moved.y -= window.top;
 
       while (LBUTTONDOWN)
       {
@@ -838,10 +839,11 @@ StyleDialog::OnNcLButtonDown(UINT nFlags, CPoint point)
         GetCursorPos(&cursor);
         if (cursor != lastpoint)
         {
-          SetWindowPos(NULL, cursor.x - point.x, cursor.y - point.y, 0, 0, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
+          SetWindowPos(NULL, cursor.x - moved.x, cursor.y - moved.y, 0, 0, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
           lastpoint = cursor;
         }
       }
+      return;
     }
     break;
 
@@ -894,7 +896,6 @@ StyleDialog::OnNcLButtonDown(UINT nFlags, CPoint point)
           if(window.Width()  >= m_originalSize.Width() &&
              window.Height() >= m_originalSize.Height())
           {
-
             SetWindowPos(nullptr, window.left, window.top, window.Width(), window.Height(), SWP_NOZORDER | SWP_DRAWFRAME);
           }
           lastpoint = cursor;
@@ -1472,6 +1473,8 @@ StyleDialog::OnPaint()
 void
 StyleDialog::EraseGripper()
 {
+  if(m_canResize && (GetParent() == nullptr) && (GetStyle() & WS_MAXIMIZE) == 0)
+  {
   CDC* pDC = GetDC();
   CRect rect;
   GetClientRect(rect);
@@ -1479,6 +1482,7 @@ StyleDialog::EraseGripper()
   rect.top = rect.bottom - ::GetSystemMetrics(SM_CYVSCROLL);
   pDC->FillRect(rect,&m_defaultBrush);
   ReleaseDC(pDC);
+  }
 }
 
 // The system calls this function to obtain the cursor to display while the user drags the minimized window.
