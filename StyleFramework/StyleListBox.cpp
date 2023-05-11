@@ -45,6 +45,7 @@ StyleListBox::StyleListBox()
 
 StyleListBox::~StyleListBox()
 {
+  RemoveLineInfo();
   ResetSkin();
   OnNcDestroy();
 }
@@ -219,7 +220,7 @@ StyleListBox::AppendString(LPCSTR p_string,COLORREF p_foreground,COLORREF p_back
     }
     UpdateWidth(p_string);
     AdjustScroll();
-  }
+}
   return result;
 }
 
@@ -424,8 +425,8 @@ StyleListBox::AdjustHorizontalExtent()
 {
   CClientDC dc(this);
 
-  CFont* f = CListBox::GetFont();
-  dc.SelectObject(f);
+  CFont* f = GetFont();
+  CFont* o = dc.SelectObject(f);
 
   m_width = 0;
   for(int i = 0; i < CListBox::GetCount(); i++)
@@ -443,6 +444,7 @@ StyleListBox::AdjustHorizontalExtent()
   }
   CListBox::SetHorizontalExtent(m_width);
   AdjustScroll();
+  dc.SelectObject(o);
 }
 
 void
@@ -763,7 +765,7 @@ StyleListBox::UpdateWidth(LPCTSTR p_string)
 {
   CClientDC dc(this);
 
-  CFont* font    = CListBox::GetFont();
+  CFont* font    = GetFont();
   CFont* oldfont = dc.SelectObject(font);
 
   // Guard against really long strings like SOAP messages
@@ -822,8 +824,18 @@ StyleListBox::RemoveLineNumber(CString& p_text)
 void
 StyleListBox::RemoveLineInfo()
 {
+  // See if we have lines left
+  int nCount = 0;
+  if(::IsWindow(GetSafeHwnd()))
+  {
+    nCount = GetCount();
+  }
+  else
+  {
+    // Nothing to do
+    return;
+  }
   // Remove our text and color content
-  int nCount = GetCount();
   for(int index = 0;index < nCount;index++)
   {
     ListBoxColorLine* line = reinterpret_cast<ListBoxColorLine*>(GetItemDataPtr(index));
@@ -897,7 +909,7 @@ StyleListBox::Internal_Paint(CDC* p_cdc)
   int top_item   = GetTopIndex();
   int focus_item = GetCaretIndex();
   
-  HFONT oldFont = (HFONT) p_cdc->SelectObject(&STYLEFONTS.DialogTextFont);
+  HFONT oldFont = (HFONT) p_cdc->SelectObject(GetFont());
 
   for(int index = top_item; index < items; index++)
   {

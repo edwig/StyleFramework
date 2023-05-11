@@ -656,10 +656,10 @@ StyleDialog::OnActivate(UINT nState,CWnd* pWndOther,BOOL bMinimized)
 {
   if(m_canActivate)
   {
-  if(nState == WA_ACTIVE || nState == WA_CLICKACTIVE)
-  {
+    if(nState == WA_ACTIVE || nState == WA_CLICKACTIVE)
+    {
       CDialog::OnActivate(nState,pWndOther,bMinimized);
-    ReDrawFrame();
+      ReDrawFrame();
     }
   }
 }
@@ -1475,13 +1475,13 @@ StyleDialog::EraseGripper()
 {
   if(m_canResize && (GetParent() == nullptr) && (GetStyle() & WS_MAXIMIZE) == 0)
   {
-  CDC* pDC = GetDC();
-  CRect rect;
-  GetClientRect(rect);
-  rect.left = rect.right - ::GetSystemMetrics(SM_CXHSCROLL);
-  rect.top = rect.bottom - ::GetSystemMetrics(SM_CYVSCROLL);
-  pDC->FillRect(rect,&m_defaultBrush);
-  ReleaseDC(pDC);
+    CDC* pDC = GetDC();
+    CRect rect;
+    GetClientRect(rect);
+    rect.left = rect.right - ::GetSystemMetrics(SM_CXHSCROLL);
+    rect.top = rect.bottom - ::GetSystemMetrics(SM_CYVSCROLL);
+    pDC->FillRect(rect,&m_defaultBrush);
+    ReleaseDC(pDC);
   }
 }
 

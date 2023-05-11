@@ -2083,7 +2083,6 @@ SCBListBox::SCBListBox()
 
 SCBListBox::~SCBListBox()
 {
-  DestroyWindow();
 }
 
 void
