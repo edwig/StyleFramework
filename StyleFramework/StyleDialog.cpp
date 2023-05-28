@@ -904,7 +904,6 @@ StyleDialog::OnNcLButtonDown(UINT nFlags, CPoint point)
       break;
     }
   }
-  OnPaint();
 }
 
 void

@@ -1047,7 +1047,10 @@ StyleComboBox::OnSetFocus(CWnd* pOldWnd)
   if(!rect.PtInRect(here))
   {
     // We are not on the combobox button
-    m_itemControl->SetFocus();
+    if(m_itemControl)
+    {
+      m_itemControl->SetFocus();
+    }
   }
 }
 
@@ -2083,6 +2086,7 @@ SCBListBox::SCBListBox()
 
 SCBListBox::~SCBListBox()
 {
+  DestroyWindow();
 }
 
 void
