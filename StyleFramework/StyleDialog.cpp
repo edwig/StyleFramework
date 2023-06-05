@@ -355,6 +355,16 @@ StyleDialog::ShowCloseButton(bool p_show)
 }
 
 void
+StyleDialog::ShowGripper(bool p_gripper /*= true*/)
+{
+  m_hasGripper = p_gripper;
+  if(p_gripper)
+  {
+    SetCanResize(true);
+  }
+}
+
+void
 StyleDialog::SetupDynamicLayout()
 {
   auto manager = GetDynamicLayout();
@@ -1456,7 +1466,7 @@ StyleDialog::OnPaint()
 
   CDialog::OnPaint();
 
-  if(m_canResize && (GetParent() == nullptr) && (GetStyle() & WS_MAXIMIZE) == 0)
+  if(m_canResize && (m_hasGripper || (GetParent() == nullptr) && (GetStyle() & WS_MAXIMIZE) == 0))
   {
     CDC* pDC = GetDC();
     CRect rect;

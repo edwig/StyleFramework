@@ -1017,3 +1017,65 @@ StyleListBox::Internal_PaintItem(CDC* p_cdc,const RECT* rect,INT index,UINT acti
   // 
   SendMessage(WM_DRAWITEM,(WPARAM)dis.CtlID,(LPARAM)&dis);
 }
+
+void
+StyleListBox::SetFontSize(int p_size)
+{
+  m_fontSize = p_size;
+  ResetFont();
+}
+
+void
+StyleListBox::SetFontStyle(bool p_bold,bool p_italic,bool p_underLine)
+{
+  m_bold      = p_bold;
+  m_italic    = p_italic;
+  m_underLine = p_underLine;
+  ResetFont();
+}
+
+void
+StyleListBox::SetFontName(CString p_fontName,int p_fontSize,BYTE p_language)
+{
+  m_fontName = p_fontName;
+  m_fontSize = p_fontSize;
+  m_language = p_language;
+  ResetFont();
+}
+
+void
+StyleListBox::ResetFont()
+{
+  LOGFONT  lgFont;
+
+  lgFont.lfCharSet        = m_language;
+  lgFont.lfClipPrecision  = 0;
+  lgFont.lfEscapement     = 0;
+  strcpy_s(lgFont.lfFaceName,LF_FACESIZE,m_fontName);
+  lgFont.lfHeight         = m_fontSize;
+  lgFont.lfItalic         = m_italic;
+  lgFont.lfOrientation    = 0;
+  lgFont.lfOutPrecision   = 0;
+  lgFont.lfPitchAndFamily = 2;
+  lgFont.lfQuality        = 0;
+  lgFont.lfStrikeOut      = 0;
+  lgFont.lfUnderline      = m_underLine;
+  lgFont.lfWidth          = 0;
+  lgFont.lfWeight         = m_bold ? FW_BOLD : FW_MEDIUM;
+
+  // Create new font or remove old object from it
+  if(m_font)
+  {
+    if(m_font->m_hObject)
+    {
+      m_font->DeleteObject();
+    }
+  }
+  else
+  {
+    m_font = new CFont();
+  }
+  // Create new font and set it to this control
+  m_font->CreatePointFontIndirect(&lgFont);
+  SetFont(m_font);
+}
