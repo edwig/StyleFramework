@@ -541,6 +541,8 @@ StyleDialog::LoadStyleTheme()
   ThemeColor::Themes theme = (ThemeColor::Themes)th;
   ThemeColor::SetTheme(theme);
 
+  SendMessageToAllChildWindows(g_msg_changed,0,0);
+
   // Needed for coloring backgrounds of the controls
   m_defaultBrush.DeleteObject();
   m_defaultBrush.CreateSolidBrush(ThemeColor::GetColor(Colors::ColorWindowFrame));
@@ -553,6 +555,24 @@ StyleDialog::LoadStyleTheme()
     ReDrawDialog();
     RedrawWindow(NULL,NULL,RDW_INVALIDATE|RDW_FRAME|RDW_ALLCHILDREN);
   }
+}
+
+BOOL CALLBACK EnumChildProc(HWND hwnd,LPARAM lParam)
+{
+  PSMessage psMessage = (PSMessage) lParam;
+  SendMessage(hwnd,psMessage->MessageId,psMessage->wParam,psMessage->lParam);
+  return TRUE;
+}
+
+void 
+StyleDialog::SendMessageToAllChildWindows(UINT MessageId,WPARAM wParam,LPARAM lParam)
+{
+  SMessage sMessage;
+  sMessage.MessageId = MessageId;
+  sMessage.wParam    = wParam;
+  sMessage.lParam    = lParam;
+
+  EnumChildWindows(GetSafeHwnd(),EnumChildProc,(LPARAM) &sMessage);
 }
 
 // After setting of a theme,

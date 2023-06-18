@@ -23,6 +23,14 @@ class StyleComboBox;
 class AutoBlockActivation;
 using ToolTips = std::map<HWND,const char*>;
 
+typedef struct
+{
+  UINT   MessageId;
+  WPARAM wParam;
+  LPARAM lParam;
+} 
+SMessage, *PSMessage;
+
 class StyleDialog : public CDialog
 {
   DECLARE_DYNAMIC(StyleDialog)
@@ -79,6 +87,7 @@ protected:
   void    DrawButton(CDC* pDC,CRect rect,LRESULT type);
   void    PositionButtons();
   void    Button(CDC* pDC, CRect rect, LRESULT type, BUTTONSTATE state = BS_NORMAL, bool max = true);
+  void    SendMessageToAllChildWindows(UINT MessageId,WPARAM wParam,LPARAM lParam);
   void    PerformMenu();
   void    InitStatusBar();
   void    EraseGripper();

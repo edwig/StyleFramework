@@ -128,7 +128,7 @@ void CTitleTip::Show(CWnd* p_parent,CRect rectTitle, LPCTSTR lpszTitleText, int 
 {
 	if (!IsWindow(m_hWnd))
 	{
-      Create(p_parent);
+    Create(p_parent);
 	}
 	ASSERT( ::IsWindow( GetSafeHwnd() ) );
 
