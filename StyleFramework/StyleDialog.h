@@ -62,6 +62,7 @@ public:
   void    ShowMinMaxButton(bool p_minButton   = true
                           ,bool p_maxButton   = true);
   void    ShowCloseButton (bool p_closeButton = true);
+  void    ShowGripper     (bool p_gripper     = true);
   void    SetCanResize    (bool p_resize      = true);
   void    SetWindowText(LPCTSTR lpstString);
   BOOL    SetSysMenu(UINT p_menuResource);
@@ -149,6 +150,7 @@ protected:
   bool      m_minButton   { false };
   bool      m_maxButton   { false };
   bool      m_canResize   { false };
+  bool      m_hasGripper  { false };
   bool      m_hasStatus   { false };
   bool      m_canActivate { true  };
   LRESULT   m_curhit      { HTNOWHERE };

@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 
 using namespace ThemeColor;
 
-IMPLEMENT_DYNAMIC(StyleComboBox,CComboBox)
+IMPLEMENT_DYNAMIC(StyleComboBox,CEdit)
 
 StyleComboBox::StyleComboBox()
 {
@@ -55,7 +55,7 @@ StyleComboBox::~StyleComboBox()
   }
 }
 
-BEGIN_MESSAGE_MAP(StyleComboBox,CComboBox)
+BEGIN_MESSAGE_MAP(StyleComboBox,CEdit)
   // General messages
   ON_WM_SIZE()
   ON_WM_PAINT()
@@ -169,7 +169,6 @@ StyleComboBox::InitSkin()
   // Create our own sub-controls!
   CreateEditControl();
   CreateListControl();
-
 }
 
 void
@@ -896,7 +895,7 @@ StyleComboBox::OnChar(UINT nChar,UINT nRepCnt,UINT nFlags)
     m_itemControl->OnChar(nChar,nRepCnt,nFlags);
     return;
   }
-  CComboBox::OnChar(nChar,nRepCnt,nFlags);
+  CEdit::OnChar(nChar,nRepCnt,nFlags);
 
   if((nChar == VK_TAB) && m_itemControl)
   {
@@ -1131,7 +1130,7 @@ StyleComboBox::OnMouseMove(UINT nFlags, CPoint point)
 
     m_itemControl->OnMouseHover(0,0);
   }
-  CComboBox::OnMouseMove(nFlags,point);
+  CEdit::OnMouseMove(nFlags,point);
 }
 
 void
@@ -1143,7 +1142,7 @@ StyleComboBox::OnMouseLeave()
 void
 StyleComboBox::OnSize(UINT nType, int cx, int cy)
 {
-  CComboBox::OnSize(nType,cx,cy);
+  CEdit::OnSize(nType,cx,cy);
 
   if(m_itemControl)
   {
@@ -1187,13 +1186,27 @@ StyleComboBox::OnEraseBkgnd(CDC* pdc)
 int   
 StyleComboBox::AddString(LPCTSTR lpszString)
 {
-  return m_listControl->AddString(lpszString);
+  int index = -1;
+  if(m_listControl)
+  {
+    index = m_listControl->AddString(lpszString);
+    int height = GetItemHeight(-1);
+    if(height != CB_ERR)
+    {
+      m_listControl->SetItemHeight(index,height);
+    }
+  }
+  return index;
 }
 
 int
 StyleComboBox::DeleteString(UINT nIndex)
 {
+  if(m_listControl)
+  {
   return m_listControl->DeleteString(nIndex);
+}
+  return -1;
 }
 
 int
@@ -1339,19 +1352,38 @@ StyleComboBox::GetItemData(int nIndex) const
 void*
 StyleComboBox::GetItemDataPtr(int nIndex) const
 {
+  if(m_listControl)
+  {
   return m_listControl->GetItemDataPtr(nIndex);
+}
+  return nullptr;
 }
 
 int
 StyleComboBox::GetItemHeight(int nIndex) const
 {
+  if(nIndex == -1)
+  {
+    // Calculate the itemheight within the skin!
+    CRect rect;
+    GetWindowRect(rect);
+    return rect.Height() - (2 * STYLE_TEXTEDIT_BORDER);
+  }
+  if(m_listControl)
+  {
   return m_listControl->GetItemHeight(nIndex);
+}
+  return CB_ERR;
 }
 
 int
 StyleComboBox::GetLBText(int nIndex,LPTSTR lpszText) const
 {
+  if(m_listControl)
+  {
   return m_listControl->GetText(nIndex,lpszText);
+}
+  return 0;
 }
 
 void
@@ -1650,6 +1682,83 @@ StyleComboBox::IsWindowEnabled()
   return m_itemControl->IsWindowEnabled();
 }
 
+void
+StyleComboBox::SetEmpty(bool p_empty,CString p_text /*= ""*/)
+{
+  if(m_itemControl)
+  {
+    m_itemControl->SetEmpty(p_empty,p_text);
+  }
+}
+
+void
+StyleComboBox::SetTextColorEmpty(COLORREF p_color)
+{
+  if(m_itemControl)
+  {
+    m_itemControl->SetTextColorEmpty(p_color);
+  }
+}
+
+void
+StyleComboBox::SetBackgroundColorEmpty(COLORREF p_color)
+{
+  if(m_itemControl)
+  {
+    m_itemControl->SetBackgroundColorEmpty(p_color);
+  }
+}
+
+bool
+StyleComboBox::GetIsEmpty()
+{
+  if(m_itemControl)
+  {
+    m_itemControl->GetIsEmpty();
+  }
+  return false;
+}
+
+CString
+StyleComboBox::GetEmptyText()
+{
+  if(m_itemControl)
+  {
+    return m_itemControl->GetEmptyText();
+  }
+  return "";
+}
+
+void
+StyleComboBox::SetFontSize(int p_size)
+{
+  if(m_itemControl && m_listControl)
+  {
+    m_itemControl->SetFontSize(p_size);
+    m_listControl->SetFontSize(p_size);
+  }
+}
+
+void
+StyleComboBox::SetFontStyle(bool p_bold,bool p_italic /*= false*/,bool p_underLine /*= false*/)
+{
+  if(m_itemControl && m_listControl)
+  {
+    m_itemControl->SetFontStyle(p_bold,p_italic,p_underLine);
+    m_listControl->SetFontStyle(p_bold,p_italic,p_underLine);
+  }
+}
+
+void
+StyleComboBox::SetFontName(CString p_fontName,int p_fontSize /*= 100*/,BYTE p_language /*= DEFAULT_CHARSET*/)
+{
+  if(m_itemControl && m_listControl)
+  {
+    m_itemControl->SetFontName(p_fontName,p_fontSize,p_language);
+    m_listControl->SetFontName(p_fontName,p_fontSize,p_language);
+  }
+}
+
 //////////////////////////////////////////////////////////////////////////
 //
 // PAINT CODE
@@ -1668,6 +1777,11 @@ StyleComboBox::OnPaint()
     CRect rcItem;
     this->GetClientRect(&rcItem);
 
+    CRect editItem(rcItem);
+    if(m_itemControl->GetSkin())
+    {
+      m_itemControl->GetSkin()->GetClientRect(&editItem);
+    }
     // Find the arrow color
     COLORREF color = ThemeColor::GetColor(Colors::AccentColor1);
     if(m_arrowColor)
@@ -1685,8 +1799,8 @@ StyleComboBox::OnPaint()
     HGDIOBJ orgpen = dc->SelectObject(pen);
 
     // Paint the button
-    int size = rcItem.Height();
-    CRect but(rcItem.right-size,rcItem.top,rcItem.right,rcItem.bottom);
+    int size = editItem.Height();
+    CRect but(rcItem.right-size,rcItem.top,rcItem.right,rcItem.top + size);
     DWORD background = ThemeColor::GetColor(Colors::ColorCtrlBackground);
     if(m_buttonDown)
     {
@@ -2612,7 +2726,7 @@ void AFXAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleComboBox& p_control)
 
 void WINAPI DDX_CBString(CDataExchange* pDX,int nIDC,StyleComboBox& p_control,CString& p_text)
 {
-  CComboBox& parent = reinterpret_cast<CComboBox&>(p_control);
+  CWnd& parent = reinterpret_cast<CWnd&>(p_control);
   DDX_Control(pDX,nIDC,parent);
   p_control.InitSkin();
 
@@ -2628,7 +2742,7 @@ void WINAPI DDX_CBString(CDataExchange* pDX,int nIDC,StyleComboBox& p_control,CS
 
 void WINAPI DDX_CBIndex(CDataExchange* pDX,int nIDC,StyleComboBox& p_control,int& p_index)
 {
-  CComboBox& parent = reinterpret_cast<CComboBox&>(p_control);
+  CWnd& parent = reinterpret_cast<CWnd&>(p_control);
   DDX_Control(pDX,nIDC,parent);
   p_control.InitSkin();
 

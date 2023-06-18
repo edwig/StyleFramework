@@ -10,6 +10,18 @@
 //
 // RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES
 
+VERSION OF 05-06-2023
+---------------------
+1) It is now possible to create StyleComboBox'es that can have a non-standard height.
+   In stead of a CComboBox on the resources, you can use a dynamic resource with a Rect size
+   of your own liking.
+   Take the following steps after declaring your StyleComboBox
+
+   m_myCombo.Create(WS_CHILD|WS_VISIBLE|WS_TABSTOP|CBS_DROPDOWNLIST,rect,this,IDC_MYCONTROL);
+   m_myCombo.InitSkin();
+   m_myCombo.ReadjustDynamic();
+
+
 VERSION OF 02-02-2023
 ---------------------
 1) StyleListBox now knows how to sort it's items
