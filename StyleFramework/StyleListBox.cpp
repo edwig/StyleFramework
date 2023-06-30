@@ -177,14 +177,30 @@ StyleListBox::OnShowWindow(BOOL bShow, UINT nStatus)
 int 
 StyleListBox::AddString(LPCTSTR p_string)
 {
-  return AppendString(p_string);
+  // Add string anyhow, so we can honour the LBS_SORT settings
+  int result = CListBox::AddString(p_string);
+  if(result != LB_ERR)
+  {
+    if(GetStyle() & LBS_OWNERDRAWFIXED)
+    {
+      ListBoxColorLine* line = new ListBoxColorLine();
+      line->m_foreground = FRAME_DEFAULT_COLOR;
+      line->m_background = FRAME_DEFAULT_COLOR;
+      line->m_text       = p_string;
+
+      SetItemPointer(result,line);
+    }
+    UpdateWidth(p_string);
+    AdjustScroll();
+  }
+  return result;
 }
 
 int 
 StyleListBox::InsertString(int p_index,LPCTSTR p_string,COLORREF p_foreground,COLORREF p_background)
 {
-  bool owner = (GetStyle() & LBS_OWNERDRAWFIXED) > 0;
-  int result = CListBox::InsertString(p_index,owner ? "" : p_string);
+  // Add string anyhow, so we can honour the LBS_SORT settings
+  int result = CListBox::InsertString(p_index,p_string);
   if (result != LB_ERR)
   {
     if (GetStyle() & LBS_OWNERDRAWFIXED)
@@ -205,8 +221,8 @@ StyleListBox::InsertString(int p_index,LPCTSTR p_string,COLORREF p_foreground,CO
 int 
 StyleListBox::AppendString(LPCSTR p_string,COLORREF p_foreground,COLORREF p_background)
 {
-  bool owner = (GetStyle() & LBS_OWNERDRAWFIXED) > 0;
-  int result = CListBox::AddString(owner ? "" : p_string);
+  // Add string anyhow, so we can honour the LBS_SORT settings
+  int result = CListBox::InsertString(-1,p_string);
   if (result != LB_ERR)
   {
     if(GetStyle() & LBS_OWNERDRAWFIXED)
