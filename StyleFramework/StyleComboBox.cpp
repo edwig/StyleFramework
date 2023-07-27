@@ -399,6 +399,7 @@ void
 StyleComboBox::PostShowComboList()
 {
   // Provide your own override if neccessary
+  m_listControl->SetFocus();
 }
 
 void StyleComboBox::PreHideComboList() 
@@ -1034,7 +1035,7 @@ StyleComboBox::OnSetFocus(CWnd* pOldWnd)
   if(m_itemControl && pOldWnd != m_itemControl)
   {
     CWnd* owner = GetOwner();
-    if(owner)
+    if(owner && !m_listControl->IsWindowVisible())
     {
       ::PostMessage(owner->GetSafeHwnd(),WM_COMMAND,MAKELONG(GetDlgCtrlID(),CBN_SETFOCUS),(LPARAM)m_hWnd);
     }
@@ -1045,10 +1046,13 @@ StyleComboBox::OnSetFocus(CWnd* pOldWnd)
   CPoint here = GetCaretPos();
   if(!rect.PtInRect(here))
   {
-    // We are not on the combobox button
-    if(m_itemControl)
+    if(!m_listControl->IsWindowVisible())
     {
-      m_itemControl->SetFocus();
+      // We are not on the combobox button and listcontrol is visible
+      if(m_itemControl)
+      {
+        m_itemControl->SetFocus();
+      }
     }
   }
 }
@@ -2637,25 +2641,31 @@ SCBListBox::PreTranslateMessage(MSG* pMsg)
     if(nchar == VK_UP    || nchar == VK_DOWN ||
        nchar == VK_PRIOR || nchar == VK_NEXT)
     {
+      int index = GetCaretIndex();
+      int page  = m_combo->GetMinVisible();
+
+      switch(nchar)
+      {
+        case VK_UP:    --index;       break;
+        case VK_DOWN:  ++index;       break;
+        case VK_PRIOR: index -= page; break;
+        case VK_NEXT:  index += page; break;
+      }
+      if(index >= GetCount()) index = GetCount() - 1;
+      if(index < 0)           index = 0;
+
       if(m_multiSelect)
       {
-        int index = GetCaretIndex();
-        int page  = m_combo->GetMinVisible();
-
-        switch(nchar)
-        {
-          case VK_UP:    --index;       break;
-          case VK_DOWN:  ++index;       break;
-          case VK_PRIOR: index -= page; break;
-          case VK_NEXT:  index += page; break;
-        }
-        if(index >= GetCount()) index = GetCount() - 1;
-        if(index < 0)           index = 0;
-
         ShowMultiSelection();
         SetCaretIndex(index);
-        return TRUE;
       }
+      else
+      {
+        SetCurSel(index);
+        SetCaretIndex(index);
+        Invalidate();
+      }
+      return TRUE;
     }
     if(nchar == VK_ESCAPE || nchar == VK_BACK)
     {
