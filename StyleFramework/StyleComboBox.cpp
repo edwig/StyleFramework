@@ -142,20 +142,23 @@ StyleComboBox::PreSubclassWindow()
   }
 
   // Owner draw combo boxes get other dimensions, so correct these
-  if((GetStyle() & CBS_OWNERDRAWFIXED) && GetSFXSizeFactor() != 100)
+  // Comboboxes are slightly lower than edit boxes, but when we draw them
+  // as CEdit with a StyleFrame, the tend to be too low!
+  CRect rect;
+  ::GetWindowRect(info.hwndCombo,&rect);
+  CWnd* parent = GetParent();
+  if(parent)
   {
-    int height = (20 * GetSFXSizeFactor()) / 100;
-
-    CRect rect;
-    ::GetWindowRect(info.hwndCombo,&rect);
-
-    CWnd* parent = GetParent();
-    if(parent)
-    {
-      parent->ScreenToClient(rect);
-    }
-    ::MoveWindow(info.hwndCombo,rect.left,rect.top,rect.Width(),height,TRUE);
+    parent->ScreenToClient(rect);
   }
+  int height = (rect.Height() * 13) / 11;
+
+  // When size factors are set, apply these as well.
+  if(GetSFXSizeFactor() != 100)
+  {
+    height = (height * GetSFXSizeFactor()) / 100;
+  }
+  ::MoveWindow(info.hwndCombo,rect.left,rect.top,rect.Width(),height,TRUE);
 }
 
 void

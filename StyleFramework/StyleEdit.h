@@ -31,7 +31,7 @@
 // Default font name
 #define   STYLE_DEFAULT_FONT     "Verdana"
 #define   STYLE_DEFAULT_FONTSIZE 100 // 10.punts font
-#define   STYLE_TEXTEDIT_BORDER  1   // Standard multiline text box
+#define   STYLE_TEXTEDIT_BORDER  2   // Standard multiline text box
 #define   STYLE_SINGLELN_BORDER  5   // Single-line MFC Wizard 
 
 // For detecting the background color
