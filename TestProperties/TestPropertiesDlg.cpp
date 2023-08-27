@@ -47,7 +47,7 @@ BOOL
 CAboutDlg::OnInitDialog()
 {
 	StyleDialog::OnInitDialog();
-	SetWindowText("About...");
+	SetWindowText(_T("About..."));
 	return TRUE;
 }
 
@@ -89,8 +89,8 @@ END_MESSAGE_MAP()
 BOOL TestPropertiesDlg::OnInitDialog()
 {
 	StyleDialog::OnInitDialog();
-	SetWindowText("Test Property pages");
-  SetWindowText("My Settings dialog");
+	SetWindowText(_T("Test Property pages"));
+  SetWindowText(_T("My Settings dialog"));
 
 	// Add extra initialization here
 	ShowMinMaxButton();
@@ -127,11 +127,11 @@ TestPropertiesDlg::InitTabs()
 	m_page1->Create(IDD_TESTPAGE1,&m_tabs);
 	m_page2->Create(IDD_TESTPAGE2,&m_tabs);
 
-  m_tabs.InsertItem(0, m_page1, "First Page");
-  m_tabs.InsertItem(1, m_page2, "Second Page");
-  m_tabs.InsertItem(2, nullptr, "Third Page");
-  m_tabs.InsertItem(3, nullptr, "Fourth Page");
-  m_tabs.InsertItem(4, nullptr, "Fifth Page");
+  m_tabs.InsertItem(0, m_page1, _T("First Page"));
+  m_tabs.InsertItem(1, m_page2, _T("Second Page"));
+  m_tabs.InsertItem(2, nullptr, _T("Third Page"));
+  m_tabs.InsertItem(3, nullptr, _T("Fourth Page"));
+  m_tabs.InsertItem(4, nullptr, _T("Fifth Page"));
 
   m_tabs.SetImages(IDB_TABICONS);
   m_tabs.SetTabImage(0, 0);

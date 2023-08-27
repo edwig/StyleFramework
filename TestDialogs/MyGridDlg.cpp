@@ -52,12 +52,12 @@ BOOL
 MyGridDlg::OnInitDialog()
 {
   StyleDialog::OnInitDialog();
-  SetWindowText("My Grid testing dialog");
+  SetWindowText(_T("My Grid testing dialog"));
   SetSysMenu(IDR_MENU4);
   SetAboutBoxAndIcon(IDM_ABOUTBOX,IDS_ABOUTBOX);
 
-  m_buttonOK.SetStyle("ok");
-  m_buttonCancel.SetStyle("can");
+  m_buttonOK.SetStyle(_T("ok"));
+  m_buttonCancel.SetStyle(_T("can"));
 
   FillGrid();
 
@@ -94,11 +94,11 @@ MyGridDlg::FillGrid()
   m_grid.SetColumnCount(5);
   m_grid.SetRowCount(1);
   m_grid.SetFixedRowCount(1);
-  m_grid.GetCell(0, 0)->SetText("Index");
-  m_grid.GetCell(0, 1)->SetText("Variable");
-  m_grid.GetCell(0, 2)->SetText("Value");
-  m_grid.GetCell(0, 3)->SetText("ComboBox");
-  m_grid.GetCell(0, 4)->SetText("CheckBox");
+  m_grid.GetCell(0, 0)->SetText(_T("Index"));
+  m_grid.GetCell(0, 1)->SetText(_T("Variable"));
+  m_grid.GetCell(0, 2)->SetText(_T("Value"));
+  m_grid.GetCell(0, 3)->SetText(_T("ComboBox"));
+  m_grid.GetCell(0, 4)->SetText(_T("CheckBox"));
   m_grid.SetColumnWidth(0, 80);
   m_grid.SetColumnWidth(1, 280);
   m_grid.SetColumnWidth(2, 280);
@@ -116,9 +116,9 @@ MyGridDlg::FillGrid()
     CString col1;
     CString col2;
     CString col3;
-    col1.Format("%02d", index + 1);
-    col2.Format("Var_%02d", 50 - index);
-    col3.Format("VALUE_%03d_LONGER", 3 * index);
+    col1.Format(_T("%02d"), index + 1);
+    col2.Format(_T("Var_%02d"), 50 - index);
+    col3.Format(_T("VALUE_%03d_LONGER"), 3 * index);
 
     int row = m_grid.InsertRow(col1);
     m_grid.GetCell(row, 1)->SetText(col2);
@@ -150,15 +150,15 @@ void
 MyGridDlg::SetComboList(CGridCellCombo* p_combo)
 {
   CStringArray list;
-  list.Add("First choice");
-  list.Add("Second 2");
-  list.Add("3 = Third");
-  list.Add("Four = 4");
-  list.Add("Firth of Fifth");
+  list.Add(_T("First choice"));
+  list.Add(_T("Second 2"));
+  list.Add(_T("3 = Third"));
+  list.Add(_T("Four = 4"));
+  list.Add(_T("Firth of Fifth"));
 
   for (int i = 0; i < 30; ++i)
   {
-    list.Add("Another one");
+    list.Add(_T("Another one"));
   }
 
   p_combo->SetOptions(list);
@@ -179,7 +179,7 @@ MyGridDlg::OnSelChangedGrid(NMHDR* p_nmhdr,LRESULT* p_result)
 {
   NM_GRIDVIEW* pItem = (NM_GRIDVIEW*)p_nmhdr;
   CString debug;
-  debug.Format("End Selection Change on row %d, col %d (%d Selected)\r\n",
+  debug.Format(_T("End Selection Change on row %d, col %d (%d Selected)\r\n"),
                pItem->iRow
               ,pItem->iColumn
               ,m_grid.GetSelectedCount());
@@ -192,7 +192,7 @@ MyGridDlg::OnGridEndEdit(NMHDR* p_nmhdr, LRESULT* p_result)
 {
   NM_GRIDVIEW* pItem = (NM_GRIDVIEW*)p_nmhdr;
   CString debug;
-  debug.Format("End Edit on row %d, col %d\r\n",pItem->iRow,pItem->iColumn);
+  debug.Format(_T("End Edit on row %d, col %d\r\n"),pItem->iRow,pItem->iColumn);
   AddToText(debug);
   *p_result = 0;
 }

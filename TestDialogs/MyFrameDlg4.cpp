@@ -52,15 +52,15 @@ BOOL
 MyFrameDlg4::OnInitDialog()
 {
   StyleDialog::OnInitDialog();
-  SetWindowText("Testing menus");
+  SetWindowText(_T("Testing menus"));
   
   ShowMinMaxButton();
   SetSysMenu(IDR_MENU4);
   SetAboutBoxAndIcon(IDM_ABOUTBOX,IDS_ABOUTBOX);
 
-  m_buttonError .SetStyle("rem");
-  m_buttonOK    .SetStyle("ok");
-  m_buttonCancel.SetStyle("can");
+  m_buttonError .SetStyle(_T("rem"));
+  m_buttonOK    .SetStyle(_T("ok"));
+  m_buttonCancel.SetStyle(_T("can"));
 
   // And trigger SetupDynamicLayout method
   SetCanResize();
@@ -105,10 +105,10 @@ MyFrameDlg4::SetStatusPanes()
   m_statusBar.SetPaneInfo(2, 0, SBPS_STRETCH, 80);
   m_statusBar.SetPaneInfo(3, 0, SBPS_NORMAL , 80);
 
-  m_statusBar.SetPaneText(0, "Pane One");
-  m_statusBar.SetPaneText(1, "Pane Two");
-  m_statusBar.SetPaneText(2, "Pane Three");
-  m_statusBar.SetPaneText(3, "XX - YY");
+  m_statusBar.SetPaneText(0, _T("Pane One"));
+  m_statusBar.SetPaneText(1, _T("Pane Two"));
+  m_statusBar.SetPaneText(2, _T("Pane Three"));
+  m_statusBar.SetPaneText(3, _T("XX - YY"));
 }
 
 // MyFrameDlg4 message handlers
@@ -142,17 +142,17 @@ MyFrameDlg4::OnBnClickedError()
 {
   if(m_edit1.GetErrorState())
   {
-    m_edit1.SetErrorState(false, "");
+    m_edit1.SetErrorState(false, _T(""));
   }
   else
   {
-    m_edit1.SetErrorState(true, "Not allowed");
+    m_edit1.SetErrorState(true, _T("Not allowed"));
   }
 }
 
 void 
 MyFrameDlg4::OnBnClickedOk()
 {
-  StyleMessageBox(this,m_info1,"TEST");
+  StyleMessageBox(this,m_info1,_T("TEST"));
   StyleDialog::OnOK();
 }

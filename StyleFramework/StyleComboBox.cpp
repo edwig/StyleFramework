@@ -203,7 +203,7 @@ StyleComboBox::CreateEditControl()
   // Create the edit control
   m_itemControl = new SCBTextEdit();
   m_itemControl->SetDirectInit(false);
-  m_itemControl->CreateEx(styleEx,"EDIT","",style,rect,this,0);
+  m_itemControl->CreateEx(styleEx,_T("EDIT"),_T(""),style,rect,this,0);
   m_itemControl->ModifyStyle(0,WS_BORDER);
   m_itemControl->SetBorderSize(3);
   m_itemControl->SetComboBox(this);
@@ -242,7 +242,7 @@ StyleComboBox::CreateListControl()
     style |= LBS_EXTENDEDSEL;
     m_listControl->SetMultiSelect(m_multiselect = true);
   }
-  m_listControl->CreateEx(styleEx,"LISTBOX","",style,rect,CWnd::FromHandle(::GetDesktopWindow()),0);
+  m_listControl->CreateEx(styleEx,_T("LISTBOX"),_T(""),style,rect,CWnd::FromHandle(::GetDesktopWindow()),0);
   m_listControl->InitSkin();
   if(m_listControl->GetSkin())
   {
@@ -372,7 +372,7 @@ StyleComboBox::SetCheck(int p_index,bool p_check)
 }
 
 void  
-StyleComboBox::InsertAtCurPos(const char* p_text,int p_offset)
+StyleComboBox::InsertAtCurPos(LPCTSTR p_text,int p_offset)
 {
   m_itemControl->InsertAtCurPos(p_text,p_offset);
 }
@@ -631,7 +631,7 @@ StyleComboBox::OnGetCount(WPARAM wParam,LPARAM lParam)
 LRESULT 
 StyleComboBox::OnGetCueBanner(WPARAM wParam,LPARAM lParam)
 {
-  return GetCueBanner((LPSTR)wParam,(int)lParam);
+  return GetCueBanner((LPTSTR)wParam,(int)lParam);
 }
 
 LRESULT 
@@ -877,7 +877,7 @@ StyleComboBox::OnGetText(WPARAM wParam,LPARAM lParam)
 {
   CString text;
   m_itemControl->GetWindowText(text);
-  lstrcpyn((LPSTR)lParam,text,(INT)wParam);
+  lstrcpyn((LPTSTR)lParam,text,(INT)wParam);
   return text.GetLength();
 }
 
@@ -1224,7 +1224,7 @@ StyleComboBox::FindString(int nStartAfter,LPCTSTR lpszString) const
   {
     nStartAfter = -1;
   }
-  int len = (int) strlen(lpszString);
+  int len = (int) _tcslen(lpszString);
   CString text;
   for(int ind = 0;ind < m_listControl->GetCount();++ind)
   {
@@ -1282,12 +1282,12 @@ StyleComboBox::GetCount() const
 }
 
 BOOL 
-StyleComboBox::GetCueBanner(LPSTR  lpszText,int cchText) const
+StyleComboBox::GetCueBanner(LPTSTR lpszText,int cchText) const
 {
   CString text = m_itemControl->GetEmptyText();
   if(text.GetLength() <= cchText)
   {
-    strcpy_s(lpszText,cchText,text.GetString());
+    _tcscpy_s(lpszText,cchText,text.GetString());
     return TRUE;
   }
   return FALSE;
@@ -1464,7 +1464,7 @@ StyleComboBox::SelectString(int nStartAfter, LPCTSTR lpszString)
 }
 
 BOOL
-StyleComboBox::SetCueBanner(LPCSTR lpszText,BOOL /* fDrawIfFocused = FALSE*/)
+StyleComboBox::SetCueBanner(LPCTSTR lpszText,BOOL /* fDrawIfFocused = FALSE*/)
 {
   CString text(lpszText);
   m_itemControl->SetEmpty(true,text);
@@ -1662,7 +1662,7 @@ StyleComboBox::OnGetText(int nMaxChars,LPTSTR lpszText)
   {
     length = nMaxChars;
   }
-  strcpy_s(lpszText,nMaxChars,text.GetString());
+  _tcscpy_s(lpszText,nMaxChars,text.GetString());
   return length;
 }
 
@@ -2162,7 +2162,7 @@ SCBTextEdit::OnPaste()
     HANDLE glob = GetClipboardData(CF_TEXT);
     if(glob)
     {
-      LPSTR text = (LPSTR)GlobalLock(glob);
+      LPTSTR text = (LPTSTR)GlobalLock(glob);
       CEdit::SetWindowText(text);
       GlobalUnlock(glob);
 

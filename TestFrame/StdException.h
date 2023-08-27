@@ -20,9 +20,9 @@ class StdException
 public:
   // Application type constructors
   explicit StdException(int p_errorCode);
-  explicit StdException(const char* p_fault);
+  explicit StdException(LPCTSTR p_fault);
   explicit StdException(const CString& p_fault);
-  StdException(int p_errorCode,const char* p_fault);
+  StdException(int p_errorCode,LPCTSTR p_fault);
   // Construct from a SafeExceptionHandler (SEH)
 	StdException(UINT p_safe,_EXCEPTION_POINTERS* p_exceptionPointers);
 	StdException(const StdException& p_other);

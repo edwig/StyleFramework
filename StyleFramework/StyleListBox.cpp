@@ -219,9 +219,9 @@ StyleListBox::InsertString(int p_index,LPCTSTR p_string,COLORREF p_foreground,CO
 }
 
 int 
-StyleListBox::AppendString(LPCSTR p_string,COLORREF p_foreground,COLORREF p_background)
+StyleListBox::AppendString(LPCTSTR p_string,COLORREF p_foreground,COLORREF p_background)
 {
-  // Add string anyhow, so we can honour the LBS_SORT settings
+  // Add string anyhow, so we can honor the LBS_SORT settings
   int result = CListBox::InsertString(-1,p_string);
   if (result != LB_ERR)
   {
@@ -520,7 +520,7 @@ StyleListBox::Copy()
     void* data = GlobalLock(memory);
     if(data)
     {
-      strncpy_s((char*)data,size,result.GetString(),size);
+      _tcsncpy_s((PTCHAR)data,size,result.GetString(),size);
     }
     GlobalUnlock(memory);
 
@@ -580,7 +580,7 @@ StyleListBox::Paste()
     // Insert into the listbox
     while(text.GetLength())
     {
-      int pos = text.FindOneOf("\r\n");
+      int pos = text.FindOneOf(_T("\r\n"));
       if (pos > 0)
       {
         CString part = text.Left(pos);
@@ -715,7 +715,7 @@ StyleListBox::GetText(int p_index,LPTSTR p_buffer) const
       if(listBox && listBox->m_magic == LIST_MAGIC)
       {
         length = listBox->m_text.GetLength() + 1;
-        strcpy_s(p_buffer, length, listBox->m_text.GetString());
+        _tcscpy_s(p_buffer, length, listBox->m_text.GetString());
       }
     }
     else
@@ -786,7 +786,7 @@ StyleListBox::UpdateWidth(LPCTSTR p_string)
 
   // Guard against really long strings like SOAP messages
   int len = 0;
-  const char* pos = strchr(p_string,'\n');
+  LPCTSTR pos = _tcschr(p_string,'\n');
   if(pos)
   {
     len = (int)(pos - p_string);
@@ -822,7 +822,7 @@ StyleListBox::AdjustScroll()
 void    
 StyleListBox::RemoveLineNumber(CString& p_text)
 {
-  int pos = p_text.Find(": ");
+  int pos = p_text.Find(_T(": "));
   if(pos >= 0)
   {
     CString number = p_text.Left(pos);
@@ -1067,7 +1067,7 @@ StyleListBox::ResetFont()
   lgFont.lfCharSet        = m_language;
   lgFont.lfClipPrecision  = 0;
   lgFont.lfEscapement     = 0;
-  strcpy_s(lgFont.lfFaceName,LF_FACESIZE,m_fontName);
+  _tcscpy_s(lgFont.lfFaceName,LF_FACESIZE,m_fontName);
   lgFont.lfHeight         = m_fontSize;
   lgFont.lfItalic         = m_italic;
   lgFont.lfOrientation    = 0;

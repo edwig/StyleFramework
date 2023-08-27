@@ -49,7 +49,7 @@ MyFrameDlg5::OnInitDialog()
 {
   LoadStyleTheme();
   StyleDialog::OnInitDialog();
-  SetWindowText("Testing the ListBox");
+  SetWindowText(_T("Testing the ListBox"));
   ShowMinMaxButton();
   SetSysMenu(IDR_MENU4);
   ShowSysMenu();
@@ -98,7 +98,7 @@ MyFrameDlg5::OnBnClickedAdd()
 {
   if(m_string.IsEmpty())
   {
-    StyleMessageBox(this,"Fill in a text first","ERROR",MB_OK | MB_ICONERROR);
+    StyleMessageBox(this,_T("Fill in a text first"),_T("ERROR"),MB_OK | MB_ICONERROR);
     return;
   }
   m_list1.AddString(m_string);
@@ -113,7 +113,7 @@ MyFrameDlg5::OnLbnSelchangeList1()
   {
     CString text;
     m_list1.GetText(ind,text);
-    StyleMessageBox(this,text,"List 1",MB_OK);
+    StyleMessageBox(this,text,_T("List 1"),MB_OK);
   }
 }
 
@@ -125,7 +125,7 @@ MyFrameDlg5::OnLbnSelchangeList2()
   {
     CString text;
     m_list2.GetText(ind, text);
-    StyleMessageBox(this, text, "List 2", MB_OK);
+    StyleMessageBox(this, text, _T("List 2"), MB_OK);
   }
 }
 
@@ -139,7 +139,7 @@ MyFrameDlg5::OnBnClickedLegen()
 void
 MyFrameDlg5::OnBnClickedPrinten()
 {
-  m_list1.Print("Left side list");
+  m_list1.Print(_T("Left side list"));
 }
 
 void 

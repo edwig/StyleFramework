@@ -15,7 +15,7 @@
 MyFrameDlg::MyFrameDlg(CWnd* p_parent /*=nullptr*/)
            :StyleDialog(IDD,p_parent,true,true)
 {
-	m_text = "Select one of the following tests";
+	m_text = _T("Select one of the following tests");
 }
 
 MyFrameDlg::~MyFrameDlg()
@@ -72,7 +72,7 @@ BOOL
 MyFrameDlg::OnInitDialog()
 {
   StyleDialog::OnInitDialog();
-	SetWindowText("Select a test");
+	SetWindowText(_T("Select a test"));
   return TRUE;
 }
 

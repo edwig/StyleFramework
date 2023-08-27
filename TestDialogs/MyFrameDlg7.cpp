@@ -62,13 +62,13 @@ BOOL
 MyFrameDlg7::OnInitDialog()
 {
   StyleDialog::OnInitDialog();
-  SetWindowText("Testing the progress control");
+  SetWindowText(_T("Testing the progress control"));
   SetSysMenu(IDR_MENU4);
   ShowMinMaxButton(true, false);
   SetAboutBoxAndIcon(IDM_ABOUTBOX,IDS_ABOUTBOX);
 
-  m_buttonOK    .SetStyle("ok");
-  m_buttonCancel.SetStyle("can");
+  m_buttonOK    .SetStyle(_T("ok"));
+  m_buttonCancel.SetStyle(_T("can"));
 
   UpdateData(FALSE);
 

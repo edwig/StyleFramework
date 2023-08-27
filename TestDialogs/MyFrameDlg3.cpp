@@ -68,7 +68,7 @@ BOOL
 MyFrameDlg3::OnInitDialog()
 {
   StyleDialog::OnInitDialog();
-  SetWindowText("Testing the StyleEditText control");
+  SetWindowText(_T("Testing the StyleEditText control"));
   ShowMinMaxButton(true,false);
   SetSysMenu(IDR_MENU4);
   SetAboutBoxAndIcon(IDM_ABOUTBOX,IDS_ABOUTBOX);
@@ -76,18 +76,18 @@ MyFrameDlg3::OnInitDialog()
   RegisterTooltips();
 
   m_edit4.SetMandatory();
-  m_edit4.SetEmpty(true,"*");
-  m_directoryEdit4.SetStyle("dir");
+  m_edit4.SetEmpty(true,_T("*"));
+  m_directoryEdit4.SetStyle(_T("dir"));
 
   m_edit5.SetCalendar();
-  m_calendarEdit5.SetStyle("cal");
+  m_calendarEdit5.SetStyle(_T("cal"));
 
   // m_string7 = "Testing";
   m_edit7.SetPassword();
-  m_edit7.SetEmpty(true,"Enter password");
+  m_edit7.SetEmpty(true,_T("Enter password"));
 
   // Our status field
-  m_status = "The current status";
+  m_status = _T("The current status");
   m_editStatus.SetMutable(false);
   m_editStatus.SetTextColor(RGB(255,0,0));
   m_editStatus.SetBorderColor(RGB(255,0,0));  // Purple
@@ -117,8 +117,8 @@ MyFrameDlg3::RegisterTooltips()
 {
   EnableToolTips();
 
-  RegisterTooltip(IDC_EDIT1,"This is a tooltip for the first field");
-  RegisterTooltip(m_edit4,  "This is a tooltip for the fourth field(Skinned!)");
+  RegisterTooltip(IDC_EDIT1,_T("This is a tooltip for the first field"));
+  RegisterTooltip(m_edit4,  _T("This is a tooltip for the fourth field(Skinned!)"));
 }
 
 // MyFrameDlg3 message handlers
@@ -168,8 +168,8 @@ void MyFrameDlg3::OnEnChangeEdit6()
 
   CString text;
   m_edit6.GetWindowText(text);
-  bool error = text.CompareNoCase("error") == 0;
-  m_edit6.SetErrorState(error,"You cannot enter 'error' here!");
+  bool error = text.CompareNoCase(_T("error")) == 0;
+  m_edit6.SetErrorState(error,_T("You cannot enter 'error' here!"));
 }
 
 void MyFrameDlg3::OnEnChangeEdit7()

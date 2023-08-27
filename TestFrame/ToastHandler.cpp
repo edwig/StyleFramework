@@ -29,7 +29,7 @@ WinToastHandler::toastActivated() const
 {
   if(m_dialog)
   {
-    m_dialog->MessageBox("toastActivated: No button clicked!", "info", MB_OK | MB_SETFOREGROUND);
+    m_dialog->MessageBox(_T("toastActivated: No button clicked!"),_T("info"), MB_OK | MB_SETFOREGROUND);
     return;
   }
   if(m_mainFrame)
@@ -52,8 +52,8 @@ WinToastHandler::toastActivated(int actionIndex) const
   if (m_dialog)
   {
     CString activated;
-    activated.Format("Button clicked: %d", actionIndex);
-    m_dialog->MessageBox(activated, "Info", MB_OK | MB_SETFOREGROUND);
+    activated.Format(_T("Button clicked: %d"), actionIndex);
+    m_dialog->MessageBox(activated, _T("Info"), MB_OK | MB_SETFOREGROUND);
   }
   if(m_mainFrame)
   {
@@ -79,7 +79,7 @@ WinToastHandler::toastDismissed(WinToastDismissalReason state) const
     case ApplicationHidden: reason = "Toast dismissed: ApplicationHidden\n"; break;
     case TimedOut:          reason = "Toast dismissed: TimedOut\n";          break;
   }
-  OutputDebugString(reason.c_str());
+  OutputDebugString(CA2W(reason.c_str()));
 
   if(m_dialog)
   {
@@ -102,5 +102,5 @@ WinToastHandler::toastDismissed(WinToastDismissalReason state) const
 void 
 WinToastHandler::toastFailed() const
 {
-  OutputDebugString("toastFailed() called\n");
+  OutputDebugString(CA2W("toastFailed() called\n"));
 }

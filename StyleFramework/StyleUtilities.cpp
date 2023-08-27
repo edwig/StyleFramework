@@ -62,14 +62,14 @@ bool Contains(CString p_string,CString p_tag)
 CString IntegerToString(int p_number)
 {
   CString number;
-  number.Format("%d",p_number);
+  number.Format(_T("%d"),p_number);
   return number;
 }
 
 CString NumToString(int p_number)
 {
   CString number;
-  number.Format("%d",p_number);
+  number.Format(_T("%d"),p_number);
   return number;
 }
 

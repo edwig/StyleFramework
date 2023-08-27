@@ -51,7 +51,7 @@ BOOL
 MyFrameDlg6::OnInitDialog()
 { 
   StyleDialog::OnInitDialog();
-  SetWindowText("Testing the TreeControl");
+  SetWindowText(_T("Testing the TreeControl"));
   ShowMinMaxButton();
   SetSysMenu(IDR_MENU4);
   ShowSysMenu();
@@ -104,7 +104,7 @@ MyFrameDlg6::OnBnClickedAdd()
 {
   if(m_string.IsEmpty())
   {
-    StyleMessageBox(this,"Fill in a text first","ERROR",MB_OK | MB_ICONERROR);
+    StyleMessageBox(this,_T("Fill in a text first"),_T("ERROR"),MB_OK | MB_ICONERROR);
     return;
   }
 

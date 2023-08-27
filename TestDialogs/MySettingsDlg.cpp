@@ -34,7 +34,7 @@ END_MESSAGE_MAP()
 int
 MySettingsDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-  m_grayWindow.CreateEx(0, AfxRegisterWndClass(0), "", WS_POPUP, CRect(0, 0, 0, 0), this, 0);
+  m_grayWindow.CreateEx(0, AfxRegisterWndClass(0), _T(""), WS_POPUP, CRect(0, 0, 0, 0), this, 0);
   return 0;
 }
 
@@ -49,14 +49,14 @@ MySettingsDlg::OnDestroy()
 BOOL MySettingsDlg::OnInitDialog()
 {
   StyleDialog::OnInitDialog();
-  SetWindowText("My Settings dialog");
+  SetWindowText(_T("My Settings dialog"));
   SetAboutBoxAndIcon(IDM_ABOUTBOX,IDS_ABOUTBOX);
 
-  m_tab.InsertItem(0, nullptr, "First");
-  m_tab.InsertItem(1, nullptr, "Second tab");
-  m_tab.InsertItem(2, nullptr, "Third");
-  m_tab.InsertItem(3, nullptr, "Fourth");
-  m_tab.InsertItem(4, nullptr, "Fifth");
+  m_tab.InsertItem(0, nullptr, _T("First"));
+  m_tab.InsertItem(1, nullptr, _T("Second tab"));
+  m_tab.InsertItem(2, nullptr, _T("Third"));
+  m_tab.InsertItem(3, nullptr, _T("Fourth"));
+  m_tab.InsertItem(4, nullptr, _T("Fifth"));
 
   m_tab.SetImages(IDB_TABICONS);
   m_tab.SetTabImage(0, 0);
