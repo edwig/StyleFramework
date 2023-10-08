@@ -504,7 +504,7 @@ StyleListBox::Copy()
   {
     if(result.GetLength())
     {
-      result += "\r\n";
+      result += _T("\r\n");
     }
     CString text;
     GetText(lines[index],text);
@@ -512,25 +512,9 @@ StyleListBox::Copy()
     result += text;
   }
 
-  // Put the text in a global GMEM_MOVABLE memory handle
-  size_t    size = (size_t)result.GetLength() + 1;
-  HGLOBAL memory = GlobalAlloc(GHND,size);
-  if(memory)
-  {
-    void* data = GlobalLock(memory);
-    if(data)
-    {
-      _tcsncpy_s((PTCHAR)data,size,result.GetString(),size);
-    }
-    GlobalUnlock(memory);
+  // Put to clipboard (Unicode aware!)
+  StylePutStringToClipboard(result,GetSafeHwnd());
 
-    // Set the text on the clipboard
-    // and transfer ownership of the memory segment
-    OpenClipboard();
-    EmptyClipboard();
-    SetClipboardData(CF_TEXT,memory);
-    CloseClipboard();
-  }
   // Free lines array
   delete[] lines;
 }
@@ -564,45 +548,30 @@ StyleListBox::Paste()
     insert = GetCount();
   }
 
-  // Set the text on the clipboard
-  // and transfer ownership of the memory segment
-  OpenClipboard();
-  HANDLE memory = GetClipboardData(CF_TEXT);
-  if(memory)
-  {
-    // Getting clipboard text as a string
-    CString text;
-    void* data = GlobalLock(memory);
-    if(data)
-    {
-      text = (const char*)data;
-    }
-    // Insert into the listbox
-    while(text.GetLength())
-    {
-      int pos = text.FindOneOf(_T("\r\n"));
-      if (pos > 0)
-      {
-        CString part = text.Left(pos);
-        CListBox::InsertString(insert++, part);
-        text = text.Mid(pos + 1);
-        if (text.Left(1) == "\n")
-        {
-          text = text.Mid(1);
-        }
-      }
-      else
-      {
-        // One/Last line insert
-        CListBox::InsertString(insert, text);
-        text.Empty();
-      }
-    }
+  // Get text from the clipboard (Unicode aware!)
+  CString text = StyleGetStringFromClipboard(GetSafeHwnd());
 
-    // Closing the clipboard
-    GlobalUnlock(memory);
+  // Insert into the listbox
+  while(text.GetLength())
+  {
+    int pos = text.FindOneOf(_T("\r\n"));
+    if (pos > 0)
+    {
+      CString part = text.Left(pos);
+      CListBox::InsertString(insert++, part);
+      text = text.Mid(pos + 1);
+      if(text.Left(1) == _T("\n"))
+      {
+        text = text.Mid(1);
+      }
+    }
+    else
+    {
+      // One/Last line insert
+      CListBox::InsertString(insert,text);
+      text.Empty();
+    }
   }
-  CloseClipboard();
 }
 
 // Print the complete list

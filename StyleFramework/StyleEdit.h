@@ -26,7 +26,7 @@
 #define   EDIT_EYE_WEIGHT WS(2)
 
 // The password character
-#define   EDIT_PASSWORD_CHAR '•'
+#define   EDIT_PASSWORD_CHAR _T('•')
 
 // Default font name
 #define   STYLE_DEFAULT_FONT     "Verdana"

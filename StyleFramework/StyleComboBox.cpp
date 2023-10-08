@@ -21,6 +21,7 @@
 #include "StyleComboBox.h"
 #include "StyleUtilities.h"
 #include <algorithm>
+#include <atlconv.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1036,7 +1037,8 @@ StyleComboBox::OnSetFocus(CWnd* pOldWnd)
 {
   m_focus = true;
   if((m_itemControl && pOldWnd != m_itemControl) &&
-     (m_listControl && pOldWnd != m_listControl))
+     (m_listControl && pOldWnd != m_listControl) &&
+     GetSafeHwnd())
   {
     CWnd* owner = GetOwner();
     if(owner)
@@ -2157,25 +2159,18 @@ SCBTextEdit::PreTranslateMessage(MSG* p_msg)
 void
 SCBTextEdit::OnPaste()
 {
-  if(OpenClipboard())
-  {
-    HANDLE glob = GetClipboardData(CF_TEXT);
-    if(glob)
-    {
-      LPTSTR text = (LPTSTR)GlobalLock(glob);
-      CEdit::SetWindowText(text);
-      GlobalUnlock(glob);
+  CString text = StyleGetStringFromClipboard(GetSafeHwnd());
 
-      int index = m_combo->FindStringExact(-1,text);
-      if(index >= 0)
-      {
-        m_combo->SetCurSel(index);
-        m_combo->OnSelEndOK(true);
-        m_combo->OnCloseup(true);
-      }
-      else m_combo->SetCurSel(-1);
+  if(!text.IsEmpty())
+  {
+    int index = m_combo->FindStringExact(-1,text);
+    if(index >= 0)
+    {
+      m_combo->SetCurSel(index);
+      m_combo->OnSelEndOK(true);
+      m_combo->OnCloseup(true);
     }
-    CloseClipboard();
+    else m_combo->SetCurSel(-1);
   }
 }
 

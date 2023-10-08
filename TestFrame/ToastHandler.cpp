@@ -72,6 +72,8 @@ WinToastHandler::toastActivated(int actionIndex) const
 void 
 WinToastHandler::toastDismissed(WinToastDismissalReason state) const
 {
+  USES_CONVERSION;
+
   std::string reason = "Dismissal error!";
   switch(state)
   {
@@ -79,7 +81,11 @@ WinToastHandler::toastDismissed(WinToastDismissalReason state) const
     case ApplicationHidden: reason = "Toast dismissed: ApplicationHidden\n"; break;
     case TimedOut:          reason = "Toast dismissed: TimedOut\n";          break;
   }
+#ifdef UNICODE
   OutputDebugString(CA2W(reason.c_str()));
+#else
+  OutputDebugString(reason.c_str());
+#endif
 
   if(m_dialog)
   {
@@ -102,5 +108,5 @@ WinToastHandler::toastDismissed(WinToastDismissalReason state) const
 void 
 WinToastHandler::toastFailed() const
 {
-  OutputDebugString(CA2W("toastFailed() called\n"));
+  OutputDebugStringA("toastFailed() called\n");
 }
