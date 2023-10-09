@@ -63,6 +63,7 @@ MyGridDlg::OnInitDialog()
 
   SetCanResize();
   ShowMinMaxButton();
+  ShowGripper();
 
   return TRUE;
 }
@@ -162,7 +163,9 @@ MyGridDlg::SetComboList(CGridCellCombo* p_combo)
   }
 
   p_combo->SetOptions(list);
-  p_combo->SetStyle(CBS_DROPDOWNLIST | CBS_SORT);
+
+  // Testing for either style of dropdown
+  p_combo->SetStyle(CBS_SORT | CBS_DROPDOWNLIST);
   // p_combo->SetStyle(CBS_DROPDOWN);
 }
 

@@ -26,11 +26,12 @@
 // For use with CGridCtrl v2.22+
 //
 // History:
-// 6 Aug 1998 - Added CComboEdit to subclass the edit control - code 
-//              provided by Roelf Werkman <rdw@inn.nl>. Added nID to 
-//              the constructor param list.
+//  6 Aug 1998 - Added CComboEdit to subclass the edit control - code 
+//               provided by Roelf Werkman <rdw@inn.nl>. Added nID to 
+//               the constructor param list.
 // 29 Nov 1998 - bug fix in onkeydown (Markus Irtenkauf)
 // 13 Mar 2004 - GetCellExtent fixed by Yogurt
+// 09 Okt 2023 - Extensivly changed for dropdown lists to close properly
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -50,6 +51,8 @@ static char THIS_FILE[] = __FILE__;
 
 using namespace ThemeColor;
 
+#define IDC_ENDEDIT (WM_USER + 1)
+
 /////////////////////////////////////////////////////////////////////////////
 // CComboEdit
 
@@ -61,8 +64,8 @@ CComboEdit::~CComboEdit()
 {
 }
 
-// Stoopid win95 accelerator key problem workaround - Matt Weagle.
-BOOL CComboEdit::PreTranslateMessage(MSG* pMsg) 
+BOOL 
+CComboEdit::PreTranslateMessage(MSG* pMsg) 
 {
 	// Make sure that the keystrokes continue to the appropriate handlers
 	if (pMsg->message == WM_KEYDOWN || pMsg->message == WM_KEYUP)
@@ -89,7 +92,8 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CComboEdit message handlers
 
-void CComboEdit::OnKillFocus(CWnd* pNewWnd) 
+void 
+CComboEdit::OnKillFocus(CWnd* pNewWnd) 
 {
 	CEdit::OnKillFocus(pNewWnd);
 	
@@ -100,7 +104,8 @@ void CComboEdit::OnKillFocus(CWnd* pNewWnd)
   }
 }
 
-void CComboEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void 
+CComboEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {
 	if((nChar == VK_PRIOR || nChar == VK_NEXT ||
 		  nChar == VK_DOWN  || nChar == VK_UP   ||
@@ -118,7 +123,8 @@ void CComboEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
-void CComboEdit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void
+CComboEdit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {
 	if (nChar == VK_ESCAPE) 
 	{
@@ -139,7 +145,6 @@ void CComboEdit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
     }
     return;
   }
-
 	CEdit::OnKeyUp(nChar, nRepCnt, nFlags);
 }
 
@@ -210,10 +215,8 @@ CInPlaceList::CInPlaceList(CWnd*          pParent
   if(::IsWindow(m_hWnd) && SelectString(-1,m_sInitText) == CB_ERR)
   {
     // No text selected, so restore what was there before
-    SetWindowText(m_sInitText);		
+    SetWindowText(m_sInitText);
   }
-  // ShowDropDown();
-  OnDropdown();
   OnDropdown();
 
   // Subclass the combobox edit control if style includes CBS_DROPDOWN
@@ -249,7 +252,21 @@ CInPlaceList::~CInPlaceList()
 {
 }
 
-void CInPlaceList::OnDropdown()
+BEGIN_MESSAGE_MAP(CInPlaceList,CComboBox)
+  ON_WM_KILLFOCUS()
+  ON_WM_KEYDOWN()
+  ON_WM_KEYUP()
+  ON_WM_PAINT()
+  ON_CONTROL_REFLECT(CBN_SELCHANGE,OnListChoise)
+  ON_CONTROL_REFLECT(CBN_CLOSEUP,  OnCbnCloseup)
+  ON_CONTROL_REFLECT(CBN_DROPDOWN, OnCbnDropdown)
+  ON_WM_GETDLGCODE()
+  ON_WM_CTLCOLOR_REFLECT()
+  ON_COMMAND(IDC_ENDEDIT,EndEdit)
+END_MESSAGE_MAP()
+
+void 
+CInPlaceList::OnDropdown()
 {
   // TODO: Add control notification handler code here
   if(!m_hWndList) return;
@@ -273,13 +290,33 @@ void CInPlaceList::OnDropdown()
   ::ShowWindow(m_hWndList,SW_SHOW);
 }
 
-void CInPlaceList::EndEdit()
+void 
+CInPlaceList::OnListChoise()
+{
+  if(GetStyle() & CBS_DROPDOWNLIST)
+  {
+    EndEdit();
+  }
+}
+
+void 
+CInPlaceList::EndEdit()
 {
   CString str;
-  if (::IsWindow(m_hWnd))
+  if(::IsWindow(m_hWnd))
   {
     GetWindowText(str);
   }
+  if((GetStyle() & CBS_DROPDOWN) == CBS_DROPDOWN)
+  {
+    // Check if we have a valid text
+    int ind = FindStringExact(-1,str);
+    if(ind == CB_ERR)
+    {
+      return;
+    }
+  }
+
   // Send Notification to parent
   GV_DISPINFO dispinfo;
   // display info header
@@ -305,7 +342,8 @@ void CInPlaceList::EndEdit()
   }
 }
 
-int CInPlaceList::GetCorrectDropWidth()
+int
+CInPlaceList::GetCorrectDropWidth()
 {
   const int nMaxWidth = 200;  // don't let the box be bigger than this
 
@@ -350,64 +388,41 @@ CInPlaceList::PositionEditWindow()
   m_edit.SetWindowPos(0,editRect.left,editRect.top,editRect.Width(),editRect.Height(),SWP_NOMOVE|SWP_NOZORDER);
 }
 
-/*
-// Fix by Ray (raybie@Exabyte.COM)
-void CInPlaceList::OnSelendOK() 
-{
-    int iIndex = GetCurSel(); 
-    if( iIndex != CB_ERR) 
-    { 
-        CString strLbText; 
-        GetLBText( iIndex, strLbText); 
- 
-        if (!((GetStyle() & CBS_DROPDOWNLIST) == CBS_DROPDOWNLIST)) 
-           m_edit.SetWindowText( strLbText); 
-    } 
- 
-    GetParent()->SetFocus(); 	
-}
-*/
-
-void CInPlaceList::PostNcDestroy() 
+void
+CInPlaceList::PostNcDestroy() 
 {
 	CComboBox::PostNcDestroy();
 
 	delete this;
 }
 
-BEGIN_MESSAGE_MAP(CInPlaceList,CComboBox)
-  ON_WM_KILLFOCUS()
-  ON_WM_KEYDOWN()
-  ON_WM_KEYUP()
-  ON_WM_PAINT()
-  ON_CONTROL_REFLECT(CBN_CLOSEUP, OnCbnCloseup)
-  ON_CONTROL_REFLECT(CBN_DROPDOWN,OnCbnDropdown)
-	ON_WM_GETDLGCODE()
-	ON_WM_CTLCOLOR_REFLECT()
-  ///ON_WM_CTLCOLOR()
-END_MESSAGE_MAP()
-
 /////////////////////////////////////////////////////////////////////////////
 // CInPlaceList message handlers
 
-UINT CInPlaceList::OnGetDlgCode() 
+UINT
+CInPlaceList::OnGetDlgCode() 
 {
   return DLGC_WANTALLKEYS;
 }
 
-void CInPlaceList::OnCbnCloseup()
+void
+CInPlaceList::OnCbnCloseup()
 {
-  // TODO: Add control notification handler code here
-  if(!m_hWndList) return;
+  if(!m_hWndList)
+  {
+    return;
+  }
   ::ShowWindow(::GetParent(::GetParent(m_hWndList)),SW_HIDE);
 }
 
-void CInPlaceList::OnCbnDropdown() 
+void
+CInPlaceList::OnCbnDropdown() 
 {
   SetDroppedWidth(GetCorrectDropWidth());
 }
 
-void CInPlaceList::OnKillFocus(CWnd* pNewWnd) 
+void
+CInPlaceList::OnKillFocus(CWnd* pNewWnd) 
 {
 	CComboBox::OnKillFocus(pNewWnd);
 
@@ -425,7 +440,8 @@ void CInPlaceList::OnKillFocus(CWnd* pNewWnd)
 // If an arrow key (or associated) is pressed, then exit if
 //  a) The Ctrl key was down, or
 //  b) m_bExitOnArrows == TRUE
-void CInPlaceList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void
+CInPlaceList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {
 	if((nChar == VK_PRIOR || nChar == VK_NEXT ||
 		  nChar == VK_DOWN  || nChar == VK_UP   ||
@@ -436,12 +452,12 @@ void CInPlaceList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		GetParent()->SetFocus();
 		return;
 	}
-
 	CComboBox::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
 // Need to keep a lookout for Tabs, Esc and Returns.
-void CInPlaceList::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void
+CInPlaceList::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {
   if(nChar == VK_ESCAPE)
   {
@@ -456,26 +472,22 @@ void CInPlaceList::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	CComboBox::OnKeyUp(nChar, nRepCnt, nFlags);
 }
 
-HBRUSH CInPlaceList::CtlColor(CDC* pDC,UINT nCtlColor) 
+HBRUSH
+CInPlaceList::CtlColor(CDC* pDC,UINT nCtlColor) 
 {
-  /*
-  static CBrush brush(m_crBackClr);
-  pDC->SetTextColor(m_crForeClr);
-  pDC->SetBkMode(TRANSPARENT);
-  return (HBRUSH) brush.GetSafeHandle();
-  */
-	
-	// Return a non-NULL brush if the parent's handler should not be called
+	// Return a non-NULL brush, so the parent's handler is not called
 	return NULL;
 }
 
-void CInPlaceList::OnPaint()
+void
+CInPlaceList::OnPaint()
 {
   CComboBox::OnPaint();
   DrawComboButton();
 }
 
-void CInPlaceList::DrawComboButton()
+void
+CInPlaceList::DrawComboButton()
 {
   CRect rect;
   GetClientRect(rect);
@@ -531,22 +543,54 @@ IMPLEMENT_DYNCREATE(CGridCellCombo, CGridCell)
 
 CGridCellCombo::CGridCellCombo() : CGridCell()
 {
-  SetStyle(CBS_DROPDOWN);  // CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE, CBS_SORT
+  // Minimal combo style in case the programmer does not chooses one.
+  SetStyle(CBS_DROPDOWN);  
+}
+
+// Only these styles are allowed
+// CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE, CBS_SORT
+void  
+CGridCellCombo::SetStyle(DWORD dwStyle)
+{
+  if(dwStyle == 0)
+  {
+    m_dwStyle = CBS_DROPDOWN;
+    return;
+  }
+  // Check dropdown style
+  if((dwStyle & CBS_DROPDOWNLIST) == CBS_DROPDOWNLIST)
+  {
+    m_dwStyle |= CBS_DROPDOWNLIST;
+  }
+  else if((dwStyle & CBS_DROPDOWN) == CBS_DROPDOWN)
+  {
+    m_dwStyle |=  CBS_DROPDOWN;
+  }
+  else if((dwStyle & CBS_SIMPLE) == CBS_SIMPLE)
+  {
+    m_dwStyle |=  CBS_SIMPLE;
+  }
+  // Check sort style
+  if((dwStyle & CBS_SORT) == CBS_SORT)
+  {
+    m_dwStyle |= CBS_SORT;
+  }
 }
 
 // Create a control to do the editing
-BOOL CGridCellCombo::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
+BOOL
+CGridCellCombo::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
 {
   m_bEditing = TRUE;
 
   // CInPlaceList auto-deletes itself
-  m_pEditWnd = new CInPlaceList(GetGrid(), rect, GetStyle(), nID, nRow, nCol, 
+  m_pEditWnd = new CInPlaceList(GetGrid(),rect, m_dwStyle, nID, nRow, nCol, 
                                 GetTextClr(), GetBackClr(), m_Strings, GetText(), nChar);
-
   return TRUE;
 }
 
-CWnd* CGridCellCombo::GetEditWnd() const
+CWnd*
+CGridCellCombo::GetEditWnd() const
 {
   if(m_pEditWnd && (m_pEditWnd->GetStyle() & CBS_DROPDOWNLIST) != CBS_DROPDOWNLIST)
   {
@@ -555,8 +599,8 @@ CWnd* CGridCellCombo::GetEditWnd() const
 	return NULL;
 }
 
-
-CSize CGridCellCombo::GetCellExtent(CDC* pDC)
+CSize
+CGridCellCombo::GetCellExtent(CDC* pDC)
 {    
   CSize sizeScroll (GetSystemMetrics(SM_CXVSCROLL), GetSystemMetrics(SM_CYHSCROLL));    
   CSize sizeCell (CGridCell::GetCellExtent(pDC));    
@@ -566,7 +610,8 @@ CSize CGridCellCombo::GetCellExtent(CDC* pDC)
 }
 
 // Cancel the editing.
-void CGridCellCombo::EndEdit()
+void
+CGridCellCombo::EndEdit()
 {
   if(m_pEditWnd)
   {
@@ -575,7 +620,8 @@ void CGridCellCombo::EndEdit()
 }
 
 // Override draw so that when the cell is selected, a drop arrow is shown in the RHS.
-BOOL CGridCellCombo::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseBkgnd /*=TRUE*/)
+BOOL
+CGridCellCombo::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseBkgnd /*=TRUE*/)
 {
   // Cell selected?
   if (GetGrid()->IsCellEditable(nRow, nCol) && !IsEditing())
@@ -614,7 +660,8 @@ BOOL CGridCellCombo::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bErase
 	return bResult;
 }
 
-void  CGridCellCombo::DrawComboButton(CDC* pDC,CRect p_rect)
+void
+CGridCellCombo::DrawComboButton(CDC* pDC,CRect p_rect)
 {
   // Find the frame color
   COLORREF color = ThemeColor::GetColor(Colors::AccentColor1);
@@ -657,7 +704,8 @@ void  CGridCellCombo::DrawComboButton(CDC* pDC,CRect p_rect)
 }
 
 // For setting the strings that will be displayed in the drop list
-void CGridCellCombo::SetOptions(const CStringArray& ar)
+void
+CGridCellCombo::SetOptions(const CStringArray& ar)
 { 
   m_Strings.RemoveAll();
   for(int i = 0; i < ar.GetSize(); i++)

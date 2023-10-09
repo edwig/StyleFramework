@@ -30,30 +30,30 @@ class CGridCellCombo : public CGridCell
     DECLARE_DYNCREATE(CGridCellCombo)
 
 public:
-    CGridCellCombo();
+  CGridCellCombo();
 
 // editing cells
 public:
-    virtual BOOL  Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
-    virtual CWnd* GetEditWnd() const;
-    virtual void  EndEdit();
+  virtual BOOL  Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
+  virtual CWnd* GetEditWnd() const;
+  virtual void  EndEdit();
 
 // Operations
 public:
-	virtual CSize GetCellExtent(CDC* pDC);
+  virtual CSize GetCellExtent(CDC* pDC);
 
 // CGridCellCombo specific calls
 public:
-    void  SetOptions(const CStringArray& ar);
-    void  SetStyle(DWORD dwStyle)           { m_dwStyle = dwStyle; }
-    DWORD GetStyle()                        { return m_dwStyle;    }
+  void  SetOptions(const CStringArray& ar);
+  void  SetStyle(DWORD dwStyle);
+  DWORD GetStyle() { return m_dwStyle; }
 
 protected:
-    virtual BOOL Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
-		void    DrawComboButton(CDC* pDC,CRect p_rect);
+  virtual BOOL Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
+          void DrawComboButton(CDC* pDC,CRect p_rect);
 
-    CStringArray m_Strings;
-    DWORD        m_dwStyle;
+  CStringArray m_Strings;
+  DWORD        m_dwStyle { 0 };
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -89,66 +89,52 @@ class CInPlaceList : public CComboBox
 
 // Construction
 public:
-	CInPlaceList(CWnd*					pParent,      // parent
-               CRect&					rect,         // dimensions & location
-               DWORD					dwStyle,      // window/combobox style
-               UINT						nID,          // control ID
-               int						nRow,
-							 int						nColumn,			// row and column
-               COLORREF				crFore,
-		           COLORREF				crBack,				// Foreground, background color
-		 	         CStringArray&	Items,				// Items in list
-               CString				sInitText,    // initial selection
-							 UINT					  nFirstChar);  // first character to pass to control
-
-// Attributes
-public:
-   CComboEdit m_edit;  // subclassed edit control
-
-// Operations
-public:
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CInPlaceList)
-	protected:
-	virtual void PostNcDestroy();
-	//}}AFX_VIRTUAL
-
-// Implementation
-public:
-	virtual ~CInPlaceList();
+  CInPlaceList(CWnd*          pParent,      // parent
+               CRect&         rect,         // dimensions & location
+               DWORD          dwStyle,      // window/combobox style
+               UINT           nID,          // control ID
+               int            nRow,
+               int            nColumn,      // row and column
+               COLORREF       crFore,
+               COLORREF       crBack,       // Foreground, background color
+               CStringArray&  Items,        // Items in list
+               CString        sInitText,    // initial selection
+               UINT           nFirstChar);  // first character to pass to control
+  virtual ~CInPlaceList();
   void EndEdit();
 
+  CComboEdit m_edit;  // subclassed edit control
+
+// Operations
 protected:
-	void DrawComboButton();
-	void PositionEditWindow();
+  virtual void PostNcDestroy();
+  void DrawComboButton();
+  void PositionEditWindow();
   int  GetCorrectDropWidth();
-	void OnDropdown();
+  void OnDropdown();
 
 // Generated message map functions
 protected:
   afx_msg void OnPaint();
-	afx_msg void OnKillFocus(CWnd* pNewWnd);
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnCbnCloseup();
-	afx_msg void OnCbnDropdown();
-	afx_msg UINT OnGetDlgCode();
-	afx_msg HBRUSH CtlColor(CDC* pDC, UINT nCtlColor);
-  //afx_msg HBRUSH CtlColor(CDC* pDC,CWnd* pWnd,UINT nCtlColor);
-	//afx_msg void OnSelendOK();
+  afx_msg void OnKillFocus(CWnd* pNewWnd);
+  afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+  afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+  afx_msg void OnCbnCloseup();
+  afx_msg void OnCbnDropdown();
+  afx_msg void OnListChoise();
+  afx_msg UINT OnGetDlgCode();
+  afx_msg HBRUSH CtlColor(CDC* pDC, UINT nCtlColor);
 
 	DECLARE_MESSAGE_MAP()
 
 private:
-	int				m_nNumLines;
-	CString		m_sInitText;
-	int				m_nRow;
-	int				m_nCol;
- 	UINT			m_nLastChar; 
-	BOOL			m_bExitOnArrows; 
-	COLORREF	m_crForeClr;
-	COLORREF  m_crBackClr;
-	HWND      m_hWndList;
+  int        m_nNumLines;
+  CString    m_sInitText;
+  int        m_nRow;
+  int        m_nCol;
+  UINT       m_nLastChar; 
+  BOOL       m_bExitOnArrows; 
+  COLORREF   m_crForeClr;
+  COLORREF   m_crBackClr;
+  HWND       m_hWndList;
 };
