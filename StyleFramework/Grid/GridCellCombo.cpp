@@ -262,7 +262,7 @@ BEGIN_MESSAGE_MAP(CInPlaceList,CComboBox)
   ON_CONTROL_REFLECT(CBN_DROPDOWN, OnCbnDropdown)
   ON_WM_GETDLGCODE()
   ON_WM_CTLCOLOR_REFLECT()
-  ON_COMMAND(IDC_ENDEDIT,EndEdit)
+  ON_COMMAND(IDC_ENDEDIT,OnEndEdit)
 END_MESSAGE_MAP()
 
 void 
@@ -299,15 +299,21 @@ CInPlaceList::OnListChoise()
   }
 }
 
-void 
-CInPlaceList::EndEdit()
+void
+CInPlaceList::OnEndEdit()
+{
+  EndEdit(false);
+}
+
+void
+CInPlaceList::EndEdit(bool p_force /*= false*/)
 {
   CString str;
   if(::IsWindow(m_hWnd))
   {
     GetWindowText(str);
   }
-  if((GetStyle() & CBS_DROPDOWN) == CBS_DROPDOWN)
+  if(!p_force && (GetStyle() & CBS_DROPDOWN) == CBS_DROPDOWN)
   {
     // Check if we have a valid text
     int ind = FindStringExact(-1,str);
@@ -586,6 +592,8 @@ CGridCellCombo::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nI
   // CInPlaceList auto-deletes itself
   m_pEditWnd = new CInPlaceList(GetGrid(),rect, m_dwStyle, nID, nRow, nCol, 
                                 GetTextClr(), GetBackClr(), m_Strings, GetText(), nChar);
+
+  GetGrid()->RegisterEditCell(nRow,nCol);
   return TRUE;
 }
 
@@ -615,7 +623,7 @@ CGridCellCombo::EndEdit()
 {
   if(m_pEditWnd)
   {
-    (dynamic_cast<CInPlaceList*>(m_pEditWnd))->EndEdit();
+    dynamic_cast<CInPlaceList*>(m_pEditWnd)->EndEdit(true);
   }
 }
 

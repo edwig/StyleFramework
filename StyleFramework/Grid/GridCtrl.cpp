@@ -8024,6 +8024,8 @@ void CGridCtrl::OnEditCell(int nRow, int nCol, CPoint point, UINT nChar)
     if(pCell)
     {
       pCell->Edit(nRow,nCol,rect,point,IDC_INPLACE_CONTROL,nChar);
+      m_curEditRow = nRow;
+      m_curEditCol = nCol;
     }
   }
 }
@@ -8031,6 +8033,17 @@ void CGridCtrl::OnEditCell(int nRow, int nCol, CPoint point, UINT nChar)
 // virtual
 void CGridCtrl::EndEditing()
 {
+  if(m_curEditRow >= 0 && m_curEditCol >= 0)
+  {
+    CGridCellBase* pCell = GetCell(m_curEditRow,m_curEditCol);
+    if(pCell)
+    {
+      pCell->EndEdit();
+    }
+    m_curEditRow = -1;
+    m_curEditCol = -1;
+    return;
+  }
   CCellID cell = GetFocusCell();
   if(!IsValid(cell))
   {
@@ -8115,4 +8128,11 @@ void CGridCtrl::Reorder(int From, int To)
 	m_arRowOrder.erase(m_arRowOrder.begin()+From);
 	int Offset = (From>=To ? 1:0);
 	m_arRowOrder.insert(m_arRowOrder.begin()+To+Offset, Value);
+}
+
+void
+CGridCtrl::RegisterEditCell(int nRow,int nCol)
+{
+  m_curEditRow = nRow;
+  m_curEditCol = nCol;
 }

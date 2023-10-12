@@ -26,8 +26,8 @@
 
 class CGridCellCombo : public CGridCell
 {
-    friend class CGridCtrl;
-    DECLARE_DYNCREATE(CGridCellCombo)
+  friend class CGridCtrl;
+  DECLARE_DYNCREATE(CGridCellCombo)
 
 public:
   CGridCellCombo();
@@ -101,7 +101,7 @@ public:
                CString        sInitText,    // initial selection
                UINT           nFirstChar);  // first character to pass to control
   virtual ~CInPlaceList();
-  void EndEdit();
+  void EndEdit(bool p_force = false);
 
   CComboEdit m_edit;  // subclassed edit control
 
@@ -122,6 +122,7 @@ protected:
   afx_msg void OnCbnCloseup();
   afx_msg void OnCbnDropdown();
   afx_msg void OnListChoise();
+  afx_msg void OnEndEdit();
   afx_msg UINT OnGetDlgCode();
   afx_msg HBRUSH CtlColor(CDC* pDC, UINT nCtlColor);
 

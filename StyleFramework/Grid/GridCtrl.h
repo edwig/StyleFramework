@@ -364,6 +364,8 @@ public:
     // The following was virtual. If you want to override, use 
     //  CGridCellBase-derived class's GetText() to accomplish same thing
     CString GetItemText(int nRow, int nCol) const;
+    // In case a subclass starts the edit
+    void    RegisterEditCell(int nRow,int nCol);
 
     // EFW - 06/13/99 - Added to support printf-style formatting codes.
     // Also supports use with a string resource ID
@@ -806,6 +808,8 @@ private:
 	bool m_QuitFocusOnTab;
 	bool m_AllowSelectRowInFixedCol;
 
+  int  m_curEditRow { -1 };
+  int  m_curEditCol { -1 };
 };
 
 // Returns the default cell implementation for the given grid region
