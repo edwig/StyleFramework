@@ -1607,6 +1607,10 @@ AFX_STATIC void AFXAPI StyleFailMinMaxWithFormat(CDataExchange* pDX,StyleEdit& p
   CString prompt;
   AfxFormatString2(prompt,nIDPrompt,szMin,szMax);
   StyleMessageBox(&p_control,prompt,_T("Error"),MB_OK|MB_ICONEXCLAMATION);
+
+  // Reset field to minimum value to be certain
+  _sntprintf_s(szMin,MINMAX_BUFFER_SIZE,"%I64d",minVal);
+  p_control.SetWindowText(szMin);
   p_control.SetFocus();
 }
 
