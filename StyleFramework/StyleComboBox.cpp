@@ -2204,7 +2204,10 @@ SCBListBox::SCBListBox()
 
 SCBListBox::~SCBListBox()
 {
-  DestroyWindow();
+  if(GetSafeHwnd())
+  {
+    DestroyWindow();
+  }
 }
 
 void
