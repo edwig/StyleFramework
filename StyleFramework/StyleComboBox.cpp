@@ -1046,21 +1046,14 @@ StyleComboBox::OnSetFocus(CWnd* pOldWnd)
       ::SendMessage(owner->GetSafeHwnd(),WM_COMMAND,MAKELONG(GetDlgCtrlID(),CBN_SETFOCUS),(LPARAM)m_hWnd);
     }
   }
-//   CRect rect;
-//   GetClientRect(rect);
-//   rect.left = rect.right - rect.Height();
-//   CPoint here = GetCaretPos();
-//   if(!rect.PtInRect(here))
-//   {
-//     if(!m_listControl->IsWindowVisible())
-//     {
-//       // We are not on the combobox button and listcontrol is visible
-//       if(m_itemControl)
-//       {
-//         m_itemControl->SetFocus();
-//       }
-//     }
-//   }
+  if(m_listControl && m_listControl->IsWindowVisible())
+  {
+    m_listControl->SetFocus();
+  }
+  else if(m_itemControl)
+  {
+    m_itemControl->SetFocus();
+  }
 }
 
 void
