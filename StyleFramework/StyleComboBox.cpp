@@ -20,6 +20,7 @@
 #include "stdafx.h"
 #include "StyleComboBox.h"
 #include "StyleUtilities.h"
+#include "Grid\GridCellCombo.h"
 #include <algorithm>
 #include <atlconv.h>
 
@@ -894,19 +895,34 @@ StyleComboBox::OnGetTextLength(WPARAM wParam,LPARAM lParam)
 void
 StyleComboBox::OnChar(UINT nChar,UINT nRepCnt,UINT nFlags)
 {
-  if((nChar != VK_TAB) && m_itemControl)
-  {
-    m_itemControl->SetFocus();
-    m_itemControl->OnChar(nChar,nRepCnt,nFlags);
-    return;
-  }
-  CEdit::OnChar(nChar,nRepCnt,nFlags);
-
   if((nChar == VK_TAB) && m_itemControl)
   {
     m_itemControl->SendMessage(WM_CHAR,VK_TAB,nFlags);
-    return;
   }
+  else
+  {
+    if(m_buttonDown)
+    {
+      if(m_listControl)
+      {
+        m_listControl->SetFocus();
+        m_listControl->PostMessage(WM_KEYDOWN,nChar,nFlags);
+        m_listControl->PostMessage(WM_CHAR,   nChar,nFlags);
+        m_listControl->PostMessage(WM_KEYUP,  nChar,nFlags);
+        return;
+      }
+    }
+    else
+    {
+      if(m_itemControl)
+      {
+        m_itemControl->SetFocus();
+        m_itemControl->OnChar(nChar,nRepCnt,nFlags);
+        return;
+      }
+    }
+  }
+  CEdit::OnChar(nChar,nRepCnt,nFlags);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1959,13 +1975,20 @@ SCBTextEdit::OnChar(UINT nChar,UINT nRepCnt,UINT nFlags)
     {
       m_origText = text.Left(first);
     }
-    if(nRepCnt == 1 && (' ' <= nChar && nChar <= 0x7F))
+    if(nRepCnt == 1 && (' ' <= nChar && nChar <= 127))
     {
       if(type || (m_combo->GetTypeBuffer() && GetTickCount() < (m_keyboardTime + COMBO_KEYBOARD_CACHE)))
       {
         m_origText += (char)nChar;
       }
       else
+      {
+        m_origText = (char)nChar;
+      }
+    }
+    else
+    {
+      if(GetTickCount() >= (m_keyboardTime + COMBO_KEYBOARD_CACHE))
       {
         m_origText = (char)nChar;
       }
@@ -1987,18 +2010,23 @@ SCBTextEdit::OnChar(UINT nChar,UINT nRepCnt,UINT nFlags)
   {
     int base = m_combo->GetCurSel();
     int find = 0;
-    if (m_origText.GetLength() > 1)
+    CString searchtext(m_origText);
+    if(!type)
     {
-      find = m_combo->FindString(0,m_origText);
+      searchtext = (char)nChar;
+    }
+    if(m_origText.GetLength() > 1)
+    {
+      find = m_combo->FindString(0,searchtext);
     }
     else
     {
-       find = m_combo->FindString(base - type, m_origText);
+       find = m_combo->FindString(base - type, searchtext);
     }
     if(find == -1 && base > 0)
     {
       // Search from the beginning, in case we searched past the end
-      find = m_combo->FindString(-1,m_origText);
+      find = m_combo->FindString(-1,searchtext);
     }
     if(find >= 0)
     {
@@ -2111,7 +2139,10 @@ SCBTextEdit::PreTranslateMessage(MSG* p_msg)
 {
   if(p_msg->message == WM_KEYDOWN)
   {
-    if(p_msg->wParam == VK_F4 || p_msg->wParam == VK_DOWN)
+    UINT key   = (UINT) p_msg->wParam;
+    bool cntrl = GetKeyState(VK_CONTROL) != 0;
+    if(p_msg->wParam == VK_F4 || 
+      (p_msg->wParam == VK_DOWN && !cntrl))
     {
       if(m_combo && m_combo->GetExtendedUI())
       {
@@ -2123,6 +2154,22 @@ SCBTextEdit::PreTranslateMessage(MSG* p_msg)
         DrawFrame();
         return TRUE;
       }
+    }
+    if(cntrl &&
+       (key == VK_PRIOR || key == VK_NEXT  ||
+        key == VK_DOWN  || key == VK_UP    ||
+        key == VK_RIGHT || key == VK_LEFT) )
+    {
+      if(m_combo->GetGridCell())
+      {
+        CGridCellCombo* cell = m_combo->GetGridCell();
+        CGridCtrl* grid = reinterpret_cast<CGridCtrl*>(m_combo->GetParent());
+        cell->SetLastChar(key);
+        cell->EndEdit();
+        // This will end this control!
+        grid->SetFocus();
+      }
+      return TRUE;
     }
   }
   if(p_msg->message == WM_KEYUP)

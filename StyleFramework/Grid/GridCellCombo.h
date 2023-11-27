@@ -43,7 +43,8 @@ public:
 public:
   void  SetOptions(const CStringArray& ar);
   void  SetStyle(DWORD dwStyle);
-  DWORD GetStyle() { return m_dwStyle; }
+  DWORD GetStyle()                { return m_dwStyle;     }
+  void  SetLastChar(UINT p_last)  { m_nLastChar = p_last; }
 
 protected:
   virtual BOOL Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE) override;
@@ -51,9 +52,10 @@ protected:
           bool CreateNewComboBox(int p_row,int p_col,CRect p_rect,UINT p_id,UINT p_char);
 
   CStringArray m_Strings;
-  DWORD        m_dwStyle { 0 };
-  int          m_row;
-  int          m_col;
+  DWORD        m_dwStyle   { 0 };
+  UINT         m_nLastChar { 0 };
+  int          m_row       { 0 };
+  int          m_col       { 0 };
 };
 
 /////////////////////////////////////////////////////////////////////////////

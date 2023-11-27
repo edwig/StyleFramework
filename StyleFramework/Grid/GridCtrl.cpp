@@ -958,6 +958,14 @@ void CGridCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
   BOOL bFoundVisible;
   int iOrig;
 
+  // Check for end-of-edit
+  if(nChar == VK_UP    || nChar == VK_DOWN  ||
+     nChar == VK_LEFT  || nChar == VK_RIGHT ||
+     nChar == VK_PRIOR || nChar == VK_NEXT)
+  {
+    EndEditing();
+  }
+
   if (nChar == VK_DELETE)
   {
 		CutSelectedText();
@@ -1222,8 +1230,8 @@ void CGridCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
   }
   else
   {
-    OnEditCell(m_idCurrentCell.row,m_idCurrentCell.col,CPoint(-1,-1),nChar);
-    // CWnd::OnKeyDown(nChar,nRepCnt,nFlags);
+    // OnEditCell(m_idCurrentCell.row,m_idCurrentCell.col,CPoint(-1,-1),nChar);
+    CWnd::OnKeyDown(nChar,nRepCnt,nFlags);
     return;
   }
 
@@ -1373,7 +1381,6 @@ void CGridCtrl::OnEndInPlaceEdit(NMHDR* pNMHDR, LRESULT* pResult)
     return;
   }
   OnEndEditCell(pgvItem->row, pgvItem->col, pgvItem->strText);
-  //InvalidateCellRect(CCellID(pgvItem->row, pgvItem->col));
 
   switch (pgvItem->lParam)
   {
@@ -1387,8 +1394,9 @@ void CGridCtrl::OnEndInPlaceEdit(NMHDR* pNMHDR, LRESULT* pResult)
     case VK_HOME:
     case VK_END:
                   OnKeyDown((UINT)pgvItem->lParam, 0, 0);
-                  OnEditCell(m_idCurrentCell.row, m_idCurrentCell.col, CPoint( -1, -1), (UINT)pgvItem->lParam);
+                  OnEditCell(m_idCurrentCell.row,m_idCurrentCell.col,CPoint(-1,-1),0); //(UINT)pgvItem->lParam);
   }
+  InvalidateCellRect(CCellID(pgvItem->row,pgvItem->col));
   *pResult = 0;
 }
 

@@ -91,10 +91,12 @@ CGridCellCombo::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nI
     }
   }
   // Now send the last edit character
-  if(nChar >= VK_SPACE)
+  // But only begin at alfanumerics and do not send cursor keys
+  if(nChar >= '0')
   {
-    TRACE("POST CHAR %d %c\n",nChar,nChar);
+    m_pEditWnd->PostMessage(WM_KEYDOWN,nChar,0);
     m_pEditWnd->PostMessage(WM_CHAR,   nChar,0);
+    m_pEditWnd->PostMessage(WM_KEYUP,  nChar,0);
   }
   return TRUE;
 }
@@ -105,6 +107,7 @@ CGridCellCombo::CreateNewComboBox(int p_row,int p_col,CRect p_rect,UINT p_id,UIN
   // Use our StyleComboBox
   m_pEditWnd = new StyleComboBox();
   StyleComboBox* combo = dynamic_cast<StyleComboBox*>(m_pEditWnd);
+  combo->SetGridCell(this);
 
   // Make sure we can see it and create it
   m_dwStyle |= WS_CHILD | WS_VISIBLE;
@@ -220,7 +223,7 @@ CGridCellCombo::EndEdit()
   dispinfo.item.row     = m_row;
   dispinfo.item.col     = m_col;
   dispinfo.item.strText = str;
-  dispinfo.item.lParam  = (LPARAM) 0;// m_nLastChar;
+  dispinfo.item.lParam  = (LPARAM) m_nLastChar;
  
   CWnd* pOwner = GetGrid();
   if(IsWindow(pOwner->GetSafeHwnd()))
@@ -231,6 +234,7 @@ CGridCellCombo::EndEdit()
   // Dispose of the detailed edit control
   if(combo)
   {
+    combo->DestroyWindow();
     delete combo;
     m_pEditWnd = nullptr;
   }
