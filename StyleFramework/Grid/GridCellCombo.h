@@ -48,6 +48,7 @@ public:
 protected:
   virtual BOOL Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE) override;
           void DrawComboButton(CDC* pDC,CRect p_rect);
+          bool CreateNewComboBox(int p_row,int p_col,CRect p_rect,UINT p_id,UINT p_char);
 
   CStringArray m_Strings;
   DWORD        m_dwStyle { 0 };

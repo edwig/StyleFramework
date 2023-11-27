@@ -23,7 +23,7 @@ public:
 
 protected:
   void AddToText(CString p_text);
-  void SetComboList(CGridCellCombo* p_combo);
+  void SetComboList(CGridCellCombo* p_combo,bool p_rigid);
 
 	DECLARE_MESSAGE_MAP()
 

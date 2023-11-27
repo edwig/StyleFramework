@@ -92,19 +92,21 @@ MyGridDlg::SetupDynamicLayout()
 void
 MyGridDlg::FillGrid()
 {
-  m_grid.SetColumnCount(5);
+  m_grid.SetColumnCount(6);
   m_grid.SetRowCount(1);
   m_grid.SetFixedRowCount(1);
   m_grid.GetCell(0, 0)->SetText(_T("Index"));
   m_grid.GetCell(0, 1)->SetText(_T("Variable"));
   m_grid.GetCell(0, 2)->SetText(_T("Value"));
   m_grid.GetCell(0, 3)->SetText(_T("ComboBox"));
-  m_grid.GetCell(0, 4)->SetText(_T("CheckBox"));
+  m_grid.GetCell(0, 4)->SetText(_T("ComboList"));
+  m_grid.GetCell(0, 5)->SetText(_T("CheckBox"));
   m_grid.SetColumnWidth(0, 80);
   m_grid.SetColumnWidth(1, 280);
   m_grid.SetColumnWidth(2, 280);
   m_grid.SetColumnWidth(3, 140);
-  m_grid.SetColumnWidth(4, 80);
+  m_grid.SetColumnWidth(4, 140);
+  m_grid.SetColumnWidth(5, 80);
   m_grid.SetEditable();
   m_grid.SetSingleColSelection(TRUE);
   m_grid.SetSingleRowSelection(TRUE);
@@ -125,10 +127,14 @@ MyGridDlg::FillGrid()
     m_grid.GetCell(row, 1)->SetText(col2);
     m_grid.GetCell(row, 2)->SetText(col3);
     m_grid.SetCellType(row, 3,RUNTIME_CLASS(CGridCellCombo));
-    m_grid.SetCellType(row, 4,RUNTIME_CLASS(CGridCellCheck));
+    m_grid.SetCellType(row, 4,RUNTIME_CLASS(CGridCellCombo));
+    m_grid.SetCellType(row, 5,RUNTIME_CLASS(CGridCellCheck));
 
-    CGridCellCombo* combo = reinterpret_cast<CGridCellCombo*>(m_grid.GetCell(row, 3));
-    SetComboList(combo);
+    CGridCellCombo* combo1 = reinterpret_cast<CGridCellCombo*>(m_grid.GetCell(row,3));
+    SetComboList(combo1,false);
+
+    CGridCellCombo* combo2 = reinterpret_cast<CGridCellCombo*>(m_grid.GetCell(row,4));
+    SetComboList(combo2,true);
 
     if (!firstRow)
     {
@@ -148,7 +154,7 @@ MyGridDlg::FillGrid()
 }
 
 void
-MyGridDlg::SetComboList(CGridCellCombo* p_combo)
+MyGridDlg::SetComboList(CGridCellCombo* p_combo,bool p_rigid)
 {
   CStringArray list;
   list.Add(_T("First choice"));
@@ -157,16 +163,23 @@ MyGridDlg::SetComboList(CGridCellCombo* p_combo)
   list.Add(_T("Four = 4"));
   list.Add(_T("Firth of Fifth"));
 
-  for (int i = 0; i < 30; ++i)
+  for (int i = 0; i < 26; ++i)
   {
-    list.Add(_T("Another one"));
+    CString choice(_T("X is a letter"));
+    choice.SetAt(0,'A' + i);
+    list.Add(choice);
   }
-
   p_combo->SetOptions(list);
 
   // Testing for either style of dropdown
-  p_combo->SetStyle(CBS_SORT | CBS_DROPDOWNLIST);
-  // p_combo->SetStyle(CBS_DROPDOWN);
+  if(p_rigid)
+  {
+    p_combo->SetStyle(CBS_SORT | CBS_DROPDOWNLIST);
+  }
+  else
+  {
+    p_combo->SetStyle(CBS_DROPDOWN);
+  }
 }
 
 void 

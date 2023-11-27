@@ -606,6 +606,7 @@ BEGIN_MESSAGE_MAP(CGridCtrl, CWnd)
   ON_MESSAGE(WM_GETFONT, OnGetFont)
   ON_MESSAGE(WM_IME_CHAR, OnImeChar)
   ON_NOTIFY(GVN_ENDLABELEDIT, IDC_INPLACE_CONTROL, OnEndInPlaceEdit)
+  ON_CONTROL_REFLECT_EX(CBN_KILLFOCUS,OnComboKillFocus)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1221,7 +1222,8 @@ void CGridCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
   }
   else
   {
-    CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+    OnEditCell(m_idCurrentCell.row,m_idCurrentCell.col,CPoint(-1,-1),nChar);
+    // CWnd::OnKeyDown(nChar,nRepCnt,nFlags);
     return;
   }
 
@@ -1339,6 +1341,7 @@ void CGridCtrl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
     if(!m_bHandleTabKey || (m_bHandleTabKey && nChar != VK_TAB))
     {
       OnEditCell(m_idCurrentCell.row,m_idCurrentCell.col,CPoint(-1,-1),nChar);
+      return;
     }
   }
 
@@ -8135,4 +8138,16 @@ CGridCtrl::RegisterEditCell(int nRow,int nCol)
 {
   m_curEditRow = nRow;
   m_curEditCol = nCol;
+}
+
+BOOL
+CGridCtrl::OnComboKillFocus()
+{
+  CGridCellBase* cell = GetCell(m_idCurrentCell.row,m_idCurrentCell.col);
+  if(cell)
+  {
+    cell->EndEdit();
+  }
+  SetFocus();
+  return FALSE;
 }

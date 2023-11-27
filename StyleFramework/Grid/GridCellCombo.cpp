@@ -83,13 +83,32 @@ CGridCellCombo::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nI
   m_row = nRow;
   m_col = nCol;
 
+  if(m_pEditWnd == nullptr)
+  {
+    if(CreateNewComboBox(nRow,nCol,rect,nID,nChar))
+    {
+      return TRUE;
+    }
+  }
+  // Now send the last edit character
+  if(nChar >= VK_SPACE)
+  {
+    TRACE("POST CHAR %d %c\n",nChar,nChar);
+    m_pEditWnd->PostMessage(WM_CHAR,   nChar,0);
+  }
+  return TRUE;
+}
+
+bool
+CGridCellCombo::CreateNewComboBox(int p_row,int p_col,CRect p_rect,UINT p_id,UINT p_char)
+{
   // Use our StyleComboBox
   m_pEditWnd = new StyleComboBox();
   StyleComboBox* combo = dynamic_cast<StyleComboBox*>(m_pEditWnd);
 
   // Make sure we can see it and create it
   m_dwStyle |= WS_CHILD | WS_VISIBLE;
-  combo->Create(m_dwStyle,rect,GetGrid(),nID);
+  combo->Create(m_dwStyle,p_rect,GetGrid(),p_id);
   combo->InitSkin();
 
   // Add all strings that we intend to use
@@ -99,7 +118,7 @@ CGridCellCombo::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nI
   }
 
   // Tell the grid that we are in business for this cell
-  GetGrid()->RegisterEditCell(nRow,nCol);
+  GetGrid()->RegisterEditCell(p_row,p_col);
 
   // Propagate the current contents
   CString initText = GetText();
@@ -108,21 +127,21 @@ CGridCellCombo::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nI
   // First action of the list
   if((m_dwStyle & CBS_DROPDOWNLIST) == CBS_DROPDOWNLIST)
   {
-    //combo->SetFocus();
-    combo->OnDropdown();
     combo->OnPaint();
+    combo->OnDropdown();
   }
   else
   {
     // CBS_SIMPLE or CBS_DROPDOWN can edit the current contents
     combo->SubclassDlgItem(IDC_COMBOEDIT,GetGrid());
     SCBTextEdit* edit = combo->GetEditControl();
- 	  // combo->SetFocus();
-    switch (nChar)
+    switch (p_char)
     {
         case VK_LBUTTON: 
-        case VK_RETURN:   edit->SetSel((int)_tcslen(initText), -1); return TRUE;
-        case VK_BACK:     edit->SetSel((int)_tcslen(initText), -1); break;
+        case VK_RETURN:   edit->SetSel((int)_tcslen(initText), -1); 
+                          return true;
+        case VK_BACK:     edit->SetSel((int)_tcslen(initText), -1);
+                          break;
         case VK_DOWN: 
         case VK_UP:   
         case VK_RIGHT:
@@ -130,12 +149,14 @@ CGridCellCombo::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nI
         case VK_NEXT:  
         case VK_PRIOR: 
         case VK_HOME:  
-        case VK_END:      edit->SetSel(0,-1); return TRUE;
+        case VK_END:      edit->SetSel(0,-1); 
+                          return true;
         default:          edit->SetSel(0,-1);
+                          break;
     }
-    edit->SendMessage(WM_CHAR,nChar,0);
   }
-  return TRUE;
+  // Not yet ready
+  return false;
 }
 
 CWnd*

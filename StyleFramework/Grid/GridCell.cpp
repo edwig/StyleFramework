@@ -161,7 +161,7 @@ DWORD CGridCell::GetFormat() const
   return m_nFormat; 
 }
 
-UINT CGridCell::GetMargin() const           
+UINT CGridCell::GetMargin() const
 {
   if (m_nMargin == (UINT)-1)
   {
