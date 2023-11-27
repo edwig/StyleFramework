@@ -1310,10 +1310,10 @@ void CGridCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
                       }
                       break;
       }
-      EnsureVisible(next); // Make sure cell is visible
+      EnsureVisible(next,true); // Make sure cell is visible
       Invalidate();
     }
-    EnsureVisible(next); // Make sure cell is visible
+    EnsureVisible(next,true); // Make sure cell is visible
 
     if(bHorzScrollAction)
     {
@@ -5839,8 +5839,15 @@ void CGridCtrl::Refresh()
   }
 }
 
+void
+CGridCtrl::EnsureVisible(CCellID& p_cell,bool p_ingrid /*=false*/)
+{ 
+  EnsureVisible(p_cell.row, p_cell.col,p_ingrid); 
+}
+
 // EnsureVisible supplied by Roelf Werkman
-void CGridCtrl::EnsureVisible(int nRow, int nCol)
+void 
+CGridCtrl::EnsureVisible(int nRow, int nCol,bool p_ingrid /*=false*/)
 {
   if(!m_bAllowDraw)
   {
@@ -5871,7 +5878,7 @@ void CGridCtrl::EnsureVisible(int nRow, int nCol)
   // We are going to send some scroll messages, which will steal the focus 
   // from it's rightful owner. Squirrel it away ourselves so we can give
   // it back. (Damir)
-  CWnd* pFocusWnd = GetFocus();
+  CWnd* pFocusWnd = p_ingrid ? this : GetFocus();
 
   CCellRange VisibleCells = GetVisibleNonFixedCellRange();
 
@@ -8016,7 +8023,7 @@ void CGridCtrl::OnEditCell(int nRow, int nCol, CPoint point, UINT nChar)
     return;
   }
   // Can we see what we are doing?
-  EnsureVisible(nRow, nCol);
+  EnsureVisible(nRow, nCol,true);
   if(!IsCellVisible(nRow,nCol))
   {
     return;
