@@ -2,9 +2,7 @@
 //
 // MFC Grid Control - Main grid cell class
 //
-// Provides the implementation for a combobox cell type of the
-// grid control.
-//
+// Provides the implementation for a combobox cell type of the grid control.
 // For use with CGridCtrl v2.22+
 //
 // History:
