@@ -978,6 +978,7 @@ StyleComboBox::OnDropdown()
   PreShowComboList();
   ShowComboList();
   PostShowComboList();
+
   m_buttonDown = true;
 }
 
@@ -1058,7 +1059,7 @@ StyleComboBox::OnSetFocus(CWnd* pOldWnd)
   {
     CWnd* owner = GetOwner();
     if(owner)
-      {
+    {
       ::SendMessage(owner->GetSafeHwnd(),WM_COMMAND,MAKELONG(GetDlgCtrlID(),CBN_SETFOCUS),(LPARAM)m_hWnd);
     }
   }
@@ -1223,8 +1224,8 @@ StyleComboBox::DeleteString(UINT nIndex)
 {
   if(m_listControl)
   {
-  return m_listControl->DeleteString(nIndex);
-}
+    return m_listControl->DeleteString(nIndex);
+  }
   return -1;
 }
 
@@ -1373,8 +1374,8 @@ StyleComboBox::GetItemDataPtr(int nIndex) const
 {
   if(m_listControl)
   {
-  return m_listControl->GetItemDataPtr(nIndex);
-}
+    return m_listControl->GetItemDataPtr(nIndex);
+  }
   return nullptr;
 }
 
@@ -1390,8 +1391,8 @@ StyleComboBox::GetItemHeight(int nIndex) const
   }
   if(m_listControl)
   {
-  return m_listControl->GetItemHeight(nIndex);
-}
+    return m_listControl->GetItemHeight(nIndex);
+  }
   return CB_ERR;
 }
 
@@ -1400,8 +1401,8 @@ StyleComboBox::GetLBText(int nIndex,LPTSTR lpszText) const
 {
   if(m_listControl)
   {
-  return m_listControl->GetText(nIndex,lpszText);
-}
+    return m_listControl->GetText(nIndex,lpszText);
+  }
   return 0;
 }
 
@@ -1801,60 +1802,11 @@ StyleComboBox::OnPaint()
     {
       m_itemControl->GetSkin()->GetClientRect(&editItem);
     }
-    // Find the arrow color
-    COLORREF color = ThemeColor::GetColor(Colors::AccentColor1);
-    if(m_arrowColor)
-    {
-      color = m_arrowColor;
-    }
-    else if(!this->IsWindowEnabled())
-    {
-      color = ThemeColor::GetColor(Colors::AccentColor2);
-    }
-
-    // Create pen
-    CPen pen;
-    pen.CreatePen(PS_SOLID, 1, color);
-    HGDIOBJ orgpen = dc->SelectObject(pen);
-
-    // Paint the button
     int size = editItem.Height();
-    CRect but(rcItem.right-size,rcItem.top,rcItem.right,rcItem.top + size);
-    DWORD background = ThemeColor::GetColor(Colors::ColorCtrlBackground);
-    if(m_buttonDown)
-    {
-      background = ThemeColor::GetColor(Colors::ColorComboDropped);
-    }
-    else if(m_itemControl->GetHoverOver())
-    {
-      background = ThemeColor::GetColor(Colors::ColorComboActive);
-    }
-    dc->FillSolidRect(but, background);
-    but.CenterPoint();
+    CRect but(rcItem.right - size,rcItem.top,rcItem.right,rcItem.top + size);
 
-    POINT points[3];
-    if(m_buttonDown)
-    {
-      points[0].x = but.CenterPoint().x - WS(4);
-      points[0].y = but.CenterPoint().y + WS(4);
-      points[1].x = but.CenterPoint().x + 1;
-      points[1].y = but.CenterPoint().y - 1;
-      points[2].x = but.CenterPoint().x + WS(4) + 2;
-      points[2].y = but.CenterPoint().y + WS(4);
-    }
-    else
-    {
-      points[0].x = but.CenterPoint().x - WS(4);
-      points[0].y = but.CenterPoint().y - 1;
-      points[1].x = but.CenterPoint().x + 1;
-      points[1].y = but.CenterPoint().y + WS(4);
-      points[2].x = but.CenterPoint().x + WS(4) + 2;
-      points[2].y = but.CenterPoint().y - 1;
-    }
-
-    CBrush brush(color);
-    HGDIOBJ orgbrush = dc->SelectObject(&brush);
-    dc->Polygon(points,3);
+    // Draw the arrow
+    COLORREF color = DrawComboButton(dc,but);
 
     CPen framepen;
     COLORREF framecolor = FRAME_DEFAULT_COLOR;
@@ -1863,7 +1815,9 @@ StyleComboBox::OnPaint()
     m_itemControl->GetDrawFrameColor(framecolor,bordersize,readonly);
 
     framepen.CreatePen(PS_SOLID,bordersize,framecolor);
-    dc->SelectObject(framepen);
+    HGDIOBJ orgpen = dc->SelectObject(framepen);
+    CBrush  brush(color);
+    HGDIOBJ orgbrush = dc->SelectObject(&brush);
 
     // Paint the frame
     dc->MoveTo(rcItem.left  + 1,    rcItem.top + bordersize - 1);
@@ -1878,6 +1832,68 @@ StyleComboBox::OnPaint()
     dc->SelectObject(orgbrush);
   }
   EndPaint(&paint);
+}
+
+COLORREF
+StyleComboBox::DrawComboButton(CDC* p_dc,CRect& p_but)
+{
+  // Find the arrow color
+  COLORREF color = ThemeColor::GetColor(Colors::AccentColor1);
+  if(m_arrowColor)
+  {
+    color = m_arrowColor;
+  }
+  else if(!this->IsWindowEnabled())
+  {
+    color = ThemeColor::GetColor(Colors::AccentColor2);
+  }
+
+  // Create pen
+  CPen pen;
+  pen.CreatePen(PS_SOLID,1,color);
+  HGDIOBJ orgpen = p_dc->SelectObject(pen);
+
+  // Paint the button
+  DWORD background = ThemeColor::GetColor(Colors::ColorCtrlBackground);
+  if(m_buttonDown)
+  {
+    background = ThemeColor::GetColor(Colors::ColorComboDropped);
+  }
+  else if(m_itemControl->GetHoverOver())
+  {
+    background = ThemeColor::GetColor(Colors::ColorComboActive);
+  }
+  p_dc->FillSolidRect(p_but,background);
+  p_but.CenterPoint();
+
+  POINT points[3];
+  if(m_buttonDown)
+  {
+    points[0].x = p_but.CenterPoint().x - WS(4);
+    points[0].y = p_but.CenterPoint().y + WS(4);
+    points[1].x = p_but.CenterPoint().x + 1;
+    points[1].y = p_but.CenterPoint().y - 1;
+    points[2].x = p_but.CenterPoint().x + WS(4) + 2;
+    points[2].y = p_but.CenterPoint().y + WS(4);
+  }
+  else
+  {
+    points[0].x = p_but.CenterPoint().x - WS(4);
+    points[0].y = p_but.CenterPoint().y - 1;
+    points[1].x = p_but.CenterPoint().x + 1;
+    points[1].y = p_but.CenterPoint().y + WS(4);
+    points[2].x = p_but.CenterPoint().x + WS(4) + 2;
+    points[2].y = p_but.CenterPoint().y - 1;
+  }
+
+  CBrush brush(color);
+  HGDIOBJ orgbrush = p_dc->SelectObject(&brush);
+  p_dc->Polygon(points,3);
+
+  p_dc->SelectObject(orgpen);
+  p_dc->SelectObject(orgbrush);
+
+  return color;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1975,7 +1991,7 @@ SCBTextEdit::OnChar(UINT nChar,UINT nRepCnt,UINT nFlags)
     {
       m_origText = text.Left(first);
     }
-    if(nRepCnt == 1 && (' ' <= nChar && nChar <= 127))
+    if(nRepCnt == 1 && (' ' <= nChar && nChar <= 0x7F))
     {
       if(type || (m_combo->GetTypeBuffer() && GetTickCount() < (m_keyboardTime + COMBO_KEYBOARD_CACHE)))
       {
@@ -2471,7 +2487,7 @@ SCBListBox::CancelCurrentSelection()
 void
 SCBListBox::OnActivate(UINT nState,CWnd* pWndOther,BOOL pMinimized)
 {
-  if(nState == WA_INACTIVE)
+  if(nState == WA_INACTIVE && pWndOther)
   {
     // Application loses the focus
     m_combo->OnCloseup();

@@ -130,7 +130,6 @@ CGridCellCombo::CreateNewComboBox(int p_row,int p_col,CRect p_rect,UINT p_id,UIN
   // First action of the list
   if((m_dwStyle & CBS_DROPDOWNLIST) == CBS_DROPDOWNLIST)
   {
-    combo->OnPaint();
     combo->OnDropdown();
   }
   else
@@ -256,15 +255,20 @@ CGridCellCombo::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseBkgnd
       // Draw control at RHS of cell
       CRect ScrollRect = rect;
       ScrollRect.left = rect.right - rect.Height();
-
-      // Do the draw 
-      // pDC->DrawFrameControl(ScrollRect, DFC_SCROLL, DFCS_SCROLLDOWN | DFCS_FLAT);
-      DrawComboButton(pDC,ScrollRect);
+      if(m_pEditWnd)
+      {
+        reinterpret_cast<StyleComboBox*>(m_pEditWnd)->DrawComboButton(pDC,ScrollRect);
+      }
+      else
+      {
+        DrawComboButton(pDC,ScrollRect);
+      }
 
       // Adjust the remaining space in the cell
       rect.right = ScrollRect.left;
     }
   }
+  // Do the draw if we are a combo box control
   if(m_pEditWnd && m_pEditWnd->GetSafeHwnd())
   {
     reinterpret_cast<StyleComboBox*>(m_pEditWnd)->OnPaint();

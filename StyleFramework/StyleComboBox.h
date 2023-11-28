@@ -166,6 +166,9 @@ protected:
   virtual void PositionDropList(int p_width,int p_height);
   virtual void FindSelectionFromEdit();
 
+  friend CGridCellCombo;
+  COLORREF     DrawComboButton(CDC* p_dc,CRect& p_but);
+
   SCBTextEdit* m_itemControl        { nullptr };                    // The real edit control
   SCBListBox*  m_listControl        { nullptr };                    // The list control
   int          m_minimum            { COMBO_DEFAULT_MINVISIBLE };   // Minimum visible items in the list
