@@ -10,6 +10,19 @@
 //
 // RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES
 
+VERSION OF 30-11-2023
+---------------------
+1) Fix for the GridCellNumeric to test for a digit in the InPlaceEdit to prevent strange
+   error messages and gray pieces of background in the grid
+2) ReWrite of the GridCellCombo. It's now implemented on the basis of a StyleComboBox
+   This makes for a better handling of the keyboard in the combobox list of the grid
+   See the grid example in TestDialogs for a column of CBS_DROPDOWN and CBS_DROPDOWNLIST
+3) It's now possible to call "DragAcceptFiles(TRUE)" for a StyleEdit control in either
+   a StyleDialog or a StyleTab. Just implement your own override of the method
+   StyleDialog::OnDroppedFile(UINT p_id,UINT p_index,LPCTSTR p_fileName)
+   For an example look up the first text field of the TestDialogs example where you can
+   drag a file from the Windows Explorer to this box.
+
 VERSION OF 27-07-2023
 ---------------------
 1) Fix for navigating StyleComboBox lists with the keyboard cursur keys
@@ -24,7 +37,6 @@ VERSION OF 05-06-2023
    m_myCombo.Create(WS_CHILD|WS_VISIBLE|WS_TABSTOP|CBS_DROPDOWNLIST,rect,this,IDC_MYCONTROL);
    m_myCombo.InitSkin();
    m_myCombo.ReadjustDynamic();
-
 
 VERSION OF 02-02-2023
 ---------------------

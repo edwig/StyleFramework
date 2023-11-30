@@ -96,6 +96,12 @@ StyleTab::SetupDynamicLayout()
   }
 }
 
+void 
+StyleTab::OnDroppedFile(UINT p_id,UINT p_index,LPCTSTR p_fileName)
+{
+  StyleMessageBox(this,"ERROR: Implement your own OnDroppedFile for this TAB","Error",MB_OK|MB_ICONERROR);
+}
+
 // Another program has changed our styling
 LRESULT
 StyleTab::OnStyleChanged(WPARAM,LPARAM)

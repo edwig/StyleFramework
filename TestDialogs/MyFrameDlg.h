@@ -14,7 +14,8 @@ public:
 
  enum { IDD = IDD_TESTS };
 
- BOOL OnInitDialog() override;
+ virtual BOOL OnInitDialog() override;
+ virtual void OnDroppedFile(UINT p_id,UINT p_index,LPCTSTR p_fileName);
 
 protected:
   virtual void DoDataExchange(CDataExchange* pDX) override;

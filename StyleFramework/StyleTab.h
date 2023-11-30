@@ -27,6 +27,7 @@ public:
   virtual ~StyleTab();
 
   void SetCanResize(bool p_resize = true);
+  virtual void OnDroppedFile(UINT p_id,UINT p_index,LPCTSTR p_fileName);
 
 protected:
   virtual BOOL PreTranslateMessage(MSG* p_msg) override;

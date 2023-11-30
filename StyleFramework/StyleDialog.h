@@ -56,6 +56,7 @@ public:
   virtual BOOL    InitFirstFocus();
   virtual bool    OnClosing();
   virtual void    SetupDynamicLayout();
+  virtual void    OnDroppedFile(UINT p_id,UINT p_index,LPCTSTR p_fileName);
 
   void    ReDrawFrame();
   void    ShowSysMenu     (bool p_sysmenu     = true);

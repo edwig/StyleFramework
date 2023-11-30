@@ -15,7 +15,7 @@
 MyFrameDlg::MyFrameDlg(CWnd* p_parent /*=nullptr*/)
            :StyleDialog(IDD,p_parent,true,true)
 {
-	m_text = _T("Select one of the following tests");
+	m_text = _T("Select one of the following tests, or drag a file to this box");
 }
 
 MyFrameDlg::~MyFrameDlg()
@@ -73,7 +73,27 @@ MyFrameDlg::OnInitDialog()
 {
   StyleDialog::OnInitDialog();
 	SetWindowText(_T("Select a test"));
+
+  // Implement OnDroppedFile !!
+  m_editText.DragAcceptFiles(TRUE);
+
   return TRUE;
+}
+
+// Our test implementation of dropped files
+void 
+MyFrameDlg::OnDroppedFile(UINT p_id,UINT p_index,LPCTSTR p_fileName)
+{
+  // Now use it!
+  if((p_id == IDC_TEXT) && (p_index == 0))
+  {
+    m_text = p_fileName;
+    UpdateData(FALSE);
+  }
+  else
+  {
+    StyleMessageBox(this,_T("You may only drop ONE file at the time on the text box!!"),_T("Error"),MB_OK|MB_ICONERROR);
+  }
 }
 
 void 
