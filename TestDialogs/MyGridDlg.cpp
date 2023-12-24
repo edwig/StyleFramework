@@ -136,6 +136,13 @@ MyGridDlg::FillGrid()
     CGridCellCombo* combo2 = reinterpret_cast<CGridCellCombo*>(m_grid.GetCell(row,4));
     SetComboList(combo2,true);
 
+    // Testing tooltips per cell
+    CGridCellBase* cell = m_grid.GetCell(row,2);
+    CString tip;
+    tip.Format("Tooltip for a line in multiple [%d] : [%d]", index / 10, index % 10);
+    m_grid.SetTitleTip(index,tip);
+    cell->SetTipNumber(index);
+
     if (!firstRow)
     {
       firstRow = row;

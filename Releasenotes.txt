@@ -10,6 +10,22 @@
 //
 // RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES
 
+VERSION OF 24-12-2023
+---------------------
+1) Small fix for the StyleComboBox OnSetFocus function while destructing the object.
+2) Added tooltips to individual cells of the grid. This is a work instruction
+   1) Add to be used tooltips to the grid as a whole under a reference number with
+      grid.SetTitleTip(n,"This is a titletip text");
+   2) Give each cell a title tip number referencing the grid mapping as in
+      CGridCellBase* cell = grid.GetCell(row,col);
+      cell->SetTipNumber(n)
+   This keeps the number of tips down to a global level in the grid and there will be no need
+   to allocate a string for each cell.
+   If a cell has a tip-number: that will take precedence over the displaying of over long 
+   contents of the current cell.
+   If a cell has no tip-number (GetTipNumber() returns -1) than the titletip is used for
+   contents that cannot be displayed as a whole, like it used to be.
+
 VERSION OF 30-11-2023
 ---------------------
 1) Fix for the GridCellNumeric to test for a digit in the InPlaceEdit to prevent strange

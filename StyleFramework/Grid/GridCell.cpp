@@ -49,7 +49,8 @@ IMPLEMENT_DYNCREATE(CGridDefaultCell, CGridCell)
 
 CGridCell::CGridCell()
 {
-  m_plfFont = NULL;
+  m_plfFont   = NULL;
+  m_tipNumber = -1;
   CGridCell::Reset();
 }
 

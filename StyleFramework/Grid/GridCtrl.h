@@ -26,7 +26,7 @@
 #include "GridCell.h"
 #include <afxtempl.h>
 #include <vector>
-
+#include <map>
 
 ///////////////////////////////////////////////////////////////////////////////////
 // Defines - these determine the features (and the final size) of the final code
@@ -113,6 +113,8 @@ typedef CTypedPtrArray<CObArray, CGridCellBase*> GRID_ROW;
 
 // For virtual mode callback
 typedef BOOL (CALLBACK* GRIDCALLBACK)(GV_DISPINFO *, LPARAM);
+
+typedef std::map<int,CString> TitleTipMap;
 
 ///////////////////////////////////////////////////////////////////////////////////
 // Defines
@@ -231,10 +233,15 @@ public:
     void     SetGridLineColor(COLORREF clr)       { m_crGridLineColour = clr;         }
     COLORREF GetGridLineColor() const             { return m_crGridLineColour;        }
 
-	void	 SetTitleTipBackClr(COLORREF clr = CLR_DEFAULT) { m_crTTipBackClr = clr;  }
-	COLORREF GetTitleTipBackClr()				            { return m_crTTipBackClr; }
-	void	 SetTitleTipTextClr(COLORREF clr = CLR_DEFAULT) { m_crTTipTextClr = clr;  }
-	COLORREF GetTitleTipTextClr()				            { return m_crTTipTextClr; }
+	  void	   SetTitleTipBackClr(COLORREF clr = CLR_DEFAULT) { m_crTTipBackClr = clr;  }
+	  COLORREF GetTitleTipBackClr()				          { return m_crTTipBackClr; }
+	  void	   SetTitleTipTextClr(COLORREF clr = CLR_DEFAULT) { m_crTTipTextClr = clr;  }
+	  COLORREF GetTitleTipTextClr()				          { return m_crTTipTextClr; }
+
+    // The map of title tips
+    void     SetTitleTip(int p_tip,CString p_text);
+    CString  GetTitleTip(int p_tip);
+    void     RemoveTitleTip(int p_tip);
 
     // ***************************************************************************** //
     // These have been deprecated. Use GetDefaultCell and then set the colors
@@ -683,9 +690,8 @@ protected:
     int         m_nRowsPerWheelNotch;
     CMap<DWORD,DWORD, CCellID, CCellID&> m_SelectedCellMap, m_PrevSelectedCellMap;
 
-#ifndef GRIDCONTROL_NO_TITLETIPS
     CTitleTip   m_TitleTip;             // Title tips for cells
-#endif
+    TitleTipMap m_tips;                 // Title tips
 
     // Drag and drop
     CCellID     m_LastDragOverCell;
