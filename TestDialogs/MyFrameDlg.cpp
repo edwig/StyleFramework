@@ -105,6 +105,7 @@ MyFrameDlg::OnEnChangeText()
 void 
 MyFrameDlg::OnBnClickedTest1()
 {
+  AutoFocus focus;
   MyFrameDlg1 dlg(this);
   dlg.DoModal();
 }
@@ -112,6 +113,7 @@ MyFrameDlg::OnBnClickedTest1()
 void 
 MyFrameDlg::OnBnClickedTest2()
 {
+  AutoFocus focus;
   MyFrameDlg2 dlg(this);
   dlg.DoModal();
 }
@@ -119,6 +121,7 @@ MyFrameDlg::OnBnClickedTest2()
 void 
 MyFrameDlg::OnBnClickedTest3()
 {
+  AutoFocus focus;
   MyFrameDlg3 dlg(this);
   dlg.DoModal();
 }
@@ -126,6 +129,7 @@ MyFrameDlg::OnBnClickedTest3()
 void 
 MyFrameDlg::OnBnClickedTest4()
 {
+  AutoFocus focus;
   MyFrameDlg4 dlg(this);
   dlg.DoModal();
 }
@@ -133,6 +137,7 @@ MyFrameDlg::OnBnClickedTest4()
 void 
 MyFrameDlg::OnBnClickedTest5()
 {
+  AutoFocus focus;
   MyFrameDlg5 dlg(this);
   dlg.DoModal();
 }
@@ -140,6 +145,7 @@ MyFrameDlg::OnBnClickedTest5()
 void 
 MyFrameDlg::OnBnClickedTest6()
 {
+  AutoFocus focus;
   MyFrameDlg6 dlg(this);
   dlg.DoModal();
 }
@@ -147,6 +153,7 @@ MyFrameDlg::OnBnClickedTest6()
 void 
 MyFrameDlg::OnBnClickedTest7()
 {
+  AutoFocus focus;
   MyFrameDlg7 dlg(this);
   dlg.DoModal();
 }
@@ -154,6 +161,7 @@ MyFrameDlg::OnBnClickedTest7()
 void 
 MyFrameDlg::OnBnClickedGrid()
 {
+  AutoFocus focus;
   MyGridDlg dlg(this);
   dlg.DoModal();
 }
@@ -161,6 +169,7 @@ MyFrameDlg::OnBnClickedGrid()
 void 
 MyFrameDlg::OnBnClickedTabs()
 {
+  AutoFocus focus;
   MySettingsDlg dlg(this);
   dlg.DoModal();
 }

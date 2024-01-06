@@ -189,6 +189,9 @@
     <ClInclude Include="StyleTab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AutoFocus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GrayWindow.cpp">

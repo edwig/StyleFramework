@@ -23,6 +23,7 @@ class StyleComboBox;
 class AutoBlockActivation;
 using ToolTips = std::map<HWND,LPCTSTR>;
 
+// Used for sending messages to all child windows
 typedef struct
 {
   UINT   MessageId;

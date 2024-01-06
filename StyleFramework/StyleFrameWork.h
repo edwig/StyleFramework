@@ -52,6 +52,7 @@ void SFXResizeByFactor(CRect& p_rect);
 void SFXResizeByFactor(int& p_x,int& p_y,int& p_w,int& p_h);
 
 // General headers
+#include "AutoFocus.h"
 #include "StyleColors.h"
 #include "StyleFonts.h"
 #include "StyleMacros.h"

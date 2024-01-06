@@ -325,6 +325,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AutoFocus.h" />
     <ClInclude Include="CWSExpander.h" />
     <ClInclude Include="GrayWindow.h" />
     <ClInclude Include="Grid\CellRange.h" />
