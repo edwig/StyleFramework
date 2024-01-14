@@ -29,6 +29,11 @@ public:
   void SetCanResize(bool p_resize = true);
   virtual void OnDroppedFile(UINT p_id,UINT p_index,LPCTSTR p_fileName);
 
+  // Stepper and other logic
+  virtual bool InitStyleTab (void* p_data);
+  virtual bool CheckStyleTab(void* p_data);
+  virtual bool SaveStyleTab (void* p_data);
+
 protected:
   virtual BOOL PreTranslateMessage(MSG* p_msg) override;
   virtual BOOL OnInitDialog() override;

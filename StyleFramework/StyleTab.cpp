@@ -96,6 +96,27 @@ StyleTab::SetupDynamicLayout()
   }
 }
 
+bool
+StyleTab::InitStyleTab(void* /*p_data*/)
+{
+  // Does nothing: Implement your own!
+  return true;
+}
+
+bool
+StyleTab::CheckStyleTab(void* /*p_data*/)
+{
+  // Does nothing: Implement your own!
+  return true;
+}
+
+bool
+StyleTab::SaveStyleTab(void* /*p_data*/)
+{
+  // Does nothing: Implement your own!
+  return true;
+}
+
 void 
 StyleTab::OnDroppedFile(UINT p_id,UINT p_index,LPCTSTR p_fileName)
 {

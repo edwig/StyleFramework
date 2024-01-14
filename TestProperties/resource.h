@@ -23,11 +23,11 @@
 #define IDB_SCROLLBAR7                  144
 #define IDD_CALENDAR                    145
 #define IDI_CALENDAR                    146
-#define IDB_MLD_STOP                    150
-#define IDB_MLD_INFO                    151
-#define IDB_MLD_VRAAG                   152
-#define IDB_MLD_UITROEP                 153
-#define IDR_MELDINGEN                   180
+// #define IDB_MLD_STOP                    150
+// #define IDB_MLD_INFO                    151
+// #define IDB_MLD_VRAAG                   152
+// #define IDB_MLD_UITROEP                 153
+// #define IDR_MELDINGEN                   180
 
 #define IDC_BOODSCHAP                    20
 #define IDC_TOAST                        11
