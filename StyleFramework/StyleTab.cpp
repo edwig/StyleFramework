@@ -55,6 +55,8 @@ StyleTab::OnInitDialog()
 {
   CDialog::OnInitDialog();
   OnStyleChanged(0,0);
+
+  ASSERT(GetStyle() & WS_CHILD);
   return TRUE;
 }
 

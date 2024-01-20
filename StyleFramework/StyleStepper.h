@@ -39,8 +39,8 @@ class StyleStepper : public StyleDialog
   DECLARE_DYNAMIC(StyleStepper);
 
 public:
-  StyleStepper(UINT    p_IDTemplate = IDD_STEPPER
-              ,CWnd*   p_parentWnd  = nullptr
+  StyleStepper(CWnd*   p_parentWnd  = nullptr
+              ,UINT    p_IDTemplate = IDD_STEPPER
               ,CString p_caption    = ""
               ,bool    p_sysmenu    = false
               ,bool    p_status     = false);
@@ -67,15 +67,20 @@ public:
 protected:
   virtual void DoDataExchange(CDataExchange* pDX) override;
   virtual BOOL OnInitDialog() override;
+  virtual void SetupDynamicLayout() override;
+
   virtual void InitPages();
   virtual void DisplayPage();
-
+  
   virtual void TryPageForward();
   virtual void TryComplete();
   virtual void Draw();
 
   // Internal for OnSize
   void ResizePages(int cx,int cy);
+  void ClearStepperArea();
+  void AdjustSteperSize();
+  void MoveButton(StyleButton& p_button,int x,int y);
 
 private:
   CString      m_caption;

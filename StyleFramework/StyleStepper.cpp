@@ -25,8 +25,8 @@ using namespace ThemeColor;
 
 IMPLEMENT_DYNAMIC(StyleStepper,StyleDialog);
 
-StyleStepper::StyleStepper(UINT    p_IDTemplate /*= IDD_STEPPER */
-                          ,CWnd*   p_parentWnd  /*= nullptr     */
+StyleStepper::StyleStepper(CWnd*   p_parentWnd  /*= nullptr     */
+                          ,UINT    p_IDTemplate /*= IDD_STEPPER */
                           ,CString p_caption    /*= ""          */
                           ,bool    p_sysmenu    /*= false       */
                           ,bool    p_status     /*= false       */)
@@ -77,13 +77,94 @@ StyleStepper::OnInitDialog()
   {
     StyleMessageBox(this,"INTERNAL ERROR: Wizards must have a least 2 pages!","ERROR",MB_OK|MB_ICONERROR);
     OnOK();
+    return TRUE;
   }
-  else
-  {
-    InitPages();
-    DisplayPage();
-  }
+  InitPages();
+  AdjustSteperSize();
+  SetCanResize();
+  ShowGripper();
+  DisplayPage();
+
+  UpdateData(FALSE);
   return TRUE;
+}
+
+void
+StyleStepper::SetupDynamicLayout()
+{
+  StyleDialog::SetupDynamicLayout();
+
+  CMFCDynamicLayout& manager = *GetDynamicLayout();
+#ifdef _DEBUG
+  manager.AssertValid();
+#endif
+
+  for(size_t index = 0;index < m_pages.size();++index)
+  {
+    HWND wnd = m_pages[index].m_page->GetSafeHwnd();
+    manager.AddItem(wnd,manager.MoveNone(),manager.SizeHorizontalAndVertical(100,100));
+  }
+  manager.AddItem(IDC_PRIOR,manager.MoveHorizontalAndVertical(100,100),manager.SizeNone());
+  manager.AddItem(IDC_NEXT,manager.MoveHorizontalAndVertical(100,100),manager.SizeNone());
+
+  // Now resize all pages
+  for(size_t index = 0;index < m_pages.size();++index)
+  {
+    m_pages[index].m_page->SetCanResize();
+  }
+  // Do the final adjustments
+  manager.Adjust();
+}
+
+void
+StyleStepper::AdjustSteperSize()
+{
+  // Get minimal size of the stepper
+  CRect winrect;
+  GetWindowRect(&winrect);
+  CRect clientrect;
+  GetClientRect(&clientrect);
+  int minx = 0;
+  int miny = 0;
+  for(size_t index = 0;index < m_pages.size();++index)
+  {
+    CRect client;
+    m_pages[index].m_page->GetWindowRect(client);
+    if(minx < client.Width())  minx = client.Width();
+    if(miny < client.Height()) miny = client.Height();
+  }
+
+  // Recalculate new positions
+  miny += STEPPER_TOP + STEPPER_BOTTOM;
+  int newright  = winrect.left + minx + (winrect.Width()  - clientrect.Width());
+  int newbottom = winrect.top  + miny + (winrect.Height() - clientrect.Height());
+
+  // Move the buttons up and left
+  MoveButton(m_buttonPrior,winrect.right - newright,winrect.bottom - newbottom);
+  MoveButton(m_buttonNext, winrect.right - newright,winrect.bottom - newbottom);
+
+  // Final resize of the window
+  winrect.right  = newright;
+  winrect.bottom = newbottom;
+  MoveWindow(winrect);
+}
+
+void
+StyleStepper::MoveButton(StyleButton& p_button,int x,int y)
+{
+  CRect rect;
+  p_button.GetWindowRect(&rect);
+  CRect parent;
+  GetWindowRect(&parent);
+  
+  int w = rect.Width();
+  int h = rect.Height();
+
+  rect.left   = rect.left - parent.left - x - 7;
+  rect.right  = rect.left + w;
+  rect.top    = rect.top  - parent.top  - y - (STEPPER_BOTTOM / 2);
+  rect.bottom = rect.top  + h;
+  p_button.MoveWindow(rect,TRUE);
 }
 
 void 
@@ -122,7 +203,7 @@ StyleStepper::InitPages()
   // Init all the pages
   for(size_t index = 0;index < m_pages.size();++index)
   {
-    m_pages[index].m_page->InitStyleTab(m_data);
+    if(!m_pages[index].m_page->InitStyleTab(m_data))
     {
       return;
     }
@@ -164,18 +245,22 @@ void
 StyleStepper::OnSize(UINT p_type,int cx,int cy)
 {
   StyleDialog::OnSize(p_type,cx,cy);
-  ResizePages(cx,cy);
+  ClearStepperArea();
 }
 
 void
 StyleStepper::ResizePages(int cx,int cy)
 {
+
   // Where we expect to see our pages
   CRect pagerect(0,STEPPER_TOP,cx,cy - STEPPER_BOTTOM);
   for(size_t index = 0;index < m_pages.size();++index)
   {
     if(m_pages[index].m_page->GetSafeHwnd())
     {
+      CWnd* parent = m_pages[index].m_page->GetParent();
+
+
       m_pages[index].m_page->MoveWindow(pagerect,TRUE);
     }
   }
@@ -212,6 +297,7 @@ StyleStepper::TryPageForward()
   {
     // Simply next page
     ++m_activePage;
+    m_pages[m_activePage].m_page->InitStyleTab(m_data);
     DisplayPage();
   }
 }
@@ -245,6 +331,21 @@ StyleStepper::OnPaint()
   StyleDialog::OnPaint();
 
   Draw();
+}
+
+void
+StyleStepper::ClearStepperArea()
+{
+  CDC* dc = GetDC();
+  CRect client;
+  GetClientRect(&client);
+
+  client.bottom =  client.top + STEPPER_TOP;
+  COLORREF oldBack = dc->SetBkColor(ThemeColor::GetColor(Colors::ColorWindowFrame));
+  dc->ExtTextOut(0,0,ETO_OPAQUE,client,"",0);
+
+  dc->SetBkColor(oldBack);
+  ReleaseDC(dc);
 }
 
 void
