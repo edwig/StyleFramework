@@ -73,9 +73,9 @@ StyleStepper::OnInitDialog()
   SetCaption(m_caption);
 
   // Check if we really have a wizard!
-  if(m_pages.size() < 2)
+  if(m_pages.empty())
   {
-    StyleMessageBox(this,"INTERNAL ERROR: Wizards must have a least 2 pages!","ERROR",MB_OK|MB_ICONERROR);
+    StyleMessageBox(this,"INTERNAL ERROR: Wizards must have a least 1 page!","ERROR",MB_OK|MB_ICONERROR);
     OnOK();
     return TRUE;
   }
@@ -135,7 +135,11 @@ StyleStepper::AdjustSteperSize()
   }
 
   // Recalculate new positions
-  miny += STEPPER_TOP + STEPPER_BOTTOM;
+  if(m_pages.size() > 1)
+  {
+    miny += STEPPER_TOP;
+  }
+  miny += STEPPER_BOTTOM;
   int newright  = winrect.left + minx + (winrect.Width()  - clientrect.Width());
   int newbottom = winrect.top  + miny + (winrect.Height() - clientrect.Height());
 
@@ -214,12 +218,18 @@ void
 StyleStepper::DisplayPage()
 {
   // Set button text and icons
-  m_buttonPrior.SetIconImage(IDI_PRIOR);
-  m_buttonNext. SetIconImage(m_activePage == (GetPagesCount() - 1) ? IDI_OK : IDI_NEXT);
-  m_buttonPrior.EnableWindow(m_activePage > 0);
-  // Button text
-  m_buttonPrior.SetWindowText(m_textPrior);
-  m_buttonNext .SetWindowText(m_activePage == (GetPagesCount() -1) ? m_textReady : m_textNext);
+  if(m_pages.size() > 1)
+  {
+    m_buttonPrior.SetIconImage(IDI_PRIOR);
+    m_buttonPrior.EnableWindow(m_activePage > 0);
+    m_buttonPrior.SetWindowText(m_textPrior);
+  }
+  else
+  {
+    m_buttonPrior.ShowWindow(SW_HIDE);
+  }
+  m_buttonNext.SetIconImage (m_activePage == (GetPagesCount() - 1) ? IDI_OK : IDI_NEXT);
+  m_buttonNext.SetWindowText(m_activePage == (GetPagesCount() -1) ? m_textReady : m_textNext);
   
   // Show correct page
   for(size_t index = 0;index < m_pages.size();++index)
@@ -251,9 +261,9 @@ StyleStepper::OnSize(UINT p_type,int cx,int cy)
 void
 StyleStepper::ResizePages(int cx,int cy)
 {
-
+  int top = m_pages.size() > 1 ? STEPPER_TOP : 0;
   // Where we expect to see our pages
-  CRect pagerect(0,STEPPER_TOP,cx,cy - STEPPER_BOTTOM);
+  CRect pagerect(0,top,cx,cy - STEPPER_BOTTOM);
   for(size_t index = 0;index < m_pages.size();++index)
   {
     if(m_pages[index].m_page->GetSafeHwnd())
@@ -329,13 +339,21 @@ void
 StyleStepper::OnPaint()
 {
   StyleDialog::OnPaint();
-
-  Draw();
+  if(m_pages.size() > 1)
+  {
+    Draw();
+  }
 }
 
 void
 StyleStepper::ClearStepperArea()
 {
+  // Not for a one page wizard!
+  if(m_pages.size() <= 1)
+  {
+    return;
+  }
+  // Clear the stepper area with fast block drawing
   CDC* dc = GetDC();
   CRect client;
   GetClientRect(&client);
