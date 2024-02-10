@@ -633,6 +633,12 @@ StyleDialog::OnStylePurple()
 }
 
 void
+StyleDialog::OnStyleMustard()
+{
+  SetTheme(ThemeColor::Themes::ThemeMustard);
+}
+
+void
 StyleDialog::OnStyleModerateGray()
 {
   SetTheme(ThemeColor::Themes::ThemeModerateGray);
