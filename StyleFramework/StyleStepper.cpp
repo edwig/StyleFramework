@@ -44,7 +44,9 @@ StyleStepper::StyleStepper(CWnd*   p_parentWnd  /*= nullptr     */
   m_textReady = _T("Ready");
 
   LOGFONT lf = StyleFonts::MakeLOGFONTFromString(_T("Verdana;28;800"));
-  m_stepFont.CreateFontIndirect(&lf);
+  LOGFONT tf = StyleFonts::MakeLOGFONTFromString(_T("Verdana;14;800"));
+  m_stepFont .CreateFontIndirect(&lf);
+  m_titleFont.CreateFontIndirect(&tf);
 }
 
 StyleStepper::~StyleStepper()
@@ -75,7 +77,7 @@ StyleStepper::OnInitDialog()
   // Check if we really have a wizard!
   if(m_pages.empty())
   {
-    StyleMessageBox(this,"INTERNAL ERROR: Wizards must have a least 1 page!","ERROR",MB_OK|MB_ICONERROR);
+    StyleMessageBox(this,_T("INTERNAL ERROR: Wizards must have a least 1 page!"),_T("ERROR"),MB_OK|MB_ICONERROR);
     OnOK();
     return TRUE;
   }
@@ -182,10 +184,11 @@ StyleStepper::SetCaption(CString p_caption)
 }
 
 void
-StyleStepper::AddPage(StyleTab* p_page,UINT p_resource)
+StyleStepper::AddPage(CString p_title,StyleTab* p_page,UINT p_resource)
 {
   StepperTab page;
-  page.m_page = p_page;
+  page.m_title    = p_title;
+  page.m_page     = p_page;
   page.m_resource = p_resource;
 
   m_pages.push_back(page);
@@ -381,7 +384,6 @@ StyleStepper::Draw()
   int dx     = (client.Width() - (2 * margin) - (2 * radius)) / (count - 1);
 
   // Draw the middle line (GRAY)
-
   int color1 = ThemeColor::GetColor(Colors::AccentColor1);
   int color2 = RGB(0x7F,0x7F,0x7F);
 
@@ -391,6 +393,7 @@ StyleStepper::Draw()
   pen.CreatePen(PS_NULL,0,RGB(0,0,0));
   CPen*   oldPen   = dc->SelectObject(&pen);
   CBrush* oldBrush = dc->SelectObject(&brush1);
+  int     halfhigh = STEPPER_LINEWIDTH / 2;
 
   for(int page = 0;page < (count - 1); ++page)
   {
@@ -399,11 +402,10 @@ StyleStepper::Draw()
       // Draw lines in GRAY color for unfinished pages
       dc->SelectObject(&brush2);
     }
-    CRect line(xpos,middle - (STEPPER_LINEWIDTH / 2),xpos + dx,middle + (STEPPER_LINEWIDTH / 2));
+    CRect line(xpos + radius + STEPPER_SPLIT,middle - halfhigh,xpos + dx - radius - STEPPER_SPLIT,middle + halfhigh);
     dc->Rectangle(line);
     xpos += dx;
   }
-
 
   // Draw circles in the style color up to activePage
   dc->SelectObject(&brush1);
@@ -427,7 +429,7 @@ StyleStepper::Draw()
   for(int page = 0;page < count; ++page)
   {
     CString number;
-    number.Format("%d",page + 1);
+    number.Format(_T("%d"),page + 1);
     CSize size = dc->GetTextExtent(number);
     CRect pos(xpos - size.cx / 2,middle - size.cy / 2,xpos + size.cx / 2,middle + size.cy / 2);
     dc->SetTextColor(RGB(0xFF,0xFF,0xFF));
@@ -436,7 +438,21 @@ StyleStepper::Draw()
     xpos += dx;
   }
 
+  // Print the name of the steps
+  xpos = margin;
+  dc->SelectObject(&m_titleFont);
+  for(int page = 0;page < count; ++page)
+  {
+    dc->SetTextColor(color1);
+    dc->SetBkColor(ThemeColor::GetColor(Colors::ColorWindowFrame));
+    CRect txtrect(xpos,middle + radius,xpos + 2 * radius,middle + radius + STEPPER_MARGIN);
+    dc->SetTextAlign(TA_CENTER);
+    dc->ExtTextOut(txtrect.left + radius,txtrect.top,ETO_OPAQUE,&txtrect,m_pages[page].m_title,nullptr);
+    xpos += dx;
+  }
+
   // Reset DC
+  dc->SelectObject(oldFont);
   dc->SelectObject(oldBrush);
   dc->SelectObject(oldPen);
   dc->SelectObject(oldFont);

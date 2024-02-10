@@ -1542,7 +1542,7 @@ StyleDialog::OnQueryDragIcon()
 void
 StyleDialog::OnDroppedFile(UINT p_id,UINT p_index,LPCTSTR p_fileName)
 {
-  StyleMessageBox(this,"ERROR: Implement your own OnDroppedFile for this Dialog","Error",MB_OK | MB_ICONERROR);
+  StyleMessageBox(this,_T("ERROR: Implement your own OnDroppedFile for this Dialog"),_T("Error"),MB_OK | MB_ICONERROR);
 }
 
 // Try overridden OnClosing before canceling the dialog

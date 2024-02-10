@@ -23,11 +23,13 @@
 #define STEPPER_MARGIN     30   // Margin around the steps
 #define STEPPER_LINEWIDTH  10   // Line between steps
 #define STEPPER_BOTTOM     60   // Space for the buttons
+#define STEPPER_SPLIT       2   // Space between step and line
 
 class StyleTab;
 
 struct StepperTab
 {
+  CString   m_title;
   StyleTab* m_page;
   UINT      m_resource;
 };
@@ -41,13 +43,13 @@ class StyleStepper : public StyleDialog
 public:
   StyleStepper(CWnd*   p_parentWnd  = nullptr
               ,UINT    p_IDTemplate = IDD_STEPPER
-              ,CString p_caption    = ""
+              ,CString p_caption    = _T("")
               ,bool    p_sysmenu    = false
               ,bool    p_status     = false);
   virtual ~StyleStepper();
 
-  // Add at least 2 pages to the stepper
-  virtual void AddPage(StyleTab* p_page,UINT p_resource);
+  // Add at least 1 page to the stepper
+  virtual void AddPage(CString p_title,StyleTab* p_page,UINT p_resource);
 
   // SETTERS
   virtual void SetStepperData(void* p_data)         { m_data      = p_data; }
@@ -91,6 +93,7 @@ private:
   StyleButton  m_buttonNext;
   StepperPages m_pages;
   CFont        m_stepFont;
+  CFont        m_titleFont;
   unsigned     m_activePage;
   void*        m_data;
 

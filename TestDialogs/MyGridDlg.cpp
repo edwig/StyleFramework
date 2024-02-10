@@ -139,7 +139,7 @@ MyGridDlg::FillGrid()
     // Testing tooltips per cell
     CGridCellBase* cell = m_grid.GetCell(row,2);
     CString tip;
-    tip.Format("Tooltip for a line in multiple [%d] : [%d]", index / 10, index % 10);
+    tip.Format(_T("Tooltip for a line in multiple [%d] : [%d]"), index / 10, index % 10);
     m_grid.SetTitleTip(index,tip);
     cell->SetTipNumber(index);
 

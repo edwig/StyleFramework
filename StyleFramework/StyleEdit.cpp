@@ -1515,7 +1515,7 @@ StyleEdit::OnDropFiles(HDROP p_drop)
   }
   else
   {
-    StyleMessageBox(this,"ALERT: DragAcceptFiles only working in a StyleDialog or StyleTab","Error",MB_OK|MB_ICONERROR);
+    StyleMessageBox(this,_T("ALERT: DragAcceptFiles only working in a StyleDialog or StyleTab"),_T("Error"),MB_OK|MB_ICONERROR);
   }
   DragFinish(p_drop);
 }
@@ -1648,7 +1648,7 @@ AFX_STATIC void AFXAPI StyleFailMinMaxWithFormat(CDataExchange* pDX,StyleEdit& p
   StyleMessageBox(&p_control,prompt,_T("Error"),MB_OK|MB_ICONEXCLAMATION);
 
   // Reset field to minimum value to be certain
-  _sntprintf_s(szMin,MINMAX_BUFFER_SIZE,"%I64d",minVal);
+  _sntprintf_s(szMin,MINMAX_BUFFER_SIZE,_T("%I64d"),minVal);
   p_control.SetWindowText(szMin);
   p_control.SetFocus();
 }

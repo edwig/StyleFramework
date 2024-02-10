@@ -171,8 +171,8 @@ void CInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
   // Check for GridCellNumeric
   if(((GetStyle() & ES_NUMBER) == ES_NUMBER) && !isdigit(nChar))
   {
-    StyleMessageBox(this,"NO LETTERS!\n"
-                         "You are only allowed to enter digits here!","Error"
+    StyleMessageBox(this,_T("NO LETTERS!\n")
+                         _T("You are only allowed to enter digits here!"),_T("Error")
                         ,MB_OK|MB_ICONERROR);
     return;
   }

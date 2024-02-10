@@ -1266,5 +1266,5 @@ GetGlobalEnvironmentVariable(CString p_variable)
   RegistryManager manager(HKEY_LOCAL_MACHINE);
   CString key(_T("HKLM\\System\\CurrentControlSet\\Control\\Session Manager\\Environment"));
 
-  return manager.GetRegistryString(key,p_variable,"");
+  return manager.GetRegistryString(key,p_variable,_T(""));
 }
