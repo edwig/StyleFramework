@@ -136,6 +136,7 @@ protected:
   bool      m_down        { false   };  // mouse pressed in m_closeRect
   bool      m_dtsize      { false   };  // Down-to-size above task bar
   bool      m_menuFocus   { false   };  // System menu has the focus
+  bool      m_trackMouse  { false   };  // Non client area is capturing the mouse
   // Button rectangles
   CRect     m_sysRect     { 0,0,0,0 };  // System   button rectangle
   CRect     m_minRect     { 0,0,0,0 };  // Minimize button rectangle

@@ -250,6 +250,7 @@ StyleComboBox::CreateListControl()
   {
     m_listControl->GetSkin()->SetScrollbarBias(0);
     m_listControl->GetSkin()->SetMouseCapture(TRUE,TME_HOVER);
+    m_listControl->GetSkin()->SkinSetMouseTracking();
   }
 }
 
@@ -403,13 +404,13 @@ StyleComboBox::ShowComboList()
 void 
 StyleComboBox::PostShowComboList()
 {
-  // Provide your own override if neccessary
+  // Provide your own override if necessary
   m_listControl->SetFocus();
 }
 
 void StyleComboBox::PreHideComboList() 
 {
-  // Provide your own override if neccessary
+  // Provide your own override if necessary
 }
 
 void
@@ -2469,6 +2470,7 @@ SCBListBox::SelectCurrentSelection()
   }
   m_active = false;
   GetSkin()->SkinReleaseCapture();
+  GetSkin()->SkinCancelMouseTracking();
   // Notify that selection has changed
   m_combo->OnSelEndOK();
   m_combo->OnCloseup();
@@ -2479,6 +2481,7 @@ void
 SCBListBox::CancelCurrentSelection()
 {
   GetSkin()->SkinReleaseCapture();
+  GetSkin()->SkinCancelMouseTracking();
   ResetCurSel();
   m_combo->OnSelEndCancel();
   m_combo->OnCloseup();
@@ -2670,6 +2673,7 @@ SCBListBox::OnLButtonDown(UINT nFlags,CPoint point)
   {
     SkinScrollWnd* skin = GetSkin();
     skin->SkinReleaseCapture();
+    skin->SkinCancelMouseTracking();
 
     LPARAM param = MAKELONG(point.x,point.y);
     skin->m_sbVert.SendMessage(WM_LBUTTONDOWN,(WPARAM)nFlags,param);
