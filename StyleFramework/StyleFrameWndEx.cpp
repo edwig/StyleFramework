@@ -217,6 +217,12 @@ StyleFrameWndEx::OnStylePurple()
 }
 
 void
+StyleFrameWndEx::OnStyleMustard()
+{
+  SetTheme(ThemeColor::Themes::ThemeMustard);
+}
+
+void
 StyleFrameWndEx::OnStyleModerateGray()
 {
   SetTheme(ThemeColor::Themes::ThemeModerateGray);
