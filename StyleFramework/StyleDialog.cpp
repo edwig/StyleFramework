@@ -584,7 +584,10 @@ StyleDialog::SendMessageToAllChildWindows(UINT MessageId,WPARAM wParam,LPARAM lP
   sMessage.wParam    = wParam;
   sMessage.lParam    = lParam;
 
-  EnumChildWindows(GetSafeHwnd(),EnumChildProc,(LPARAM) &sMessage);
+  if(GetSafeHwnd())
+  {
+    EnumChildWindows(GetSafeHwnd(),EnumChildProc,(LPARAM)&sMessage);
+  }
 }
 
 // After setting of a theme,
