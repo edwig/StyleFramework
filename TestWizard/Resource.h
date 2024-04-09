@@ -8,11 +8,11 @@
 #define IDS_ABOUTBOX					101
 #define IDD_TESTWIZARD_DIALOG 102
 
-#define IDD_STEPPER            147
-#define IDC_PRIOR              148
-#define IDC_NEXT               149
-#define IDI_PRIOR              150
-#define IDI_NEXT               151
+#define IDD_STEPPER            148
+#define IDC_PRIOR              149
+#define IDC_NEXT               150
+#define IDI_PRIOR              151
+#define IDI_NEXT               152
 
 #define IDD_TESTPAGE1          200
 #define IDD_TESTPAGE2          201
