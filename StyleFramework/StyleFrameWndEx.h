@@ -64,6 +64,7 @@ protected:
   afx_msg void    OnStyleModerateGray();
   afx_msg void    OnStylePureGray();
   afx_msg void    OnStyleBlackWhite();
+  afx_msg void    OnStyleDark();
 
     // Sub-procedures
   void  ReDrawButton(LRESULT type);

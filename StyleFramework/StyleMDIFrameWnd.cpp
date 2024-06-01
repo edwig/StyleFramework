@@ -235,6 +235,12 @@ StyleMDIFrameWnd::OnStyleBlackWhite()
 }
 
 void
+StyleMDIFrameWnd::OnStyleDark()
+{
+  SetTheme(ThemeColor::Themes::ThemeDark);
+}
+
+void
 StyleMDIFrameWnd::PerformMenu()
 {
   if (m_menu.GetSafeHmenu())

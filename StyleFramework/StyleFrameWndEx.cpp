@@ -240,6 +240,12 @@ StyleFrameWndEx::OnStyleBlackWhite()
   SetTheme(ThemeColor::Themes::ThemeBlackWhite);
 }
 
+void
+StyleFrameWndEx::OnStyleDark()
+{
+  SetTheme(ThemeColor::Themes::ThemeDark);
+}
+
 // Setting the resource and tooltip for a menu entry
 void 
 StyleFrameWndEx::SetMenuResource(int p_menu,UINT p_resource,CString p_tooltip /*=""*/)
