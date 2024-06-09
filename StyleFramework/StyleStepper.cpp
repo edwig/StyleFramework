@@ -73,6 +73,7 @@ StyleStepper::OnInitDialog()
 {
   StyleDialog::OnInitDialog();
   SetCaption(m_caption);
+  ShowCloseButton(false);
 
   // Check if we really have a wizard!
   if(m_pages.empty())
@@ -83,12 +84,13 @@ StyleStepper::OnInitDialog()
   }
   InitPages();
   AdjustSteperSize();
+  AdjustDefaultButtons();
   SetCanResize();
   ShowGripper();
-  DisplayPage();
-
   UpdateData(FALSE);
-  return TRUE;
+
+  DisplayPage();
+  return FALSE;
 }
 
 void
@@ -107,7 +109,7 @@ StyleStepper::SetupDynamicLayout()
     manager.AddItem(wnd,manager.MoveNone(),manager.SizeHorizontalAndVertical(100,100));
   }
   manager.AddItem(IDC_PRIOR,manager.MoveHorizontalAndVertical(100,100),manager.SizeNone());
-  manager.AddItem(IDC_NEXT,manager.MoveHorizontalAndVertical(100,100),manager.SizeNone());
+  manager.AddItem(IDC_NEXT, manager.MoveHorizontalAndVertical(100,100),manager.SizeNone());
 
   // Now resize all pages
   for(size_t index = 0;index < m_pages.size();++index)
@@ -153,6 +155,30 @@ StyleStepper::AdjustSteperSize()
   winrect.right  = newright;
   winrect.bottom = newbottom;
   MoveWindow(winrect);
+}
+
+void
+StyleStepper::SetDefaultButton(bool p_previous /*= false*/, bool p_next /*= true*/)
+{
+  m_priorIsDefault = p_previous;
+  m_nextIsDefault  = p_next;
+
+  if(m_buttonNext.GetSafeHwnd() && m_buttonPrior.GetSafeHwnd())
+  {
+    AdjustDefaultButtons();
+  }
+}
+
+void
+StyleStepper::AdjustDefaultButtons()
+{
+  // Are we so advanced in setup, that we can execute?
+  if(!m_buttonNext.GetSafeHwnd() || !m_buttonPrior.GetSafeHwnd())
+  {
+    return;
+  }
+  m_buttonPrior.ModifyStyle(m_priorIsDefault ? 0 : BS_DEFPUSHBUTTON,m_priorIsDefault ? BS_DEFPUSHBUTTON : 0);
+  m_buttonNext .ModifyStyle(m_nextIsDefault  ? 0 : BS_DEFPUSHBUTTON,m_nextIsDefault  ? BS_DEFPUSHBUTTON : 0);
 }
 
 void
@@ -234,12 +260,15 @@ StyleStepper::DisplayPage()
   m_buttonNext.SetIconImage (m_activePage == (GetPagesCount() - 1) ? IDI_OK : IDI_NEXT);
   m_buttonNext.SetWindowText(m_activePage == (GetPagesCount() -1) ? m_textReady : m_textNext);
   
+  StyleTab* current = nullptr;
+
   // Show correct page
   for(size_t index = 0;index < m_pages.size();++index)
   {
     if(m_activePage == index)
     {
       m_pages[index].m_page->ShowWindow(SW_SHOW);
+      current = m_pages[index].m_page;
     }
     else
     {
@@ -252,6 +281,12 @@ StyleStepper::DisplayPage()
   CRect client;
   GetClientRect(&client);
   ResizePages(client.Width(),client.Height());
+
+  // Set focus on the first dialog item of the page
+  if(current)
+  {
+    current->InitFirstFocus();
+  }
 }
 
 void
@@ -334,8 +369,8 @@ StyleStepper::TryComplete()
       return;
     }
   }
-  // Final OK
-  OnOK();
+  // Final OK. Bypassing 'OnClosing'
+  CDialog::OnOK();
 }
 
 void
