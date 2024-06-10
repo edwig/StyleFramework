@@ -66,7 +66,7 @@ public:
   CString GetButtonTextReady()  { return m_textReady; }
   CString GetCaption()          { return m_caption;   }
   // Steppers do not close with ENTER
-  virtual bool OnClosing()      { return false; }
+  virtual bool OnClosing();
 
 protected:
   virtual void DoDataExchange(CDataExchange* pDX) override;
@@ -108,5 +108,6 @@ private:
   afx_msg void OnBnClickedPrior();
   afx_msg void OnBnClickedNext();
   afx_msg void OnSize(UINT p_type,int cx,int cy);
+  afx_msg void OnCancel();
 };
 

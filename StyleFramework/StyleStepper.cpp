@@ -66,6 +66,7 @@ BEGIN_MESSAGE_MAP(StyleStepper,StyleDialog)
   ON_WM_PAINT()
   ON_BN_CLICKED(IDC_PRIOR,&StyleStepper::OnBnClickedPrior)
   ON_BN_CLICKED(IDC_NEXT, &StyleStepper::OnBnClickedNext)
+  ON_COMMAND(IDCANCEL,    &StyleStepper::OnCancel)
 END_MESSAGE_MAP()
 
 BOOL
@@ -73,7 +74,6 @@ StyleStepper::OnInitDialog()
 {
   StyleDialog::OnInitDialog();
   SetCaption(m_caption);
-  ShowCloseButton(false);
 
   // Check if we really have a wizard!
   if(m_pages.empty())
@@ -258,7 +258,7 @@ StyleStepper::DisplayPage()
     m_buttonPrior.ShowWindow(SW_HIDE);
   }
   m_buttonNext.SetIconImage (m_activePage == (GetPagesCount() - 1) ? IDI_OK : IDI_NEXT);
-  m_buttonNext.SetWindowText(m_activePage == (GetPagesCount() -1) ? m_textReady : m_textNext);
+  m_buttonNext.SetWindowText(m_activePage == (GetPagesCount() - 1) ? m_textReady : m_textNext);
   
   StyleTab* current = nullptr;
 
@@ -374,6 +374,26 @@ StyleStepper::TryComplete()
 }
 
 void
+StyleStepper::OnCancel()
+{
+  OnClosing();
+}
+
+bool
+StyleStepper::OnClosing()
+{
+  CString wizard   = GetStyleText(TXT_WIZARD);
+  CString question = GetStyleText(TXT_CANCEL_WIZARD);
+
+  if(StyleMessageBox(this,question,wizard,MB_YESNO|MB_DEFBUTTON2|MB_ICONQUESTION) == IDYES)
+  {
+    CDialog::OnOK();
+    return true;
+  }
+  return false;
+}
+
+void
 StyleStepper::OnPaint()
 {
   StyleDialog::OnPaint();
@@ -398,7 +418,7 @@ StyleStepper::ClearStepperArea()
 
   client.bottom =  client.top + STEPPER_TOP;
   COLORREF oldBack = dc->SetBkColor(ThemeColor::GetColor(Colors::ColorWindowFrame));
-  dc->ExtTextOut(0,0,ETO_OPAQUE,client,"",0);
+  dc->ExtTextOut(0,0,ETO_OPAQUE,client,_T(""),0);
 
   dc->SetBkColor(oldBack);
   ReleaseDC(dc);
