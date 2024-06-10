@@ -71,12 +71,12 @@ BOOL TestWizardApp::InitInstance()
 	StyleStepper wizard;
   m_pMainWnd = &wizard;
 
-  wizard.AddPage("First", &m_page1,IDD_TESTPAGE1);
-  wizard.AddPage("Second",&m_page2,IDD_TESTPAGE2);
-  wizard.AddPage("Third", &m_page3,IDD_TESTPAGE3);
-  wizard.AddPage("Fourth",&m_page4,IDD_TESTPAGE4);
+  wizard.AddPage(_T("First"), &m_page1,IDD_TESTPAGE1);
+  wizard.AddPage(_T("Second"),&m_page2,IDD_TESTPAGE2);
+  wizard.AddPage(_T("Third"), &m_page3,IDD_TESTPAGE3);
+  wizard.AddPage(_T("Fourth"),&m_page4,IDD_TESTPAGE4);
 
-  wizard.SetCaption("Style wizard");
+  wizard.SetCaption(_T("Style wizard"));
 
 	INT_PTR nResponse = wizard.DoModal();
 
