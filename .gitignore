@@ -22,8 +22,10 @@ Include/
 # Build results 
 [Dd]ebug/
 [Dd]ebugPublic/
+[Dd]ebugUnicode/
 [Rr]elease/
 [Rr]eleases/
+[Rr]eleaseUnicode/
 ipch/
 x64/
 x86/
@@ -104,6 +106,11 @@ ipch/
 *.cachefile 
 *.VC.db
 *.VC.VC.opendb
+*.ipdb
+*.iobj
+*.idb
+*.res
+*.recipe
  
 # Visual Studio profiler 
 *.psess
