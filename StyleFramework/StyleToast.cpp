@@ -306,7 +306,7 @@ StyleToast* CreateToast(int      p_style
                        ,CString  p_text2    /* = ""   */
                        ,CString  p_text3    /* = ""   */
                        ,unsigned p_timeout  /* = 3000 */
-                       ,bool*    p_success = nullptr)
+                       ,bool*    p_success  /* = nullptr*/)
 {
   CWnd* focuswin = CWnd::FromHandle(GetFocus());
   
