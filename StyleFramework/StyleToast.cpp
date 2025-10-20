@@ -201,9 +201,9 @@ StyleToast::OnPaint()
 {
   CDialog::OnPaint();
 
+  CDC* dc = GetDC();
   CRect rect;
   GetClientRect(rect);
-  CDC* dc = GetDC();
   CRect stepper(rect);
   stepper.top    = rect.bottom - TOAST_LINE;
   stepper.right  = rect.left + (rect.Width() * m_steps / TOAST_STEPS);
