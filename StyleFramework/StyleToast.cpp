@@ -64,9 +64,20 @@ StyleToast::StyleToast(int      p_style
            ,m_text3(p_text3)
            ,m_timeout(p_timeout)
            ,m_steps(0)
+           ,m_killTimer(0)
+           ,m_stepTimer(0)
            ,m_background(RGB(255,255,255))
            ,m_foreground(RGB(0,0,0))
+           ,m_dimmedback(0)
 {
+  if(m_timeout < 0)
+  {
+    m_timeout = 0;
+  }
+  if(m_timeout < TOAST_MINIMUM_TIME)
+  {
+    m_timeout = TOAST_MINIMUM_TIME;
+  }
 }
 
 StyleToast::~StyleToast()
@@ -110,7 +121,7 @@ StyleToast::OnInitDialog()
   }
 
   // Special case for black-on-black
-  if(m_background == 0)
+  if(ThemeColor::GetTheme() == Themes::ThemeDark)
   {
     m_foreground = RGB(255,255,255);
     m_dimmedback = RGB(127,127,127);
@@ -127,9 +138,9 @@ StyleToast::OnInitDialog()
   
   if(m_timeout > 0)
   {
-    SetTimer(EV_TOAST,  m_timeout,nullptr);
-    SetTimer(EV_STEPPER,m_timeout / TOAST_STEPS,nullptr);
-    m_steps = TOAST_STEPS;
+    m_killTimer = SetTimer(EV_TOAST,  m_timeout,nullptr);
+    m_stepTimer = SetTimer(EV_STEPPER,m_timeout / TOAST_STEPS,nullptr);
+    m_steps     = TOAST_STEPS;
   }
   UpdateData(FALSE);
   PumpMessage();
@@ -169,11 +180,11 @@ StyleToast::OnSize(UINT nType, int x, int y)
 void
 StyleToast::OnTimer(UINT_PTR nIDEvent)
 {
-  if(nIDEvent == EV_TOAST)
+  if(nIDEvent == m_killTimer)
   {
     DestroyToast(this);
   }
-  if(nIDEvent == EV_STEPPER)
+  if(nIDEvent == m_stepTimer)
   {
     --m_steps;
     Invalidate();
@@ -245,9 +256,8 @@ StyleToast::PumpMessage()
   // We could face an eternal loop, so we put a time constriction on it!
   MSG msg;
   UINT ticks = GetTickCount();
-  while(GetTickCount() - ticks < 200 &&
-        (PeekMessage(&msg,NULL,WM_PAINT,WM_PAINT,          PM_REMOVE) ||
-         PeekMessage(&msg,NULL,WM_SYSCOMMAND,WM_SYSCOMMAND,PM_REMOVE)))
+  while(GetTickCount() - ticks < 500 &&
+       (PeekMessage(&msg,NULL,WM_CREATE,WM_APP,PM_REMOVE)))
   {
     try
     {
@@ -297,13 +307,12 @@ void DestroyToast(StyleToast* p_toast)
   {
     if(*it == p_toast)
     {
-      delete p_toast;
       g_toasts.m_toasts.erase(it);
-      return;
+      break;
     }
     ++it;
   }
-  // Not found. Delete it anyway
+  // Delete it regardless wheter we found it
   delete p_toast;
 }
 
@@ -347,24 +356,63 @@ StyleToast* CreateToast(int      p_style
                        ,CString  p_text1
                        ,CString  p_text2    /* = ""   */
                        ,CString  p_text3    /* = ""   */
-                       ,unsigned p_timeout  /* = 3000 */
+                       ,unsigned p_timeout  /* = TOAST_DEFAULT_TIME */
                        ,bool*    p_success  /* = nullptr*/ )
 {
   CWnd* focuswin = CWnd::FromHandle(GetFocus());
+  bool fallback(false);
   
-  StyleToast* toast = new StyleToast(p_style,p_position,p_text1,p_text2,p_text3,p_timeout);
-
-  if(!toast->Create(MAKEINTRESOURCE(IDD_TOAST),CWnd::FromHandle(GetDesktopWindow())))
+  StyleToast* toast(nullptr);
+  try
   {
-    if(p_success)
+    while(g_toasts.m_toasts.size() > TOAST_MAX_PARALLEL)
     {
-      *p_success = false;
+      // If there are too much toasts on the stack, we fallback to a simple message
+      // otherwise we can get a stack overflow very easily!!
+      CString prompt  = GetStyleText(TXT_TOAST_TOOMUCH);
+      CString message = GetStyleText(TXT_TOAST_WAITTODIE);
+      ::StyleMessageBox(nullptr,message,prompt,MB_OK | MB_ICONWARNING);
     }
+    toast = new StyleToast(p_style,p_position,p_text1,p_text2,p_text3,p_timeout);
+    if(!toast->Create(MAKEINTRESOURCE(IDD_TOAST),CWnd::FromHandle(GetDesktopWindow())))
+    {
+      if(p_success)
+      {
+        *p_success = false;
+      }
+      delete toast;
+      toast = nullptr;
+      fallback = true;
+    }
+  }
+  catch(...)
+  {
+    // Unhandled
     delete toast;
+    toast = nullptr;
+    fallback = true;
+  }
+
+  // See if we must do the fallback to a simple MessageBox
+  if(fallback)
+  {
+    CString message = p_text1 + p_text2 + p_text3;
+    while(!g_toasts.m_toasts.empty())
+    {
+      int buttons = MB_OK;
+      switch(p_style)
+      {
+        case STYLE_TOAST_MESSAGE: buttons = MB_OK;                  break;
+        case STYLE_TOAST_WARNING: buttons = MB_OK | MB_ICONWARNING; break;
+        case STYLE_TOAST_ERROR:   buttons = MB_OK | MB_ICONERROR;   break;
+      }
+      CString prompt = GetStyleText(TXT_TOAST_FALLBACK);
+      ::StyleMessageBox(nullptr,message,prompt,buttons);
+    }
     return nullptr;
   }
 
-  // Add to the toasts
+  // Add to the toasts stack
   {
     AutoLock lock(&g_toasts.m_lock);
     g_toasts.m_toasts.push_back(toast);
