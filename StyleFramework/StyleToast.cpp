@@ -22,6 +22,32 @@
 #include "StyleUtilities.h"
 #include "StyleFonts.h"
 
+// Use automatic critical section
+class AutoLock
+{
+public:
+  explicit AutoLock(CRITICAL_SECTION* section): m_section(section)
+  {
+    EnterCriticalSection(m_section);
+  }
+  ~AutoLock()
+  {
+    LeaveCriticalSection(m_section);
+  }
+  void Unlock()
+  {
+    LeaveCriticalSection(m_section);
+  };
+  void Relock()
+  {
+    EnterCriticalSection(m_section);
+  };
+private:
+  CRITICAL_SECTION* m_section;
+};
+
+
+
 using namespace ThemeColor;
 
 StyleToast::StyleToast(int      p_style
@@ -38,9 +64,20 @@ StyleToast::StyleToast(int      p_style
            ,m_text3(p_text3)
            ,m_timeout(p_timeout)
            ,m_steps(0)
+           ,m_killTimer(0)
+           ,m_stepTimer(0)
            ,m_background(RGB(255,255,255))
            ,m_foreground(RGB(0,0,0))
+           ,m_dimmedback(0)
 {
+  if(m_timeout < 0)
+  {
+    m_timeout = 0;
+  }
+  if(m_timeout < TOAST_MINIMUM_TIME)
+  {
+    m_timeout = TOAST_MINIMUM_TIME;
+  }
 }
 
 StyleToast::~StyleToast()
@@ -84,7 +121,7 @@ StyleToast::OnInitDialog()
   }
 
   // Special case for black-on-black
-  if(m_background == 0)
+  if(ThemeColor::GetTheme() == Themes::ThemeDark)
   {
     m_foreground = RGB(255,255,255);
     m_dimmedback = RGB(127,127,127);
@@ -101,9 +138,9 @@ StyleToast::OnInitDialog()
   
   if(m_timeout > 0)
   {
-    SetTimer(EV_TOAST,  m_timeout,nullptr);
-    SetTimer(EV_STEPPER,m_timeout / TOAST_STEPS,nullptr);
-    m_steps = TOAST_STEPS;
+    m_killTimer = SetTimer(EV_TOAST,  m_timeout,nullptr);
+    m_stepTimer = SetTimer(EV_STEPPER,m_timeout / TOAST_STEPS,nullptr);
+    m_steps     = TOAST_STEPS;
   }
   UpdateData(FALSE);
   PumpMessage();
@@ -143,11 +180,11 @@ StyleToast::OnSize(UINT nType, int x, int y)
 void
 StyleToast::OnTimer(UINT_PTR nIDEvent)
 {
-  if(nIDEvent == EV_TOAST)
+  if(nIDEvent == m_killTimer)
   {
     DestroyToast(this);
   }
-  if(nIDEvent == EV_STEPPER)
+  if(nIDEvent == m_stepTimer)
   {
     --m_steps;
     Invalidate();
@@ -175,9 +212,9 @@ StyleToast::OnPaint()
 {
   CDialog::OnPaint();
 
+  CDC* dc = GetDC();
   CRect rect;
   GetClientRect(rect);
-  CDC* dc = GetDC();
   CRect stepper(rect);
   stepper.top    = rect.bottom - TOAST_LINE;
   stepper.right  = rect.left + (rect.Width() * m_steps / TOAST_STEPS);
@@ -219,9 +256,8 @@ StyleToast::PumpMessage()
   // We could face an eternal loop, so we put a time constriction on it!
   MSG msg;
   UINT ticks = GetTickCount();
-  while(GetTickCount() - ticks < 200 &&
-        (PeekMessage(&msg,NULL,WM_PAINT,WM_PAINT,          PM_REMOVE) ||
-         PeekMessage(&msg,NULL,WM_SYSCOMMAND,WM_SYSCOMMAND,PM_REMOVE)))
+  while(GetTickCount() - ticks < 500 &&
+       (PeekMessage(&msg,NULL,WM_CREATE,WM_APP,PM_REMOVE)))
   {
     try
     {
@@ -243,32 +279,47 @@ StyleToast::PumpMessage()
 
 Toasts g_toasts;
 
+Toasts::Toasts()
+{
+  InitializeCriticalSection(&m_lock);
+}
+
 Toasts::~Toasts()
 {
-  for(auto& toast : m_toasts)
+  // Delete in lock scope
   {
-    delete toast;
+    AutoLock lock(&m_lock);
+    for(auto& toast : m_toasts)
+    {
+      delete toast;
+    }
+    m_toasts.clear();
   }
-  m_toasts.clear();
+  DeleteCriticalSection(&m_lock);
 }
 
 void DestroyToast(StyleToast* p_toast)
 {
+  AutoLock lock(&g_toasts.m_lock);
+
   std::vector<StyleToast*>::iterator it = g_toasts.m_toasts.begin();
   while(it != g_toasts.m_toasts.end())
   {
     if(*it == p_toast)
     {
-      delete p_toast;
       g_toasts.m_toasts.erase(it);
-      return;
+      break;
     }
     ++it;
   }
+  // Delete it regardless wheter we found it
+  delete p_toast;
 }
 
 static void MoreThanOne(int h,int& y,bool up)
 {
+  AutoLock lock(&g_toasts.m_lock);
+
   int size = (int) g_toasts.m_toasts.size();
   int num  = (size - 1) % TOAST_STACK;
 
@@ -305,14 +356,67 @@ StyleToast* CreateToast(int      p_style
                        ,CString  p_text1
                        ,CString  p_text2    /* = ""   */
                        ,CString  p_text3    /* = ""   */
-                       ,unsigned p_timeout  /* = 3000 */)
+                       ,unsigned p_timeout  /* = TOAST_DEFAULT_TIME */
+                       ,bool*    p_success  /* = nullptr*/ )
 {
   CWnd* focuswin = CWnd::FromHandle(GetFocus());
+  bool fallback(false);
   
-  StyleToast* toast = new StyleToast(p_style,p_position,p_text1,p_text2,p_text3,p_timeout);
-  g_toasts.m_toasts.push_back(toast);
+  StyleToast* toast(nullptr);
+  try
+  {
+    while(g_toasts.m_toasts.size() > TOAST_MAX_PARALLEL)
+    {
+      // If there are too much toasts on the stack, we fallback to a simple message
+      // otherwise we can get a stack overflow very easily!!
+      CString prompt  = GetStyleText(TXT_TOAST_TOOMUCH);
+      CString message = GetStyleText(TXT_TOAST_WAITTODIE);
+      ::StyleMessageBox(nullptr,message,prompt,MB_OK | MB_ICONWARNING);
+    }
+    toast = new StyleToast(p_style,p_position,p_text1,p_text2,p_text3,p_timeout);
+    if(!toast->Create(MAKEINTRESOURCE(IDD_TOAST),CWnd::FromHandle(GetDesktopWindow())))
+    {
+      if(p_success)
+      {
+        *p_success = false;
+      }
+      delete toast;
+      toast = nullptr;
+      fallback = true;
+    }
+  }
+  catch(...)
+  {
+    // Unhandled
+    delete toast;
+    toast = nullptr;
+    fallback = true;
+  }
 
-  toast->Create(MAKEINTRESOURCE(IDD_TOAST),CWnd::FromHandle(GetDesktopWindow()));
+  // See if we must do the fallback to a simple MessageBox
+  if(fallback)
+  {
+    CString message = p_text1 + p_text2 + p_text3;
+    while(!g_toasts.m_toasts.empty())
+    {
+      int buttons = MB_OK;
+      switch(p_style)
+      {
+        case STYLE_TOAST_MESSAGE: buttons = MB_OK;                  break;
+        case STYLE_TOAST_WARNING: buttons = MB_OK | MB_ICONWARNING; break;
+        case STYLE_TOAST_ERROR:   buttons = MB_OK | MB_ICONERROR;   break;
+      }
+      CString prompt = GetStyleText(TXT_TOAST_FALLBACK);
+      ::StyleMessageBox(nullptr,message,prompt,buttons);
+    }
+    return nullptr;
+  }
+
+  // Add to the toasts stack
+  {
+    AutoLock lock(&g_toasts.m_lock);
+    g_toasts.m_toasts.push_back(toast);
+  }
 
   CRect rect; // Total workarea on the desktop
   CRect size; // Size of the Toast window
@@ -386,6 +490,13 @@ StyleToast* CreateToast(int      p_style
   {
     focuswin->SetFocus();
   }
+
+  // Tell of our success
+  if(p_success)
+  {
+    *p_success = true;
+  }
+
   // Only return the toast if we are prepared to destroy it later
   return p_timeout > 0 ? nullptr : toast;
 }
