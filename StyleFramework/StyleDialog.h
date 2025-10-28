@@ -94,6 +94,7 @@ protected:
   void    PerformMenu();
   void    InitStatusBar();
   void    EraseGripper();
+  void    PumpMessage();
 
   DECLARE_MESSAGE_MAP();
 
@@ -103,6 +104,7 @@ protected:
   afx_msg HBRUSH  OnCtlColor(CDC* pDC,CWnd* pWnd,UINT nCtlColor);
   afx_msg LPARAM  OnCtlColorStatic (WPARAM wParam,LPARAM lParam);
   afx_msg LPARAM  OnCtlColorListBox(WPARAM wParam,LPARAM lParam);
+  afx_msg LRESULT OnDpiChanged(WPARAM wParam,LPARAM lParam);
   afx_msg void    OnNcMouseMove(UINT nFlags, CPoint point);
   afx_msg void    OnNcLButtonDown(UINT nFlags, CPoint point);
   afx_msg void    OnNcRButtonUp(UINT nFlags, CPoint point);
@@ -159,6 +161,8 @@ protected:
   bool      m_canActivate { true  };
   LRESULT   m_curhit      { HTNOWHERE };
   UINT      m_sysmenu     { NULL  };
+  int       m_dpi_x       { 0     };
+  int       m_dpi_y       { 0     };
   // Objects
   CMenu      m_menu;
   HICON      m_hIcon;

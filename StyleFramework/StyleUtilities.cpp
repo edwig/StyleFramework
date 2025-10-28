@@ -19,12 +19,16 @@
 #include "stdafx.h"
 #include "StyleUtilities.h"
 #include <afxglobals.h>
+#include <shellscalingapi.h>
+#include <VersionHelpers.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+#pragma comment(lib,"shcore.lib")
 
 CString EverythingBefore(CString p_string,CString p_tag)
 {
@@ -288,4 +292,36 @@ bool StylePutStringToClipboard(CString p_string,HWND p_wnd /*=NULL*/,bool p_appe
     CloseClipboard();
   }
   return result;
+}
+
+// Getting the DPI for the DPI_AWARE_PER_MONITOR_V2
+bool GetDpi(HWND hWnd,int& p_dpi_x,int& p_dpi_y)
+{
+   bool v81 = IsWindows8Point1OrGreater();
+   bool v10 = IsWindows10OrGreater();
+   if (v81 || v10)
+   {
+      HMONITOR hMonitor = ::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+      UINT xdpi, ydpi;
+      LRESULT success = ::GetDpiForMonitor(hMonitor,MDT_EFFECTIVE_DPI,&xdpi,&ydpi);
+      if(success == S_OK)
+      {
+        p_dpi_x = static_cast<int>(xdpi);
+        p_dpi_y = static_cast<int>(ydpi);
+        return true;
+      }
+      p_dpi_x = USER_DEFAULT_SCREEN_DPI;
+      p_dpi_y = USER_DEFAULT_SCREEN_DPI;
+      return false;
+   }
+   else
+   {
+      HDC hDC  = ::GetDC(hWnd);
+      INT xdpi = ::GetDeviceCaps(hDC, LOGPIXELSX);
+      INT ydpi = ::GetDeviceCaps(hDC, LOGPIXELSY);
+      ::ReleaseDC(NULL, hDC);
+      p_dpi_x = static_cast<int>(xdpi);
+      p_dpi_y = static_cast<int>(ydpi);
+      return true;
+   }
 }

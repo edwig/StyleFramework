@@ -21,6 +21,7 @@
 //
 #include "stdafx.h"
 #include "RegistryManager.h"
+#include "StyleUtilities.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -34,6 +35,11 @@ static UINT auIDStatusBar[] =
 {
   ID_SEPARATOR
 };
+
+static int g_dpi_x = USER_DEFAULT_SCREEN_DPI;
+static int g_dpi_y = USER_DEFAULT_SCREEN_DPI;
+
+extern StylingFramework g_styling;
 
 IMPLEMENT_DYNAMIC(StyleDialog,CDialog);
 
@@ -84,6 +90,7 @@ BEGIN_MESSAGE_MAP(StyleDialog,CDialog)
   ON_NOTIFY_EX(TTN_NEEDTEXT,0,        OnToolTipNotify)
   ON_MESSAGE(WM_CTLCOLORSTATIC,       OnCtlColorStatic)
   ON_MESSAGE(WM_CTLCOLORLISTBOX,      OnCtlColorListBox)
+  ON_MESSAGE(WM_DPICHANGED,           OnDpiChanged)
 END_MESSAGE_MAP()
 
 BOOL
@@ -124,6 +131,11 @@ StyleDialog::OnCreate(LPCREATESTRUCT p_create)
   GetWindowRect(&rect);
   SFXResizeByFactor(rect);
   MoveWindow(&rect);
+
+  // Getting the DPI
+  GetDpi(GetSafeHwnd(),m_dpi_x,m_dpi_y);
+  g_dpi_x = m_dpi_x;
+  g_dpi_y = m_dpi_y;
 
   return res;
 }
@@ -817,6 +829,7 @@ StyleDialog::OnNcLButtonDown(UINT nFlags, CPoint point)
     CDialog::OnNcLButtonDown(nFlags, point);
     return;
   }
+  int oldDpi = g_dpi_x;
 
   // Remove gripper. We could resize the dialog
   EraseGripper();
@@ -889,7 +902,7 @@ StyleDialog::OnNcLButtonDown(UINT nFlags, CPoint point)
     {
       if(GetStyle() & WS_MAXIMIZE)
       {
-        return;
+        goto ready;
       }
 
       SetWindowPos(&CWnd::wndTop,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE|SWP_SHOWWINDOW|SWP_NOSENDCHANGING|SWP_DRAWFRAME);
@@ -911,7 +924,7 @@ StyleDialog::OnNcLButtonDown(UINT nFlags, CPoint point)
           lastpoint = cursor;
         }
       }
-      return;
+      goto ready;
     }
     break;
 
@@ -926,7 +939,7 @@ StyleDialog::OnNcLButtonDown(UINT nFlags, CPoint point)
     {
       if(!m_canResize || (GetStyle() & WS_MAXIMIZE))
       {
-        return;
+        goto ready;
       }
       CPoint lastpoint(point);
       CRect window;
@@ -971,6 +984,12 @@ StyleDialog::OnNcLButtonDown(UINT nFlags, CPoint point)
       }
       break;
     }
+  }
+ready:
+  // In case we changed DPI while moving/resizing redraw the frame
+  if(g_dpi_x != oldDpi)
+  {
+    OnNcPaint();
   }
 }
 
@@ -1069,6 +1088,95 @@ StyleDialog::OnSettingChange(UINT uFlags,LPCTSTR lpszSection)
     ShowWindow(SW_MAXIMIZE);
   }
 }
+
+LRESULT
+StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM lParam)
+{
+  // The new DPI
+  m_dpi_x = HIWORD(wParam);
+  m_dpi_y = LOWORD(wParam);
+
+  CRect wrect;
+  GetWindowRect(wrect);
+
+  wrect.right  = wrect.left + ::MulDiv(wrect.Width(), m_dpi_x,g_dpi_x);
+  wrect.bottom = wrect.top  + ::MulDiv(wrect.Height(),m_dpi_x,g_dpi_y);
+
+  // Set the new window size/position as suggested by the system
+  ::SetWindowPos(m_hWnd,
+                 nullptr,
+                 wrect.left,
+                 wrect.top,
+                 wrect.Width(),
+                 wrect.Height(),
+                 SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+
+  // Update the global font scaling factor, re-create all the standard fonts
+  int factory = (m_dpi_y * 100) / USER_DEFAULT_SCREEN_DPI;
+  int factorx = (m_dpi_x * 100) / USER_DEFAULT_SCREEN_DPI;
+  g_styling.SetSizeFactorX(factorx);
+  g_styling.SetSizeFactorY(factory);
+  TRACE("Font factor: %d\n",factorx);
+
+  // Scale child windows using oldDpi (the previous DPI)
+  ::EnumChildWindows(m_hWnd,
+                      [](HWND hWnd,LPARAM lParam)
+                      {
+                        const int dpi_x = HIWORD(lParam);
+                        const int dpi_y = LOWORD(lParam);
+                        CRect rc;
+                        ::GetWindowRect(hWnd,rc);
+                        HWND parentWnd = ::GetParent(hWnd);
+                        POINT ptPos = {rc.left, rc.top};
+                        ::ScreenToClient(parentWnd,&ptPos);
+                        int dpiScaledX      = ::MulDiv(ptPos.x,    dpi_x,g_dpi_x);
+                        int dpiScaledY      = ::MulDiv(ptPos.y,    dpi_y,g_dpi_y);
+                        int dpiScaledWidth  = ::MulDiv(rc.Width(), dpi_x,g_dpi_x);
+                        int dpiScaledHeight = ::MulDiv(rc.Height(),dpi_y,g_dpi_y);
+
+                        ::SetWindowPos(hWnd,
+                                        nullptr,
+                                        dpiScaledX,
+                                        dpiScaledY,
+                                        dpiScaledWidth,
+                                        dpiScaledHeight,
+                                        SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+                        return TRUE;
+                      },
+                      MAKELPARAM(m_dpi_y,m_dpi_x));
+
+  // Store the new DPI as old DPI for next time
+  g_dpi_x = m_dpi_x;
+  g_dpi_y = m_dpi_y;
+  TRACE("DPI now set to: %d/%d\n",g_dpi_x,g_dpi_y);
+
+  // Now redraw everything
+  Invalidate();
+  return 0;
+}
+
+void
+StyleDialog::PumpMessage()
+{
+  // We just handle the paint messages, so we get visible
+  // for larger and longer processes.
+  // We could face an eternal loop, so we put a time constriction on it!
+  MSG msg;
+  UINT ticks = GetTickCount();
+  while(GetTickCount() - ticks < 500 && PeekMessage(&msg,NULL,WM_CREATE,WM_APP,PM_REMOVE))
+  {
+    try
+    {
+      ::TranslateMessage(&msg);
+      ::DispatchMessage(&msg);
+    }
+    catch(...)
+    {
+      // How now, brown cow?
+    }
+  }
+}
+
 
 void 
 StyleDialog::OnSize(UINT nType, int cx, int cy)

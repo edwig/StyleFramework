@@ -1365,6 +1365,8 @@ StyleEdit::OnSize(UINT nType, int cx, int cy)
 {
   CEdit::OnSize(nType,cx,cy);
 
+  SetFont(&STYLEFONTS.DialogTextFont);
+
   SkinScrollWnd* skin = GetSkin();
   if (skin && skin->m_moveClient == FALSE)
   {

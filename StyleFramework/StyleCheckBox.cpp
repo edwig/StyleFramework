@@ -235,7 +235,13 @@ StyleCheckbox::Draw(CWnd* p_wnd
       p_dc->SetBkColor(ThemeColor::GetColor(Colors::ColorWindowFrame));
       p_dc->SelectObject(STYLEFONTS.DialogTextFont);
       p_dc->SetTextColor(textcolor);
-      int margin = (28 * GetSFXSizeFactor()) / 100;
+      int margin = 28;
+      int factor = GetSFXSizeFactor();
+             if(factor <= 100) margin = 28;  // x 1.0
+        else if(factor <= 125) margin = 42;  // x 1.5
+        else if(factor <= 150) margin = 56;  // x 2.0
+        else if(factor <= 175) margin = 84;  // * 3.0
+        else                   margin = 112; // * 4.0
       p_rect.left += margin;
       p_dc->DrawText(text,&p_rect,DT_VCENTER | DT_SINGLELINE);
     }

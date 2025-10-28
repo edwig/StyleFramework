@@ -85,7 +85,8 @@ StylingFramework::GetSizeFactorY()
 bool 
 SetSFXSizeFactor(int p_factorX,int p_factorY)
 {
-  if(g_styling.SetSizeFactorX(p_factorY) && g_styling.SetSizeFactorY(p_factorY))
+  if(g_styling.SetSizeFactorX(p_factorX) && 
+     g_styling.SetSizeFactorY(p_factorY))
   {
     return true;
   }
