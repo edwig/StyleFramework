@@ -197,15 +197,12 @@ MinimalFrameWnd(CWnd* p_wnd)
   }
 }
 
-int GetSFXSizeFactor();
-void SFXResizeByFactor(CRect& p_rect);
-
 // Scale a control to the SFXSizeFactor
 void
 ScaleControl(CWnd* p_wnd)
 {
   // See if we must do scaling
-  if(GetSFXSizeFactor() == 100)
+  if(GetSFXSizeFactor(p_wnd->GetSafeHwnd()) == 100)
   {
     return;
   }
@@ -218,7 +215,7 @@ ScaleControl(CWnd* p_wnd)
   {
     parent->ScreenToClient(rect);
   }
-  SFXResizeByFactor(rect);
+  SFXResizeByFactor(p_wnd->GetSafeHwnd(),rect);
   // p_wnd->MoveWindow(rect);
   SetWindowPos(p_wnd->GetSafeHwnd(),p_wnd->GetSafeHwnd()
               ,rect.left,rect.top,rect.Width(),rect.Height()
@@ -302,17 +299,7 @@ bool GetDpi(HWND hWnd,int& p_dpi_x,int& p_dpi_y)
    if (v81 || v10)
    {
       HMONITOR hMonitor = ::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
-      UINT xdpi, ydpi;
-      LRESULT success = ::GetDpiForMonitor(hMonitor,MDT_EFFECTIVE_DPI,&xdpi,&ydpi);
-      if(success == S_OK)
-      {
-        p_dpi_x = static_cast<int>(xdpi);
-        p_dpi_y = static_cast<int>(ydpi);
-        return true;
-      }
-      p_dpi_x = USER_DEFAULT_SCREEN_DPI;
-      p_dpi_y = USER_DEFAULT_SCREEN_DPI;
-      return false;
+      return GetDpiMonitor(hMonitor,p_dpi_x,p_dpi_y);
    }
    else
    {
@@ -324,4 +311,19 @@ bool GetDpi(HWND hWnd,int& p_dpi_x,int& p_dpi_y)
       p_dpi_y = static_cast<int>(ydpi);
       return true;
    }
+}
+
+bool GetDpiMonitor(HMONITOR hMonitor,int& p_dpi_x,int& p_dpi_y)
+{
+  UINT xdpi, ydpi;
+  LRESULT success = ::GetDpiForMonitor(hMonitor,MDT_EFFECTIVE_DPI,&xdpi,&ydpi);
+  if(success == S_OK)
+  {
+    p_dpi_x = static_cast<int>(xdpi);
+    p_dpi_y = static_cast<int>(ydpi);
+    return true;
+  }
+  p_dpi_x = USER_DEFAULT_SCREEN_DPI;
+  p_dpi_y = USER_DEFAULT_SCREEN_DPI;
+  return false;
 }

@@ -74,6 +74,7 @@ protected:
   virtual void SetupDynamicLayout() override;
 
   virtual void InitPages();
+  virtual void InitFonts();
   virtual void DisplayPage();
   
   virtual void TryPageForward();

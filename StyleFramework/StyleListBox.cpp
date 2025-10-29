@@ -83,9 +83,10 @@ StyleListBox::InitSkin(int p_borderSize /*=1*/,int p_clientBias /*=0*/)
 {
   if(m_skin == nullptr)
   {
-    SetFont(&STYLEFONTS.DialogTextFont);
+    CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFont);
+    SetFont(font);
     int height = LISTBOX_ITEMHEIGTH;
-    SetItemHeight(0,(height * GetSFXSizeFactor()) / 100);
+    SetItemHeight(0,(height * GetSFXSizeFactor(m_hWnd)) / 100);
 
     m_skin = SkinWndScroll(this,p_borderSize,p_clientBias);
   }

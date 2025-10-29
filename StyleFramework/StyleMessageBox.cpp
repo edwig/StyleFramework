@@ -844,7 +844,7 @@ MessageDialog::OnInitDialog()
   ShowCloseButton(false);
 
   // MB_ICONERROR message?
-  m_font = (m_image == IDI_SHIELD) ? &STYLEFONTS.ErrorTextFont : &STYLEFONTS.DialogTextFont;
+  m_font = GetSFXFont(GetSafeHwnd(),(m_image == IDI_SHIELD) ? StyleFontType::ErrorFont : StyleFontType::DialogFont);
   SetWindowText(m_title); 
 
   // Grab control and put font on it
@@ -870,9 +870,10 @@ MessageDialog::OnInitDialog()
 
   // The internal margins of the edit control need to be added to the text part
   // so the edit control will become big enough to show margins itself
+  int caption = WINDOWCAPTIONHEIGHT(m_hWnd);
   CRect margins;
   edit->GetRect(margins);
-  tekstRect.OffsetRect(0, WINDOWCAPTIONHEIGHT);
+  tekstRect.OffsetRect(0, caption);
   tekstRect.right  += margins.left * 2;
   tekstRect.bottom += margins.top * 2;
 
@@ -893,10 +894,10 @@ MessageDialog::OnInitDialog()
   {
     // Extra space at the left side of 32 pixels for the icon
     tekstRect.OffsetRect(32 + OFFSET,0);
-    if (tekstRect.bottom - WINDOWCAPTIONHEIGHT < 32)
+    if (tekstRect.bottom - caption < 32)
     {
       // Still to do: vertically centering
-      tekstRect.bottom = WINDOWCAPTIONHEIGHT + 32 + OFFSET;
+      tekstRect.bottom = caption + 32 + OFFSET;
     }
   }
 
@@ -1028,7 +1029,8 @@ MessageDialog::OnInitDialog()
     }
   }
   // Recalculate the window size
-  CRect rect(0, 0, totalWidth + OFFSET + WINDOWSHADOWBORDER, buttonTop + OFFSET + buttonHeight + WINDOWSHADOWBORDER);
+  int border = WINDOWSHADOWBORDER(m_hWnd);
+  CRect rect(0, 0, totalWidth + OFFSET + border, buttonTop + OFFSET + buttonHeight + border);
   if (m_suppressable || (m_notAgainPtr != NULL))
   {
     int hcb = (tsize.cy + 2*GetSystemMetrics(SM_CYFIXEDFRAME));
@@ -1097,7 +1099,7 @@ MessageDialog::OnPaint()
     // We must draw the signal icon
     if(m_image)
     {
-      dc.DrawIcon(OFFSET,WINDOWCAPTIONHEIGHT + OFFSET,m_icon);
+      dc.DrawIcon(OFFSET,WINDOWCAPTIONHEIGHT(m_hWnd) + OFFSET,m_icon);
     }
 
     // Drawing a line above the checkbox

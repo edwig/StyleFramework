@@ -145,7 +145,10 @@ StyleStaticToast::OnPaint()
 
 	// Paint the text
 	int fontheight = 2 * STANDARDFONTSIZE;
-	CFont* org = pDC->SelectObject(&STYLEFONTS.DialogTextFontBold);
+
+  CFont* boldfont = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFontBold);
+
+	CFont* org = pDC->SelectObject(boldfont);
 	pDC->SetTextColor(m_colorText);
 	rect.left += m_leftOffset;
 	rect.top  += GetPosition(rect.Height());
@@ -155,7 +158,8 @@ StyleStaticToast::OnPaint()
 
 	if(m_text1.GetLength())
 	{
-		pDC->SelectObject(&STYLEFONTS.DialogTextFont);
+    CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFont);
+		pDC->SelectObject(font);
 		rect.top    += fontheight;
 		rect.bottom += fontheight;
     pDC->DrawText(m_text1,&rect,DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);

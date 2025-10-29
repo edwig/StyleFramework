@@ -42,11 +42,6 @@ StyleStepper::StyleStepper(CWnd*   p_parentWnd  /*= nullptr     */
   m_textPrior = _T("Previous");
   m_textNext  = _T("Next");
   m_textReady = _T("Ready");
-
-  LOGFONT lf = StyleFonts::MakeLOGFONTFromString(_T("Verdana;28;800"));
-  LOGFONT tf = StyleFonts::MakeLOGFONTFromString(_T("Verdana;14;800"));
-  m_stepFont .CreateFontIndirect(&lf);
-  m_titleFont.CreateFontIndirect(&tf);
 }
 
 StyleStepper::~StyleStepper()
@@ -74,6 +69,8 @@ StyleStepper::OnInitDialog()
 {
   StyleDialog::OnInitDialog();
   SetCaption(m_caption);
+
+  InitFonts();
 
   // Check if we really have a wizard!
   if(m_pages.empty())
@@ -118,6 +115,21 @@ StyleStepper::SetupDynamicLayout()
   }
   // Do the final adjustments
   manager.Adjust();
+}
+
+void
+StyleStepper::InitFonts()
+{
+  extern StylingFramework g_styling;
+  const StyleMonitor* monitor = g_styling.GetMonitor(m_hWnd);
+  if(monitor)
+  {
+    StyleFonts& fonts = const_cast<StyleFonts&>(monitor->GetFonts());
+    LOGFONT lf = fonts.MakeLOGFONTFromString(_T("Verdana;28;800"));
+    LOGFONT tf = fonts.MakeLOGFONTFromString(_T("Verdana;14;800"));
+    m_stepFont.CreateFontIndirect(&lf);
+    m_titleFont.CreateFontIndirect(&tf);
+  }
 }
 
 void

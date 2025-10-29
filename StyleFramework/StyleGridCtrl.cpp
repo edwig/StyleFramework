@@ -63,7 +63,8 @@ StyleGridCtrl::InitSkin()
     return;
   }
   // Skin our grid
-  SetFont(&STYLEFONTS.DialogTextFont);
+  CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFont);
+  SetFont(font);
   SkinScrollWnd* skin = SkinWndScroll(this,1);
   skin->SetScrollbarBias(0);
 }

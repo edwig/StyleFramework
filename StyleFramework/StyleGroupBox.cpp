@@ -84,7 +84,8 @@ StyleGroupBox::Internal_Paint(CDC* p_dc)
   // Text of the label
   CString text;
   GetWindowText(text);
-  HFONT oldfont = (HFONT)p_dc->SelectObject(&STYLEFONTS.DialogTextFont);
+  CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFont);
+  HFONT oldfont = (HFONT)p_dc->SelectObject(font);
 
   /* GroupBox acts like static control, so it sends CTLCOLORSTATIC */
   CWnd* parent = GetParent();

@@ -126,8 +126,8 @@ StyleStatic::OnPaint()
   pDC->SetTextColor(textcolor);
 
   // Paint the text
-  int fontheight = STANDARDFONTSIZE;
-  CFont* org = pDC->SelectObject(&STYLEFONTS.DialogTextFont);
+  CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFont);
+  CFont* org = pDC->SelectObject(font);
   
   // Use left offset
   rect.left += m_leftOffset;

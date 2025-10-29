@@ -82,9 +82,10 @@ StyleDialogCA::OnInitDialog()
   ModifyStyleEx(0, WS_EX_LAYERED);
   SetLayeredWindowAttributes(ColorWindowTransparent,0,LWA_COLORKEY);
 
+  int border = WINDOWSHADOWBORDER(m_hWnd);
   CRect window;
   GetWindowRect(window);
-  SetWindowPos(nullptr, 0, 0, window.Width() + WINDOWSHADOWBORDER, window.Height() + WINDOWSHADOWBORDER, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+  SetWindowPos(nullptr, 0, 0, window.Width() + border, window.Height() + border, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 
   m_defaultBrush.DeleteObject();
   m_defaultBrush.CreateSolidBrush(ThemeColor::GetColor(Colors::ColorWindowFrame));
@@ -110,29 +111,33 @@ void StyleDialogCA::ShowCloseButton(bool p_show)
 BOOL 
 StyleDialogCA::OnEraseBkgnd(CDC* pDC)
 {
+  int border  = WINDOWSHADOWBORDER(m_hWnd);
+  int caption = WINDOWCAPTIONHEIGHT(m_hWnd);
+
   // Shadow frame
-  pDC->FillSolidRect(CRect(m_windowRect.right - WINDOWSHADOWBORDER, m_windowRect.top, m_windowRect.right, m_windowRect.top + 2 * WINDOWSHADOWBORDER), ColorWindowTransparent);
-  pDC->FillSolidRect(CRect(m_windowRect.right - WINDOWSHADOWBORDER, m_windowRect.top + 2 * WINDOWSHADOWBORDER, m_windowRect.right, m_windowRect.bottom), ColorWindowGrayFrame);
-        ValidateRect(CRect(m_windowRect.right - WINDOWSHADOWBORDER, m_windowRect.top, m_windowRect.right, m_windowRect.bottom));
-  pDC->FillSolidRect(CRect(m_windowRect.left, m_windowRect.bottom - WINDOWSHADOWBORDER, m_windowRect.left * 2 * WINDOWSHADOWBORDER, m_windowRect.bottom), ColorWindowTransparent);
-  pDC->FillSolidRect(CRect(m_windowRect.left + 2 * WINDOWSHADOWBORDER, m_windowRect.bottom - WINDOWSHADOWBORDER, m_windowRect.right - WINDOWSHADOWBORDER, m_windowRect.bottom), ColorWindowGrayFrame);
-        ValidateRect(CRect(m_windowRect.left, m_windowRect.bottom - WINDOWSHADOWBORDER, m_windowRect.right - WINDOWSHADOWBORDER, m_windowRect.bottom));
+  pDC->FillSolidRect(CRect(m_windowRect.right - border,    m_windowRect.top,             m_windowRect.right,             m_windowRect.top + 2 * border), ColorWindowTransparent);
+  pDC->FillSolidRect(CRect(m_windowRect.right - border,    m_windowRect.top + 2 * border,m_windowRect.right,             m_windowRect.bottom), ColorWindowGrayFrame);
+        ValidateRect(CRect(m_windowRect.right - border,    m_windowRect.top,             m_windowRect.right,             m_windowRect.bottom));
+  pDC->FillSolidRect(CRect(m_windowRect.left,              m_windowRect.bottom - border, m_windowRect.left * 2 * border, m_windowRect.bottom), ColorWindowTransparent);
+  pDC->FillSolidRect(CRect(m_windowRect.left + 2 * border, m_windowRect.bottom - border, m_windowRect.right - border,    m_windowRect.bottom), ColorWindowGrayFrame);
+        ValidateRect(CRect(m_windowRect.left,              m_windowRect.bottom - border, m_windowRect.right - border,    m_windowRect.bottom));
 
   if (m_caption)
   {
     // caption bar
-    CRect caption(m_clientRect.left, m_clientRect.top, m_clientRect.right, m_clientRect.top + WINDOWCAPTIONHEIGHT);
-    pDC->FillSolidRect(caption, m_error ? ColorWindowFrameError : ColorWindowHeader);
-    ValidateRect(caption);
+    CRect captionrc(m_clientRect.left, m_clientRect.top, m_clientRect.right, m_clientRect.top + caption);
+    pDC->FillSolidRect(captionrc, m_error ? ColorWindowFrameError : ColorWindowHeader);
+    ValidateRect(captionrc);
 
     // title
-    pDC->SelectObject(&STYLEFONTS.DialogTextFontBold);
+    CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFontBold);
+    pDC->SelectObject(font);
     pDC->SetTextColor(m_error ? ColorWindowFrameTextError : ColorWindowHeaderText);
-    caption.right -= WINDOWCAPTIONHEIGHT;
-    caption.DeflateRect(5, 0);
+    captionrc.right -= caption;
+    captionrc.DeflateRect(5, 0);
     CString titel;
     GetWindowText(titel);
-    pDC->DrawText(titel, caption, DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+    pDC->DrawText(titel, captionrc, DT_LEFT | DT_SINGLELINE | DT_VCENTER);
     
     if (m_close)
     {
@@ -157,7 +162,7 @@ StyleDialogCA::OnEraseBkgnd(CDC* pDC)
                                                            : ThemeColor::GetColor(Colors::ColorEditText));
       HGDIOBJ orgpen = pDC->SelectObject(pen);
 
-      CPoint center(m_closeRect.right - WINDOWCAPTIONHEIGHT / 2, m_closeRect.top + WINDOWCAPTIONHEIGHT / 2);
+      CPoint center(m_closeRect.right - caption / 2, m_closeRect.top + caption/ 2);
       pDC->MoveTo(center.x - WS(3), center.y - WS(3));
       pDC->LineTo(center.x + WS(4), center.y + WS(4));
       pDC->MoveTo(center.x + WS(3), center.y - WS(3));
@@ -326,20 +331,23 @@ StyleDialogCA::OnSize(UINT nType, int cx, int cy)
 {
   CDialogEx::OnSize(nType, cx, cy);
   
+  int border  = WINDOWSHADOWBORDER(m_hWnd);
+  int caption = WINDOWCAPTIONHEIGHT(m_hWnd);
+
   m_windowRect.SetRect(0, 0, cx, cy);
 
-  m_clientRect.SetRect(0, 0, cx - WINDOWSHADOWBORDER, cy - WINDOWSHADOWBORDER);
+  m_clientRect.SetRect(0, 0, cx - border, cy - border);
   if (m_caption)
   {
-    m_closeRect.SetRect(cx - WINDOWSHADOWBORDER- WINDOWCAPTIONHEIGHT,0,cx - WINDOWSHADOWBORDER,                      WINDOWCAPTIONHEIGHT);
-    m_dragRect .SetRect(0,                                           0,cx - WINDOWSHADOWBORDER - WINDOWCAPTIONHEIGHT,WINDOWCAPTIONHEIGHT);
-    m_properClientRect.SetRect(1, WINDOWCAPTIONHEIGHT, cx - WINDOWSHADOWBORDER-1, cy - WINDOWSHADOWBORDER - 1);
+    m_closeRect.SetRect(cx - border - caption,0,cx - border,          caption);
+    m_dragRect .SetRect(0,                    0,cx - border - caption,caption);
+    m_properClientRect.SetRect(1, caption, cx - border -1, cy - border - 1);
   }
   else
   {
     m_closeRect.SetRect(0,0,0,0);
     m_dragRect .SetRect(0,0,0,0);
-    m_properClientRect.SetRect(1, 1, cx - WINDOWSHADOWBORDER - 1, cy - WINDOWSHADOWBORDER - 1);
+    m_properClientRect.SetRect(1, 1, cx - border - 1, cy - border - 1);
   }
 }
 

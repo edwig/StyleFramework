@@ -705,7 +705,8 @@ StyleButton::Draw(CDC*    pDC
   }
   else
   {
-    org = pDC->SelectObject(m_bold ? &STYLEFONTS.DialogTextFontBold : &STYLEFONTS.DialogTextFont);
+    CFont* font = GetSFXFont(GetSafeHwnd(),m_bold ? StyleFontType::DialogFontBold : StyleFontType::DialogFont);
+    org = pDC->SelectObject(font);
   }
   pDC->DrawText(txt,&rect,DT_CENTER|DT_VCENTER|DT_SINGLELINE);
   pDC->SelectObject(org);

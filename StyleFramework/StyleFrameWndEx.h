@@ -81,7 +81,7 @@ protected:
   bool      m_down  { false     };
   bool      m_dtsize{ false     };
   // Elementary sizes
-  int       m_menuItemWidth = { MENUITEMWIDTH };
+  int       m_menuItemWidth   { 0 };
   // Rectangles
   CRect     m_windowRectLocal { 0,0,0,0 };    // Local window rectangle
   CRect     m_minRect         { 0,0,0,0 };    // Minimize button rectangle

@@ -20,43 +20,13 @@
 
 #define SFX_VERSION "1.1.0"       // Current SFX version number
 
-class StylingFramework
-{
-public:
-  StylingFramework();
-
-  // Set sizing in percentage (96 DPI = 100 %)
-  bool SetSizeFactorX(int p_factor);
-  bool SetSizeFactorY(int p_factor);
-  // Getting the sizing factor
-  int  GetSizeFactorX();
-  int  GetSizeFactorY();
-
-private:
-  // Pre-calculate the DPI scaling factor
-  void SFXCalculateDPI();
-
-  StylingFramework* m_instance { nullptr };
-  int m_factor_x { 100 };
-  int m_factor_y { 100 };
-};
-
-
-// Setting the size factor
-// To be called in your main program or InitInstance **BEFORE** you create any dialog or window
-bool SetSFXSizeFactor(int p_factorX,int p_factorY);
-int  GetSFXSizeFactor();
-
-// General resize a windows rectangle
-void SFXResizeByFactor(CRect& p_rect);
-void SFXResizeByFactor(int& p_x,int& p_y,int& p_w,int& p_h);
-
 // General headers
 #include "AutoFocus.h"
 #include "StyleColors.h"
 #include "StyleFonts.h"
 #include "StyleMacros.h"
 #include "StyleTexts.h"
+#include "StyleMonitor.h"
 
 // Skinning & scrollbars
 #include "SkinScrollWnd.h"
@@ -93,6 +63,26 @@ void SFXResizeByFactor(int& p_x,int& p_y,int& p_w,int& p_h);
 #include "StyleTab.h"             // ----             -> StyleTab (simple StyleDialog)
 #include "StyleToolBar.h"         // CMFCToolBar      -> StyleToolBar
 #include "StyleTreeCtrl.h"        // CTreeCtrl        -> StyleTreeCtrl
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The one-and-only global style framework object
+// Used to get font and monitor information and scaling factors
+//
+class StylingFramework
+{
+public:
+  StylingFramework();
+
+  // GETTERS
+  const StyleMonitor* GetMonitor(HWND p_hwnd) const;
+  const StyleMonitor* GetMonitor(HMONITOR p_monitor) const;
+  const StyleMonitor* GetPrimaryMonitor() const;
+
+private:
+  StylingFramework* m_instance { nullptr };
+  StyleMonitors     m_monitors;
+};
 
 // Selecting the right library to link with automatically
 // So we do not need to worry about which library to use in the linker settings

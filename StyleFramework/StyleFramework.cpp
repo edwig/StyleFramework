@@ -28,90 +28,109 @@ StylingFramework::StylingFramework()
     throw CString(_T("SFX can only be initialized once!"));
   }
   m_instance = this;
-  SFXCalculateDPI();
+
+  // Getting all monitors and fonts
+  m_monitors.DiscoverAllMonitors();
+}
+
+const StyleMonitor* 
+StylingFramework::GetMonitor(HWND p_hwnd) const
+{
+  HMONITOR hMonitor = ::MonitorFromWindow(p_hwnd,MONITOR_DEFAULTTONEAREST);
+  if(hMonitor)
+  {
+    return GetMonitor(hMonitor);
+  }
+  return nullptr;
+}
+
+const StyleMonitor*
+StylingFramework::GetMonitor(HMONITOR p_monitor) const
+{
+  return m_monitors.GetMonitor(p_monitor);
+}
+
+const StyleMonitor* 
+StylingFramework::GetPrimaryMonitor() const
+{
+  return m_monitors.GetPrimaryMonitor();
 }
 
 void
-StylingFramework::SFXCalculateDPI()
+SFXResizeByFactor(HWND p_hwnd,CRect& p_rect)
 {
-  HDC screen = GetDC(0);
-  int dpiX = GetDeviceCaps(screen,LOGPIXELSX);
-  int dpiY = GetDeviceCaps(screen,LOGPIXELSY);
-
-  m_factor_x = MulDiv(100,dpiX,96);
-  m_factor_y = MulDiv(100,dpiY,96);
-
-  STYLEFONTS.SetFactor(m_factor_y);
-
-  ReleaseDC(0,screen);
-}
-
-bool
-StylingFramework::SetSizeFactorX(int p_factor)
-{
-  if(p_factor > 50 && p_factor < 1000)
+  const StyleMonitor* monitor = g_styling.GetMonitor(p_hwnd);
+  if(!monitor)
   {
-    m_factor_x = p_factor;
-    return true;
+    return;
   }
-  return false;
-}
+  int dpi_x;
+  int dpi_y;
+  monitor->GetDPI(dpi_x,dpi_y);
+  int factorx = (dpi_x * 100) / USER_DEFAULT_SCREEN_DPI;
+  int factory = (dpi_y * 100) / USER_DEFAULT_SCREEN_DPI;
 
-bool
-StylingFramework::SetSizeFactorY(int p_factor)
-{
-  if(p_factor > 50 && p_factor < 1000)
-  {
-    m_factor_y = p_factor;
-    return STYLEFONTS.SetFactor(p_factor);
-  }
-  return false;
-}
-
-int
-StylingFramework::GetSizeFactorX()
-{
-  return m_factor_x;
-}
-
-int
-StylingFramework::GetSizeFactorY()
-{
-  return m_factor_y;
-}
-
-// Setting the size factor
-// To be called in your main program or InitInstance **BEFORE** you create any dialog or window
-bool 
-SetSFXSizeFactor(int p_factorX,int p_factorY)
-{
-  if(g_styling.SetSizeFactorX(p_factorX) && 
-     g_styling.SetSizeFactorY(p_factorY))
-  {
-    return true;
-  }
-  return false;
-}
-
-int GetSFXSizeFactor()
-{
-  return g_styling.GetSizeFactorY();
-}
-
-void
-SFXResizeByFactor(CRect& p_rect)
-{
-  p_rect.top    = (p_rect.top    * g_styling.GetSizeFactorY()) / 100;
-  p_rect.bottom = (p_rect.bottom * g_styling.GetSizeFactorY()) / 100;
-  p_rect.left   = (p_rect.left   * g_styling.GetSizeFactorX()) / 100;
-  p_rect.right  = (p_rect.right  * g_styling.GetSizeFactorX()) / 100;
+  p_rect.top    = (p_rect.top    * factorx) / 100;
+  p_rect.bottom = (p_rect.bottom * factory) / 100;
+  p_rect.left   = (p_rect.left   * factorx) / 100;
+  p_rect.right  = (p_rect.right  * factory) / 100;
 }
 
 void 
-SFXResizeByFactor(int& p_x,int& p_y,int& p_w,int& p_h)
+SFXResizeByFactor(HWND p_hwnd,int& p_x,int& p_y,int& p_w,int& p_h)
 {
-  p_x = (p_x * g_styling.GetSizeFactorX()) / 100;
-  p_y = (p_y * g_styling.GetSizeFactorY()) / 100;
-  p_w = (p_w * g_styling.GetSizeFactorX()) / 100;
-  p_h = (p_h * g_styling.GetSizeFactorY()) / 100;
+  const StyleMonitor* monitor = g_styling.GetMonitor(p_hwnd);
+  if(!monitor)
+  {
+    return;
+  }
+  int dpi_x;
+  int dpi_y;
+  monitor->GetDPI(dpi_x,dpi_y);
+  int factorx = (dpi_x * 100) / USER_DEFAULT_SCREEN_DPI;
+  int factory = (dpi_y * 100) / USER_DEFAULT_SCREEN_DPI;
+
+  p_x = (p_x * factorx) / 100;
+  p_y = (p_y * factory) / 100;
+  p_w = (p_w * factorx) / 100;
+  p_h = (p_h * factory) / 100;
+}
+
+int GetSFXSizeFactor(HWND p_hwnd)
+{
+  const StyleMonitor* monitor = g_styling.GetMonitor(p_hwnd);
+  if(!monitor)
+  {
+    return 100;
+  }
+  int dpi_x;
+  int dpi_y;
+  monitor->GetDPI(dpi_x,dpi_y);
+  return (dpi_y * 100) / USER_DEFAULT_SCREEN_DPI;
+}
+
+// Global function to get the correct font for a window
+// based on its monitor
+CFont*
+GetSFXFont(HWND p_hwnd,StyleFontType p_type)
+{
+  const StyleMonitor* monitor = g_styling.GetMonitor(p_hwnd);
+  if(monitor)
+  {
+    StyleFonts& fonts = const_cast<StyleFonts&>(monitor->GetFonts());
+    return fonts.GetFont(p_type);
+  }
+  return nullptr;
+}
+
+CFont* 
+GetSFXFont(HMONITOR hm,StyleFontType p_type)
+{
+  const StyleMonitor* monitor = g_styling.GetMonitor(hm);
+  if(monitor)
+  {
+    StyleFonts& fonts = const_cast<StyleFonts&>(monitor->GetFonts());
+    return fonts.GetFont(p_type);
+  }
+  return nullptr;
 }

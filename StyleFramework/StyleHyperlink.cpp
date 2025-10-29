@@ -80,7 +80,8 @@ BOOL StyleHyperLink::PreTranslateMessage(MSG* pMsg)
 void StyleHyperLink::PreSubclassWindow() 
 {
   ScaleControl(this);
-  SetFont(&STYLEFONTS.DialogTextFont);
+  CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFont);
+  SetFont(font);
 
   // We want to get mouse clicks via STN_CLICKED
   DWORD dwStyle = GetStyle();

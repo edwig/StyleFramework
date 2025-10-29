@@ -34,6 +34,7 @@ void    MinimalFrameWnd   (CWnd* p_wnd);
 
 void    ScaleControl(CWnd* p_wnd);
 bool    GetDpi(HWND hWnd,int& p_dpi_x,int& p_dpi_y);
+bool    GetDpiMonitor(HMONITOR hMonitor,int& p_dpi_x,int& p_dpi_y);
 
 // Unicode aware Clipboard handling
 CString StyleGetStringFromClipboard(HWND p_wnd = NULL);

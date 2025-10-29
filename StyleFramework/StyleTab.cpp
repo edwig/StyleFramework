@@ -214,7 +214,7 @@ StyleTab::OnToolHitTest(CPoint point,TOOLINFO* pTI) const
       combo->GetWindowRect(&comboRect);
       CRect dialogRect;
       GetWindowRect(&dialogRect);
-      comboRect.OffsetRect(-dialogRect.left,-(dialogRect.top + WINDOWCAPTIONHEIGHT));
+      comboRect.OffsetRect(-dialogRect.left,-(dialogRect.top + WINDOWCAPTIONHEIGHT(m_hWnd)));
       comboRect.right -= comboRect.Height();
       if(comboRect.PtInRect(point))
       {

@@ -43,16 +43,15 @@ BEGIN_MESSAGE_MAP(StyleEdit,CEdit)
   ON_WM_LBUTTONUP()
   ON_WM_NCCALCSIZE()
   ON_WM_DROPFILES()
-  ON_MESSAGE(WM_MOUSEHOVER,           OnMouseHover)
-  ON_MESSAGE(WM_MOUSELEAVE,           OnMouseLeave)
-  ON_MESSAGE(WM_LBUTTONDBLCLK,        OnDoubleClick)
-  ON_CONTROL_REFLECT_EX(EN_KILLFOCUS, OnKillFocus)
-  ON_CONTROL_REFLECT_EX(EN_SETFOCUS,  OnSetfocus)
+  ON_MESSAGE(WM_MOUSEHOVER,            OnMouseHover)
+  ON_MESSAGE(WM_MOUSELEAVE,            OnMouseLeave)
+  ON_MESSAGE(WM_LBUTTONDBLCLK,         OnDoubleClick)
+  ON_CONTROL_REFLECT_EX(EN_KILLFOCUS,  OnKillFocus)
+  ON_CONTROL_REFLECT_EX(EN_SETFOCUS,   OnSetfocus)
+  ON_MESSAGE(WM_DPICHANGED_AFTERPARENT,OnDpiChanged)
   ON_WM_CTLCOLOR_REFLECT()
-
 // BEWARE: Not activated
 // ON_WM_WINDOWPOSCHANGED()
-
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -125,7 +124,8 @@ StyleEdit::InitSkin(bool p_force /*=false*/)
       m_borderSize = STYLE_SINGLELN_BORDER;
     }
   }
-  SetFont(&STYLEFONTS.DialogTextFont);
+  CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFont);
+  SetFont(font);
   if(p_force || (style & ES_MULTILINE))
   {
     SkinWndScroll(this,border ? m_borderSize : 0);
@@ -1373,8 +1373,6 @@ StyleEdit::OnSize(UINT nType, int cx, int cy)
 {
   CEdit::OnSize(nType,cx,cy);
 
-  SetFont(&STYLEFONTS.DialogTextFont);
-
   SkinScrollWnd* skin = GetSkin();
   if (skin && skin->m_moveClient == FALSE)
   {
@@ -1399,6 +1397,21 @@ StyleEdit::OnSize(UINT nType, int cx, int cy)
   {
     Invalidate();
   }
+}
+
+LRESULT
+StyleEdit::OnDpiChanged(WPARAM wParam,LPARAM lParam)
+{
+  HMONITOR monitor = reinterpret_cast<HMONITOR>(lParam);
+  if(monitor)
+  {
+    CFont* font = GetSFXFont(monitor,StyleFontType::DialogFont);
+    if(font)
+    {
+      SetFont(font);
+    }
+  }
+  return 0;
 }
 
 void

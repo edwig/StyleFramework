@@ -164,7 +164,7 @@ StyleToast::OnCreate(LPCREATESTRUCT p_create)
 
   CRect rect;
   GetWindowRect(&rect);
-  SFXResizeByFactor(rect);
+  SFXResizeByFactor(m_hWnd,rect);
   MoveWindow(&rect);
 
   return res;

@@ -229,14 +229,16 @@ StyleCheckbox::Draw(CWnd* p_wnd
     p_wnd->GetWindowText(text);
     if(!text.IsEmpty())
     {
+      CFont* font = GetSFXFont(p_wnd->GetSafeHwnd(),StyleFontType::DialogFont);
+
       CPen pen;
       pen.CreatePen(PS_SOLID,1,textcolor);
       p_dc->SelectObject(pen);
       p_dc->SetBkColor(ThemeColor::GetColor(Colors::ColorWindowFrame));
-      p_dc->SelectObject(STYLEFONTS.DialogTextFont);
+      p_dc->SelectObject(font);
       p_dc->SetTextColor(textcolor);
       int margin = 28;
-      int factor = GetSFXSizeFactor();
+      int factor = GetSFXSizeFactor(p_wnd->GetSafeHwnd());
              if(factor <= 100) margin = 28;  // x 1.0
         else if(factor <= 125) margin = 42;  // x 1.5
         else if(factor <= 150) margin = 56;  // x 2.0

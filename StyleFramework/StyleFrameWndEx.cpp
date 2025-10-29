@@ -261,7 +261,7 @@ StyleFrameWndEx::SetMenuResource(int p_menu,UINT p_resource,CString p_tooltip /*
 void 
 StyleFrameWndEx::SetMenuItemWidth(int p_width)
 {
-  if(p_width >= MENUITEMWIDTH_MIN && p_width <= MENUITEMWIDTH_MAX)
+  if(p_width >= MENUITEMWIDTH_MIN(m_hWnd) && p_width <= MENUITEMWIDTH_MAX(m_hWnd))
   {
     m_menuItemWidth = p_width;
   }
@@ -488,6 +488,11 @@ void StyleFrameWndEx::OnSize(UINT nType, int cx, int cy)
 {
   CFrameWndEx::OnSize(nType, cx, cy);
   
+  if(m_menuItemWidth == 0)
+  {
+    m_menuItemWidth = MENUITEMWIDTH(m_hWnd);
+  }
+
   if (nType != SIZE_MINIMIZED)
   {
     // Leave the size-box, otherwise a maximized window will not react on 
@@ -518,6 +523,8 @@ void StyleFrameWndEx::OnSize(UINT nType, int cx, int cy)
     m_windowRectLocal.OffsetRect(-m_windowRectLocal.left, -m_windowRectLocal.top);
 
     int border = 0;
+    int caption = CAPTIONHEIGHT(m_hWnd);
+
     if ((GetStyle() & WS_MAXIMIZE) != 0)
     {
       // On a full screen the OS uses this margin outside of view
@@ -530,15 +537,15 @@ void StyleFrameWndEx::OnSize(UINT nType, int cx, int cy)
     }
     else
     {
-      border = MARGIN;
+      border = MARGIN(m_hWnd);
     }
 
-    m_closeRect.SetRect(m_windowRectLocal.right - border -     CAPTIONHEIGHT, m_windowRectLocal.top, m_windowRectLocal.right - border,                     m_windowRectLocal.top + CAPTIONHEIGHT);
-    m_maxRect  .SetRect(m_windowRectLocal.right - border - 2 * CAPTIONHEIGHT, m_windowRectLocal.top, m_windowRectLocal.right - border -     CAPTIONHEIGHT, m_windowRectLocal.top + CAPTIONHEIGHT);
-    m_minRect  .SetRect(m_windowRectLocal.right - border - 3 * CAPTIONHEIGHT, m_windowRectLocal.top, m_windowRectLocal.right - border - 2 * CAPTIONHEIGHT, m_windowRectLocal.top + CAPTIONHEIGHT);
+    m_closeRect.SetRect(m_windowRectLocal.right - border -     caption, m_windowRectLocal.top, m_windowRectLocal.right - border,               m_windowRectLocal.top + caption);
+    m_maxRect  .SetRect(m_windowRectLocal.right - border - 2 * caption, m_windowRectLocal.top, m_windowRectLocal.right - border -     caption, m_windowRectLocal.top + caption);
+    m_minRect  .SetRect(m_windowRectLocal.right - border - 3 * caption, m_windowRectLocal.top, m_windowRectLocal.right - border - 2 * caption, m_windowRectLocal.top + caption);
 
-    m_dragRect.SetRect(m_windowRectLocal.left, m_windowRectLocal.top,m_windowRectLocal.right - border - 3 * CAPTIONHEIGHT, m_windowRectLocal.top + CAPTIONHEIGHT);
-    m_menuRect.SetRect(m_windowRectLocal.left, m_windowRectLocal.top,m_windowRectLocal.right - border,                     m_windowRectLocal.top + CAPTIONHEIGHT);
+    m_dragRect.SetRect(m_windowRectLocal.left, m_windowRectLocal.top,m_windowRectLocal.right - border - 3 * caption, m_windowRectLocal.top + caption);
+    m_menuRect.SetRect(m_windowRectLocal.left, m_windowRectLocal.top,m_windowRectLocal.right - border,               m_windowRectLocal.top + caption);
 
     m_menuRects[0].SetRect(m_menuRect.left,                        m_menuRect.top, m_menuRect.left  +     m_menuItemWidth, m_menuRect.bottom);
     m_menuRects[1].SetRect(m_menuRect.left  +     m_menuItemWidth, m_menuRect.top, m_menuRect.left  + 2 * m_menuItemWidth, m_menuRect.bottom);
@@ -547,12 +554,12 @@ void StyleFrameWndEx::OnSize(UINT nType, int cx, int cy)
     m_menuRects[4].SetRect(m_dragRect.right - 2 * m_menuItemWidth, m_menuRect.top, m_dragRect.right -     m_menuItemWidth, m_menuRect.bottom);
     m_menuRects[5].SetRect(m_dragRect.right -     m_menuItemWidth, m_menuRect.top, m_dragRect.right,                       m_menuRect.bottom);
 
-    m_iconRects[0].SetRect(m_menuRects[0].left + (m_menuItemWidth - CAPTIONHEIGHT) / 2, m_dragRect.top, m_menuRects[0].left + (m_menuItemWidth - CAPTIONHEIGHT) / 2 + CAPTIONHEIGHT, m_dragRect.bottom);
-    m_iconRects[1].SetRect(m_menuRects[1].left + (m_menuItemWidth - CAPTIONHEIGHT) / 2, m_dragRect.top, m_menuRects[1].left + (m_menuItemWidth - CAPTIONHEIGHT) / 2 + CAPTIONHEIGHT, m_dragRect.bottom);
-    m_iconRects[2].SetRect(m_menuRects[2].left + (m_menuItemWidth - CAPTIONHEIGHT) / 2, m_dragRect.top, m_menuRects[2].left + (m_menuItemWidth - CAPTIONHEIGHT) / 2 + CAPTIONHEIGHT, m_dragRect.bottom);
-    m_iconRects[3].SetRect(m_menuRects[3].left + (m_menuItemWidth - CAPTIONHEIGHT) / 2, m_dragRect.top, m_menuRects[3].left + (m_menuItemWidth - CAPTIONHEIGHT) / 2 + CAPTIONHEIGHT, m_dragRect.bottom);
-    m_iconRects[4].SetRect(m_menuRects[4].left + (m_menuItemWidth - CAPTIONHEIGHT) / 2, m_dragRect.top, m_menuRects[4].left + (m_menuItemWidth - CAPTIONHEIGHT) / 2 + CAPTIONHEIGHT, m_dragRect.bottom);
-    m_iconRects[5].SetRect(m_menuRects[5].left + (m_menuItemWidth - CAPTIONHEIGHT) / 2, m_dragRect.top, m_menuRects[5].left + (m_menuItemWidth - CAPTIONHEIGHT) / 2 + CAPTIONHEIGHT, m_dragRect.bottom);
+    m_iconRects[0].SetRect(m_menuRects[0].left + (m_menuItemWidth - caption) / 2, m_dragRect.top, m_menuRects[0].left + (m_menuItemWidth - caption) / 2 + caption, m_dragRect.bottom);
+    m_iconRects[1].SetRect(m_menuRects[1].left + (m_menuItemWidth - caption) / 2, m_dragRect.top, m_menuRects[1].left + (m_menuItemWidth - caption) / 2 + caption, m_dragRect.bottom);
+    m_iconRects[2].SetRect(m_menuRects[2].left + (m_menuItemWidth - caption) / 2, m_dragRect.top, m_menuRects[2].left + (m_menuItemWidth - caption) / 2 + caption, m_dragRect.bottom);
+    m_iconRects[3].SetRect(m_menuRects[3].left + (m_menuItemWidth - caption) / 2, m_dragRect.top, m_menuRects[3].left + (m_menuItemWidth - caption) / 2 + caption, m_dragRect.bottom);
+    m_iconRects[4].SetRect(m_menuRects[4].left + (m_menuItemWidth - caption) / 2, m_dragRect.top, m_menuRects[4].left + (m_menuItemWidth - caption) / 2 + caption, m_dragRect.bottom);
+    m_iconRects[5].SetRect(m_menuRects[5].left + (m_menuItemWidth - caption) / 2, m_dragRect.top, m_menuRects[5].left + (m_menuItemWidth - caption) / 2 + caption, m_dragRect.bottom);
 
     m_captionRect.SetRect(m_iconRects[2].right, m_dragRect.top, m_iconRects[3].left, m_dragRect.bottom);
 
@@ -621,7 +628,7 @@ StyleFrameWndEx::OnNcCalcSize(BOOL calcValidRects,NCCALCSIZE_PARAMS* p_params)
   {
     CRect area;
     StyleGetWorkArea(this,area);
-    area.top += CAPTIONHEIGHT;
+    area.top += CAPTIONHEIGHT(m_hWnd);
     p_params->rgrc[0] = area;
   }
   else
@@ -629,10 +636,11 @@ StyleFrameWndEx::OnNcCalcSize(BOOL calcValidRects,NCCALCSIZE_PARAMS* p_params)
     // The baseMargin is needed for two things:
     // 1) To activate the left/right/bottom mouse pulling action
     // 2) To provide space for a painted border around the window
-    p_params->rgrc[0].top    += CAPTIONHEIGHT;
-    p_params->rgrc[0].left   += MARGIN;
-    p_params->rgrc[0].right  -= MARGIN;
-    p_params->rgrc[0].bottom -= MARGIN;
+    int margin = MARGIN(m_hWnd);
+    p_params->rgrc[0].top    += CAPTIONHEIGHT(m_hWnd);
+    p_params->rgrc[0].left   += margin;
+    p_params->rgrc[0].right  -= margin;
+    p_params->rgrc[0].bottom -= margin;
   }
   // Use same rectangle for displacement (so hide it)
   if(calcValidRects)
@@ -662,7 +670,7 @@ StyleFrameWndEx::OnNcPaint()
   {
     CRect r;
     COLORREF bkgnd = ThemeColor::GetColor(Colors::AccentColor1);
-    int width = MARGIN;
+    int width = MARGIN(m_hWnd);
 
     r.SetRect(m_windowRectLocal.left,         m_windowRectLocal.top,           m_windowRectLocal.right,       m_windowRectLocal.top + width);
     dc.FillSolidRect(r, bkgnd);
@@ -678,7 +686,8 @@ StyleFrameWndEx::OnNcPaint()
   dc.FillSolidRect(m_dragRect,ThemeColor::GetColor(Colors::AccentColor1));
 
   // TITLE
-  CFont* orgfont = dc.SelectObject(&STYLEFONTS.CaptionTextFont);
+  CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::CaptionFont);
+  CFont* orgfont = dc.SelectObject(font);
   dc.SetTextColor(ColorWindowHeaderText);
   CString titel;
   GetWindowText(titel);
@@ -719,11 +728,12 @@ StyleFrameWndEx::DrawIcon(CDC* pDC, int index)
   pDC->FillSolidRect(m_iconRects[index], index == m_selectedMenu ? ColorWindowHeader == frame ? Assistant5 : frame : ColorWindowHeader);
 
   // Get position of the icon
+  int iconsize = HALF_ICONSIZE(m_hWnd);
   CRect rect = m_iconRects[index];
-  rect.SetRect(rect.CenterPoint().x - HALF_ICONSIZE
-              ,rect.CenterPoint().y - HALF_ICONSIZE
-              ,rect.CenterPoint().x + HALF_ICONSIZE
-              ,rect.CenterPoint().y + HALF_ICONSIZE);
+  rect.SetRect(rect.CenterPoint().x - iconsize
+              ,rect.CenterPoint().y - iconsize
+              ,rect.CenterPoint().x + iconsize
+              ,rect.CenterPoint().y + iconsize);
 
   // Menu index in the right domain
   if (index < 0 || index >= MENUCOUNT)
@@ -777,36 +787,37 @@ LRESULT StyleFrameWndEx::OnNcHitTest(CPoint point)
 
   if (!(GetStyle() & WS_MAXIMIZE))
   {
+    const int margin = SIZEMARGIN(m_hWnd);
     window.OffsetRect(-window.left, -window.top);
-    if (point.x <= window.left + SIZEMARGIN)
+    if (point.x <= window.left + margin)
     {
-      if (point.y >= window.bottom - SIZEMARGIN)
+      if (point.y >= window.bottom - margin)
       {
         return HTBOTTOMLEFT;
       }
-      if (point.y <= window.top + SIZEMARGIN)
+      if (point.y <= window.top + margin)
       {
         return HTTOPLEFT;
       }
       return HTLEFT;
     }
-    if (point.x >= window.right - 2 * SIZEMARGIN)
+    if (point.x >= window.right - 2 * margin)
     {
-      if (point.y >= window.bottom - SIZEMARGIN)
+      if (point.y >= window.bottom - margin)
       {
         return HTBOTTOMRIGHT;
       }
-      if (point.y <= window.top + SIZEMARGIN)
+      if (point.y <= window.top + margin)
       {
         return HTTOPRIGHT;
       }
       return HTRIGHT;
     }
-    if (point.y >= window.bottom - SIZEMARGIN)
+    if (point.y >= window.bottom - margin)
     {
       return HTBOTTOM;
     }
-    if (point.y <= window.top + SIZEMARGIN)
+    if (point.y <= window.top + margin)
     {
       return HTTOP;
     }

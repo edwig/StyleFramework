@@ -503,15 +503,16 @@ void StyleMDIFrameWnd::OnSize(UINT nType, int cx, int cy)
     }
     else
     {
-      border = MARGIN;
+      border = MARGIN(m_hWnd);
     }
+    int caption = WINCAPTIONHEIGHT(m_hWnd);
 
-    m_closeRect.SetRect(m_windowRectLocal.right - border -     WINCAPTIONHEIGHT, m_windowRectLocal.top, m_windowRectLocal.right - border,                        m_windowRectLocal.top + WINCAPTIONHEIGHT);
-    m_maxRect  .SetRect(m_windowRectLocal.right - border - 2 * WINCAPTIONHEIGHT, m_windowRectLocal.top, m_windowRectLocal.right - border -     WINCAPTIONHEIGHT, m_windowRectLocal.top + WINCAPTIONHEIGHT);
-    m_minRect  .SetRect(m_windowRectLocal.right - border - 3 * WINCAPTIONHEIGHT, m_windowRectLocal.top, m_windowRectLocal.right - border - 2 * WINCAPTIONHEIGHT, m_windowRectLocal.top + WINCAPTIONHEIGHT);
-    m_sysRect  .SetRect(m_windowRectLocal.left  + border,                        m_windowRectLocal.top, m_windowRectLocal.left  + border +     WINCAPTIONHEIGHT, m_windowRectLocal.top + WINCAPTIONHEIGHT);
+    m_closeRect.SetRect(m_windowRectLocal.right - border -     caption, m_windowRectLocal.top, m_windowRectLocal.right - border,               m_windowRectLocal.top + caption);
+    m_maxRect  .SetRect(m_windowRectLocal.right - border - 2 * caption, m_windowRectLocal.top, m_windowRectLocal.right - border -     caption, m_windowRectLocal.top + caption);
+    m_minRect  .SetRect(m_windowRectLocal.right - border - 3 * caption, m_windowRectLocal.top, m_windowRectLocal.right - border - 2 * caption, m_windowRectLocal.top + caption);
+    m_sysRect  .SetRect(m_windowRectLocal.left  + border,               m_windowRectLocal.top, m_windowRectLocal.left  + border +     caption, m_windowRectLocal.top + caption);
 
-    m_dragRect   .SetRect(m_windowRectLocal.left, m_windowRectLocal.top,m_windowRectLocal.right - border - 3 * WINCAPTIONHEIGHT, m_windowRectLocal.top + WINCAPTIONHEIGHT);
+    m_dragRect   .SetRect(m_windowRectLocal.left, m_windowRectLocal.top,m_windowRectLocal.right - border - 3 * caption, m_windowRectLocal.top + caption);
     m_captionRect.SetRect(m_sysRect.right, m_dragRect.top, m_minRect.left, m_dragRect.bottom);
 
     RedrawWindow(NULL,NULL,RDW_INVALIDATE|RDW_FRAME|RDW_ALLCHILDREN);
@@ -531,7 +532,7 @@ StyleMDIFrameWnd::OnNcCalcSize(BOOL calcValidRects,NCCALCSIZE_PARAMS* p_params)
   {
     CRect area;
     StyleGetWorkArea(this,area);
-    area.top += WINCAPTIONHEIGHT;
+    area.top += WINCAPTIONHEIGHT(m_hWnd);
     p_params->rgrc[0] = area;
   }
   else
@@ -539,10 +540,11 @@ StyleMDIFrameWnd::OnNcCalcSize(BOOL calcValidRects,NCCALCSIZE_PARAMS* p_params)
     // The baseMargin is needed for two things:
     // 1) To activate the left/right/bottom mouse pulling action
     // 2) To provide space for a painted border around the window
-    p_params->rgrc[0].top    += WINCAPTIONHEIGHT;
-    p_params->rgrc[0].left   += MARGIN;
-    p_params->rgrc[0].right  -= MARGIN;
-    p_params->rgrc[0].bottom -= MARGIN;
+    int margin = MARGIN(m_hWnd);
+    p_params->rgrc[0].top    += WINCAPTIONHEIGHT(m_hWnd);
+    p_params->rgrc[0].left   += margin;
+    p_params->rgrc[0].right  -= margin;
+    p_params->rgrc[0].bottom -= margin;
   }
   // Use same rectangle for displacement (so hide it)
   if(calcValidRects)
@@ -572,7 +574,7 @@ StyleMDIFrameWnd::OnNcPaint()
   {
     CRect r;
     COLORREF bkgnd = ThemeColor::GetColor(Colors::AccentColor1);
-    int width = MARGIN;
+    int width = MARGIN(m_hWnd);
 
     r.SetRect(m_windowRectLocal.left,         m_windowRectLocal.top,           m_windowRectLocal.right,       m_windowRectLocal.top + width);
     dc.FillSolidRect(r, bkgnd);
@@ -589,8 +591,9 @@ StyleMDIFrameWnd::OnNcPaint()
 
   // title
   CRect titleRect(m_captionRect);
-  titleRect.left += WINCAPTIONHEIGHT / 3;
-  CFont* orgfont = dc.SelectObject(&STYLEFONTS.CaptionTextFont);
+  titleRect.left += WINCAPTIONHEIGHT(m_hWnd) / 3;
+  CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::CaptionFont);
+  CFont* orgfont = dc.SelectObject(font);
   dc.SetTextColor(ColorWindowHeaderText);
   CString titel;
   GetWindowText(titel);
@@ -634,36 +637,38 @@ LRESULT StyleMDIFrameWnd::OnNcHitTest(CPoint point)
 
   if (!(GetStyle() & WS_MAXIMIZE))
   {
+    int margin = SIZEMARGIN(m_hWnd);
+
     window.OffsetRect(-window.left, -window.top);
-    if (point.x <= window.left + SIZEMARGIN)
+    if (point.x <= window.left + margin)
     {
-      if (point.y >= window.bottom - SIZEMARGIN)
+      if (point.y >= window.bottom - margin)
       {
         return HTBOTTOMLEFT;
       }
-      if (point.y <= window.top + SIZEMARGIN)
+      if (point.y <= window.top + margin)
       {
         return HTTOPLEFT;
       }
       return HTLEFT;
     }
-    if (point.x >= window.right - SIZEMARGIN)
+    if (point.x >= window.right - margin)
     {
-      if (point.y >= window.bottom - SIZEMARGIN)
+      if (point.y >= window.bottom - margin)
       {
         return HTBOTTOMRIGHT;
       }
-      if (point.y <= window.top + SIZEMARGIN)
+      if (point.y <= window.top + margin)
       {
         return HTTOPRIGHT;
       }
       return HTRIGHT;
     }
-    if (point.y >= window.bottom - SIZEMARGIN)
+    if (point.y >= window.bottom - margin)
     {
       return HTBOTTOM;
     }
-    if (point.y <= window.top + SIZEMARGIN)
+    if (point.y <= window.top + margin)
     {
       return HTTOP;
     }

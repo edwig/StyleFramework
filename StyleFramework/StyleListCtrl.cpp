@@ -266,7 +266,8 @@ StyleListCtrl::OnGetCellBkColor(int p_row,int p_colum)
 void
 StyleListCtrl::InitSkin(int p_borderSize /*=1*/)
 {
-  SetFont(&STYLEFONTS.DialogTextFont);
+  CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFont);
+  SetFont(font);
   SkinScrollWnd* skin = SkinWndScroll(this,p_borderSize);
   skin->SetScrollbarBias(0);
 }

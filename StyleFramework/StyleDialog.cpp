@@ -36,9 +36,6 @@ static UINT auIDStatusBar[] =
   ID_SEPARATOR
 };
 
-static int g_dpi_x = USER_DEFAULT_SCREEN_DPI;
-static int g_dpi_y = USER_DEFAULT_SCREEN_DPI;
-
 extern StylingFramework g_styling;
 
 IMPLEMENT_DYNAMIC(StyleDialog,CDialog);
@@ -101,12 +98,13 @@ StyleDialog::OnInitDialog()
   SetLayeredWindowAttributes(ColorWindowTransparent, 0, LWA_COLORKEY);
 
   // Make room for the shadow border
+  int border = WINDOWSHADOWBORDER(m_hWnd);
   CRect window;
   GetWindowRect(window);
   SetWindowPos(nullptr
               ,0,0
-              ,window.Width()  + WINDOWSHADOWBORDER
-              ,window.Height() + WINDOWSHADOWBORDER
+              ,window.Width()  + border
+              ,window.Height() + border
               ,SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 
   // Standard OnInitDialog
@@ -129,13 +127,11 @@ StyleDialog::OnCreate(LPCREATESTRUCT p_create)
 
   CRect rect;
   GetWindowRect(&rect);
-  SFXResizeByFactor(rect);
+  SFXResizeByFactor(m_hWnd,rect);
   MoveWindow(&rect);
 
   // Getting the DPI
   GetDpi(GetSafeHwnd(),m_dpi_x,m_dpi_y);
-  g_dpi_x = m_dpi_x;
-  g_dpi_y = m_dpi_y;
 
   return res;
 }
@@ -145,7 +141,8 @@ StyleDialog::InitStatusBar()
 {
   if(m_statusBar.Create(this,WS_CHILD|WS_VISIBLE|CBRS_BOTTOM|CBRS_GRIPPER|SBARS_SIZEGRIP))
   {
-    m_statusBar.SetFont(&STYLEFONTS.DialogTextFont);
+    CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFont);
+    m_statusBar.SetFont(font);
     m_statusBar.SetIndicators(auIDStatusBar,sizeof(auIDStatusBar) / sizeof(UINT));
     m_statusBar.SetWindowText(_T(""));
     m_statusBar.SetPaneStyle(0, SBPS_STRETCH|SBPS_NOBORDERS);
@@ -477,7 +474,7 @@ StyleDialog::OnToolHitTest(CPoint point,TOOLINFO* pTI) const
       combo->GetWindowRect(&comboRect);
       CRect dialogRect;
       GetWindowRect(&dialogRect);
-      comboRect.OffsetRect(-dialogRect.left,- (dialogRect.top + WINDOWCAPTIONHEIGHT));
+      comboRect.OffsetRect(-dialogRect.left,- (dialogRect.top + WINDOWCAPTIONHEIGHT(m_hWnd)));
       comboRect.right -= comboRect.Height();
       if(comboRect.PtInRect(point))
       {
@@ -829,7 +826,7 @@ StyleDialog::OnNcLButtonDown(UINT nFlags, CPoint point)
     CDialog::OnNcLButtonDown(nFlags, point);
     return;
   }
-  int oldDpi = g_dpi_x;
+  int oldDpi = m_dpi_x;
 
   // Remove gripper. We could resize the dialog
   EraseGripper();
@@ -987,7 +984,7 @@ StyleDialog::OnNcLButtonDown(UINT nFlags, CPoint point)
   }
 ready:
   // In case we changed DPI while moving/resizing redraw the frame
-  if(g_dpi_x != oldDpi)
+  if(m_dpi_x != oldDpi)
   {
     OnNcPaint();
   }
@@ -1092,7 +1089,13 @@ StyleDialog::OnSettingChange(UINT uFlags,LPCTSTR lpszSection)
 LRESULT
 StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM lParam)
 {
+  static int g_dpi_x = USER_DEFAULT_SCREEN_DPI;
+  static int g_dpi_y = USER_DEFAULT_SCREEN_DPI;
+  static HMONITOR g_newMonitor;
+
   // The new DPI
+  g_dpi_x = m_dpi_x;
+  g_dpi_y = m_dpi_y;
   m_dpi_x = HIWORD(wParam);
   m_dpi_y = LOWORD(wParam);
 
@@ -1111,14 +1114,12 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM lParam)
                  wrect.Height(),
                  SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
 
-  // Update the global font scaling factor, re-create all the standard fonts
-  int factory = (m_dpi_y * 100) / USER_DEFAULT_SCREEN_DPI;
-  int factorx = (m_dpi_x * 100) / USER_DEFAULT_SCREEN_DPI;
-  g_styling.SetSizeFactorX(factorx);
-  g_styling.SetSizeFactorY(factory);
-  TRACE("Font factor: %d\n",factorx);
+  // Take the HMONITOR for the new monitor
+  extern StylingFramework g_styling;
+  const  StyleMonitor* mon = g_styling.GetMonitor(m_hWnd);
+  g_newMonitor = mon ? mon->GetMonitor() : nullptr;
 
-  // Scale child windows using oldDpi (the previous DPI)
+  // Scale child windows using newDpi and oldDpi (the previous DPI)
   ::EnumChildWindows(m_hWnd,
                       [](HWND hWnd,LPARAM lParam)
                       {
@@ -1135,23 +1136,22 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM lParam)
                         int dpiScaledHeight = ::MulDiv(rc.Height(),dpi_y,g_dpi_y);
 
                         ::SetWindowPos(hWnd,
-                                        nullptr,
-                                        dpiScaledX,
-                                        dpiScaledY,
-                                        dpiScaledWidth,
-                                        dpiScaledHeight,
-                                        SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+                                       nullptr,
+                                       dpiScaledX,
+                                       dpiScaledY,
+                                       dpiScaledWidth,
+                                       dpiScaledHeight,
+                                       SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+                        ::SendMessage(hWnd,WM_DPICHANGED_AFTERPARENT,0,(LPARAM)g_newMonitor);
                         return TRUE;
                       },
                       MAKELPARAM(m_dpi_y,m_dpi_x));
 
   // Store the new DPI as old DPI for next time
-  g_dpi_x = m_dpi_x;
-  g_dpi_y = m_dpi_y;
-  TRACE("DPI now set to: %d/%d\n",g_dpi_x,g_dpi_y);
+  TRACE("DPI now set to: %d/%d\n",m_dpi_x,m_dpi_y);
 
   // Now redraw everything
-  Invalidate();
+  Invalidate(TRUE);
   return 0;
 }
 
@@ -1224,29 +1224,32 @@ StyleDialog::PositionButtons()
   GetWindowRect(window);
   window.OffsetRect(-window.left, -window.top);
 
+  int border  = WINDOWSHADOWBORDER(m_hWnd);
+  int caption = WINDOWCAPTIONHEIGHT(m_hWnd);
+
   if(m_caption)
   {
-    m_captionRect.SetRect(0, 0, window.Width() - WINDOWSHADOWBORDER, WINDOWCAPTIONHEIGHT);
+    m_captionRect.SetRect(0, 0, window.Width() - border, caption);
 
     int index = 1;
     if(m_closeButton)
     {
-      m_closeRect.SetRect(window.Width() - WINDOWSHADOWBORDER - index * WINDOWCAPTIONHEIGHT, 0, window.Width() - WINDOWSHADOWBORDER, WINDOWCAPTIONHEIGHT);
+      m_closeRect.SetRect(window.Width() - border - index * caption, 0, window.Width() - border, caption);
       ++index;
     }
     if(m_maxButton)
     {
-      m_maxRect.SetRect(window.Width() - WINDOWSHADOWBORDER - index * WINDOWCAPTIONHEIGHT, 0, window.Width() - WINDOWSHADOWBORDER - (index - 1) * WINDOWCAPTIONHEIGHT, WINDOWCAPTIONHEIGHT);
+      m_maxRect.SetRect(window.Width() - border - index * caption, 0, window.Width() - border - (index - 1) * caption, caption);
       ++index;
     }
     if(m_minButton)
     {
-      m_minRect.SetRect(window.Width() - WINDOWSHADOWBORDER - index * WINDOWCAPTIONHEIGHT, 0, window.Width() - WINDOWSHADOWBORDER - (index - 1) * WINDOWCAPTIONHEIGHT, WINDOWCAPTIONHEIGHT);
+      m_minRect.SetRect(window.Width() - border - index * caption, 0, window.Width() - border - (index - 1) * caption, caption);
       ++index;
     }
     if(m_mnuButton)
     {
-      m_sysRect.SetRect(0,0,WINDOWCAPTIONHEIGHT,WINDOWCAPTIONHEIGHT);
+      m_sysRect.SetRect(0,0,caption,caption);
     }
   }
   else
@@ -1272,11 +1275,14 @@ StyleDialog::OnNcCalcSize(BOOL calcValidRects, NCCALCSIZE_PARAMS *params)
 
     if (m_caption)
     {
+      int border  = WINDOWSHADOWBORDER(m_hWnd);
+      int caption = WINDOWCAPTIONHEIGHT(m_hWnd);
+      int margin  = SIZEMARGIN(m_hWnd);
       // Derived from CDialog
-      params->rgrc[0].left   += SIZEMARGIN - 1;
-      params->rgrc[0].top    += WINDOWCAPTIONHEIGHT;
-      params->rgrc[0].bottom -= SIZEMARGIN - 1 + WINDOWSHADOWBORDER;
-      params->rgrc[0].right  -= SIZEMARGIN - 1 + WINDOWSHADOWBORDER;
+      params->rgrc[0].left   += margin - 1;
+      params->rgrc[0].top    += caption;
+      params->rgrc[0].bottom -= margin - 1 + border;
+      params->rgrc[0].right  -= margin - 1 + border;
     }
   }
 }
@@ -1303,27 +1309,33 @@ StyleDialog::OnNcPaint()
 
     if(m_caption)
     {
+      int border  = WINDOWSHADOWBORDER(m_hWnd);
+      int caption = WINDOWCAPTIONHEIGHT(m_hWnd);
+      int margin  = SIZEMARGIN(m_hWnd);
+
       // Shadow frame    
-      dc.FillSolidRect(CRect(window.right - WINDOWSHADOWBORDER,   window.top,                         window.right,                        window.top + 2 * WINDOWSHADOWBORDER), ColorWindowTransparent);
-      dc.FillSolidRect(CRect(window.right - WINDOWSHADOWBORDER,   window.top + 2 * WINDOWSHADOWBORDER,window.right,                        window.bottom), ColorWindowGrayFrame);
-      dc.FillSolidRect(CRect(window.left,                         window.bottom -  WINDOWSHADOWBORDER,window.left + 2 * WINDOWSHADOWBORDER,window.bottom), ColorWindowTransparent);
-      dc.FillSolidRect(CRect(window.left + 2 * WINDOWSHADOWBORDER,window.bottom -  WINDOWSHADOWBORDER,window.right    - WINDOWSHADOWBORDER,window.bottom), ColorWindowGrayFrame);
+      dc.FillSolidRect(CRect(window.right - border,   window.top,             window.right,            window.top + 2 * border), ColorWindowTransparent);
+      dc.FillSolidRect(CRect(window.right - border,   window.top + 2 * border,window.right,            window.bottom), ColorWindowGrayFrame);
+      dc.FillSolidRect(CRect(window.left,             window.bottom -  border,window.left + 2 * border,window.bottom), ColorWindowTransparent);
+      dc.FillSolidRect(CRect(window.left + 2 * border,window.bottom -  border,window.right    - border,window.bottom), ColorWindowGrayFrame);
 
       // caption bar
-      CRect caption(m_captionRect);
-      dc.FillSolidRect(caption, m_error ? ColorWindowFrameError : ThemeColor::GetColor(Colors::AccentColor1));
+      CRect captionrc(m_captionRect);
+      dc.FillSolidRect(captionrc, m_error ? ColorWindowFrameError : ThemeColor::GetColor(Colors::AccentColor1));
 
       // title
       dc.SetTextColor(m_error ? ColorWindowFrameTextError : ColorWindowHeaderText);
-      caption.right -= WINDOWCAPTIONHEIGHT;
-      caption.right -= m_maxButton ? WINDOWCAPTIONHEIGHT : 0;
-      caption.right -= m_minButton ? WINDOWCAPTIONHEIGHT : 0;
-      caption.left  += m_mnuButton   ? WINDOWCAPTIONHEIGHT : 0;
-      caption.DeflateRect(5, 0);
+      captionrc.right -= caption;
+      captionrc.right -= m_maxButton ? caption : 0;
+      captionrc.right -= m_minButton ? caption : 0;
+      captionrc.left  += m_mnuButton ? caption : 0;
+      captionrc.DeflateRect(5, 0);
       CString titel;
       GetWindowText(titel);
-      dc.SelectObject(STYLEFONTS.DialogTextFontBold.m_hObject);
-      dc.DrawText(titel, caption, DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+
+      CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFontBold);
+      dc.SelectObject(font);
+      dc.DrawText(titel, captionrc, DT_LEFT | DT_SINGLELINE | DT_VCENTER);
 
       // System menu button
       if (m_mnuButton)
@@ -1349,20 +1361,20 @@ StyleDialog::OnNcPaint()
       CPen pen;
       pen.CreatePen(PS_SOLID, 1, m_error ? ColorWindowFrameError : ColorWindowGrayFrame);
       HGDIOBJ orgpen = dc.SelectObject(pen);
-      dc.MoveTo(window.right- WINDOWSHADOWBORDER-1, window.top    + WINDOWCAPTIONHEIGHT);
-      dc.LineTo(window.right- WINDOWSHADOWBORDER-1, window.bottom - WINDOWSHADOWBORDER-1);
-      dc.LineTo(window.left, window.bottom - WINDOWSHADOWBORDER-1);
-      dc.LineTo(window.left, window.top    + WINDOWCAPTIONHEIGHT-1);
+      dc.MoveTo(window.right- border-1, window.top    + caption);
+      dc.LineTo(window.right- border-1, window.bottom - border - 1);
+      dc.LineTo(window.left, window.bottom - border  - 1);
+      dc.LineTo(window.left, window.top    + caption - 1);
       dc.SelectObject(orgpen);
 
       CRect r;
       int back = ThemeColor::GetColor(Colors::ColorWindowFrame);
 
-      r.SetRect(window.left + 1, window.top + WINDOWCAPTIONHEIGHT, window.left + SIZEMARGIN, window.bottom - WINDOWSHADOWBORDER-1);
+      r.SetRect(window.left + 1, window.top + caption, window.left + margin, window.bottom - border -1);
       dc.FillSolidRect(r, back);
-      r.SetRect(window.left + SIZEMARGIN, window.bottom - WINDOWSHADOWBORDER- SIZEMARGIN, window.right - WINDOWSHADOWBORDER- 1, window.bottom - WINDOWSHADOWBORDER - 1);
+      r.SetRect(window.left + margin, window.bottom - border - margin, window.right - border - 1, window.bottom - border - 1);
       dc.FillSolidRect(r, back);
-      r.SetRect(window.right - WINDOWSHADOWBORDER-SIZEMARGIN, window.top + WINDOWCAPTIONHEIGHT, window.right - WINDOWSHADOWBORDER- 1, window.bottom - WINDOWSHADOWBORDER-SIZEMARGIN);
+      r.SetRect(window.right - border - margin, window.top + caption, window.right - border - 1, window.bottom - border - margin);
       dc.FillSolidRect(r, back);
     }
     else
@@ -1405,37 +1417,38 @@ StyleDialog::OnNcHitTest(CPoint point)
 
   if(!(GetStyle() & WS_MAXIMIZE))
   {
+    int margin = SIZEMARGIN(m_hWnd);
 
     window.OffsetRect(-window.left, -window.top);
-    if(point.x <= window.left + SIZEMARGIN)
+    if(point.x <= window.left + margin)
     {
-      if(point.y >= window.bottom - SIZEMARGIN)
+      if(point.y >= window.bottom - margin)
       {
         return HTBOTTOMLEFT;
       }
-      if(point.y <= window.top + SIZEMARGIN)
+      if(point.y <= window.top + margin)
       {
         return HTTOPLEFT;
       }
       return HTLEFT;
     }
-    if(point.x >= window.right - SIZEMARGIN)
+    if(point.x >= window.right - margin)
     {
-      if(point.y >= window.bottom - SIZEMARGIN)
+      if(point.y >= window.bottom - margin)
       {
         return HTBOTTOMRIGHT;
       }
-      if(point.y <= window.top + SIZEMARGIN)
+      if(point.y <= window.top + margin)
       {
         return HTTOPRIGHT;
       }
       return HTRIGHT;
     }
-    if(point.y >= window.bottom - SIZEMARGIN)
+    if(point.y >= window.bottom - margin)
     {
       return HTBOTTOM;
     }
-    if(point.y <= window.top + SIZEMARGIN)
+    if(point.y <= window.top + margin)
     {
       return HTTOP;
     }

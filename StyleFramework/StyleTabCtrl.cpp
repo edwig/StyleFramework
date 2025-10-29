@@ -35,7 +35,6 @@ StyleTabCtrl::StyleTabCtrl()
 {
   m_selColor   = ThemeColor::GetColor(Colors::ColorTabTextActive);
   m_unselColor = ThemeColor::GetColor(Colors::ColorTabTextInactive);
-  m_font       = &STYLEFONTS.DialogTextFontBold;
   m_hover      = -1;
   m_notch      = false;
   m_offset     = 0;
@@ -65,6 +64,7 @@ StyleTabCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
     return -1;
   }
   ModifyStyle(0, TCS_OWNERDRAWFIXED);
+  m_font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFontBold);
   return 0;
 }
 
@@ -73,7 +73,8 @@ StyleTabCtrl::PreSubclassWindow()
 {
   CTabCtrl::PreSubclassWindow();
   ModifyStyle(0, TCS_OWNERDRAWFIXED);
-  SetFont(&STYLEFONTS.DialogTextFontBold);
+  CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFontBold);
+  SetFont(font);
 }
 
 HBRUSH
@@ -227,7 +228,8 @@ StyleTabCtrl::OnPaint()
   {
     CPaintDC paint(this);
     CDC* dc = GetDC();
-    dc->SelectObject(&STYLEFONTS.DialogTextFont);
+    CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFont);
+    dc->SelectObject(font);
 
     CRect client;
     GetClientRect(client);
@@ -420,7 +422,9 @@ StyleTabCtrl::OnPaint()
 void 
 StyleTabCtrl::PaintError(CDC* pDC, CRect rect)
 {
-  HGDIOBJ  oldfont  = pDC->SelectObject(STYLEFONTS.ErrorTextFont);
+  CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::ErrorFont);
+
+  HGDIOBJ  oldfont  = pDC->SelectObject(font);
   COLORREF oldcolor = pDC->SetTextColor(ColorWindowFrameError);
   int      oldmode  = pDC->SetBkMode(TRANSPARENT);
 
