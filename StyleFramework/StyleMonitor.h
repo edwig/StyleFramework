@@ -20,13 +20,6 @@
 #include <vector>
 #include "StyleFonts.h"
 
-// General resize a windows rectangle
-void   SFXResizeByFactor(HWND p_hwnd,CRect& p_rect);
-void   SFXResizeByFactor(HWND p_hwnd,int& p_x,int& p_y,int& p_w,int& p_h);
-int    GetSFXSizeFactor (HWND p_hwnd);
-CFont* GetSFXFont       (HWND p_hwnd,StyleFontType p_type);
-CFont* GetSFXFont       (HMONITOR hm,StyleFontType p_type);
-
 class StyleMonitor
 {
 public:
@@ -83,6 +76,7 @@ public:
   const MonitorMap&   GetMonitors() const;
   const StyleMonitor* GetPrimaryMonitor() const;
   const StyleMonitor* GetMonitor(HMONITOR p_monitor) const;
+  const StyleMonitor* GetMonitor(int p_dpi_x,int p_dpi_y) const;
 
 private:
   void UnMarkAllMonitors();

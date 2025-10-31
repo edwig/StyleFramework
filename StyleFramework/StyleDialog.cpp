@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "RegistryManager.h"
 #include "StyleUtilities.h"
+#include <ShellScalingApi.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,14 +39,14 @@ static UINT auIDStatusBar[] =
 
 extern StylingFramework g_styling;
 
-IMPLEMENT_DYNAMIC(StyleDialog,CDialog);
+IMPLEMENT_DYNAMIC(StyleDialog,CDialogEx);
 
 StyleDialog::StyleDialog(UINT  p_IDTemplate
                         ,CWnd* p_parentWnd
                         ,bool  p_caption
                         ,bool  p_sysmenu
                         ,bool  p_status) 
-            :CDialog(p_IDTemplate, p_parentWnd)
+            :CDialogEx(p_IDTemplate, p_parentWnd)
             ,m_caption(p_caption)
             ,m_mnuButton(p_sysmenu)
             ,m_hasStatus(p_status)
@@ -63,7 +64,7 @@ StyleDialog::StyleDialog(UINT  p_IDTemplate
   m_defaultBrush.CreateSolidBrush(ThemeColor::GetColor(Colors::ColorWindowFrame));
 }
 
-BEGIN_MESSAGE_MAP(StyleDialog,CDialog)
+BEGIN_MESSAGE_MAP(StyleDialog,CDialogEx)
   ON_WM_CREATE()
   ON_WM_ERASEBKGND()
   ON_WM_CTLCOLOR()
@@ -107,8 +108,9 @@ StyleDialog::OnInitDialog()
               ,window.Height() + border
               ,SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 
+
   // Standard OnInitDialog
-  CDialog::OnInitDialog();
+  CDialogEx::OnInitDialog();
 
   // Create status bar
   if(m_hasStatus)
@@ -123,12 +125,12 @@ StyleDialog::OnCreate(LPCREATESTRUCT p_create)
 {
   p_create->dwExStyle |= WS_EX_CONTROLPARENT;
 
-  int res = CDialog::OnCreate(p_create);
+  int res = CDialogEx::OnCreate(p_create);
 
-  CRect rect;
-  GetWindowRect(&rect);
-  SFXResizeByFactor(m_hWnd,rect);
-  MoveWindow(&rect);
+//   CRect rect;
+//   GetWindowRect(&rect);
+//   SFXResizeByFactor(m_hWnd,rect);
+//   MoveWindow(&rect);
 
   // Getting the DPI
   GetDpi(GetSafeHwnd(),m_dpi_x,m_dpi_y);
@@ -247,7 +249,7 @@ INT_PTR
 StyleDialog::DoModal()
 {
   AutoStyleGrayScreen grayscreen;
-  return CDialog::DoModal();
+  return CDialogEx::DoModal();
 }
 
 INT_PTR 
@@ -256,8 +258,9 @@ StyleDialog::DoModal(bool p_showGrayScreen)
   if(p_showGrayScreen)
   {
     AutoStyleGrayScreen grayscreen;
+    return CDialogEx::DoModal();
   }
-  return CDialog::DoModal();
+  return CDialogEx::DoModal();
 }
 
 BOOL 
@@ -265,7 +268,7 @@ StyleDialog::PreTranslateMessage(MSG* p_msg)
 {
   if(!PreTranslateMenu(p_msg))
   {
-    return CDialog::PreTranslateMessage(p_msg);
+    return CDialogEx::PreTranslateMessage(p_msg);
   }
   return TRUE;
 }
@@ -708,7 +711,7 @@ StyleDialog::OnActivate(UINT nState,CWnd* pWndOther,BOOL bMinimized)
   {
     if(nState == WA_ACTIVE || nState == WA_CLICKACTIVE)
     {
-      CDialog::OnActivate(nState,pWndOther,bMinimized);
+      CDialogEx::OnActivate(nState,pWndOther,bMinimized);
       ReDrawFrame();
     }
   }
@@ -717,7 +720,7 @@ StyleDialog::OnActivate(UINT nState,CWnd* pWndOther,BOOL bMinimized)
 void
 StyleDialog::OnActivateApp(BOOL bActive,DWORD dwThreadID)
 {
-  CDialog::OnActivateApp(bActive,dwThreadID);
+  CDialogEx::OnActivateApp(bActive,dwThreadID);
   if(bActive)
   {
     ReDrawFrame();
@@ -729,11 +732,11 @@ StyleDialog::OnNcMouseMove(UINT nFlags, CPoint point)
 {
   if ((GetStyle() & WS_POPUP) == 0)
   {
-    CDialog::OnNcMouseMove(nFlags, point);
+    CDialogEx::OnNcMouseMove(nFlags, point);
   }
   else
   {
-    CDialog::OnNcMouseMove(nFlags,point);
+    CDialogEx::OnNcMouseMove(nFlags,point);
 
     if(m_curhit != (LRESULT)nFlags)
     {
@@ -783,7 +786,7 @@ StyleDialog::OnNcRButtonUp(UINT nFlags,CPoint point)
 {
   if(!m_mnuButton)
   {
-    CDialog::OnNcRButtonUp(nFlags,point);
+    CDialogEx::OnNcRButtonUp(nFlags,point);
     return;
   }
   // Implement our system menu
@@ -823,7 +826,7 @@ StyleDialog::OnNcLButtonDown(UINT nFlags, CPoint point)
 {
   if((GetStyle() & WS_POPUP) == 0)
   {
-    CDialog::OnNcLButtonDown(nFlags, point);
+    CDialogEx::OnNcLButtonDown(nFlags, point);
     return;
   }
   int oldDpi = m_dpi_x;
@@ -1003,7 +1006,7 @@ StyleDialog::OnNcLButtonDblClk(UINT nFlags, CPoint point)
   }
   else
   {
-    CDialog::OnNcLButtonDblClk(nFlags,point);
+    CDialogEx::OnNcLButtonDblClk(nFlags,point);
   }
 }
 
@@ -1066,13 +1069,13 @@ StyleDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
                           }
                           break;
   }
-  return CDialog::OnCtlColor(pDC,pWnd,nCtlColor);
+  return CDialogEx::OnCtlColor(pDC,pWnd,nCtlColor);
 }
 
 void 
 StyleDialog::SetWindowText(LPCTSTR lpstString)
 {
-  CDialog::SetWindowText(lpstString);
+  CDialogEx::SetWindowText(lpstString);
   ReDrawFrame();
 }
 
@@ -1086,12 +1089,14 @@ StyleDialog::OnSettingChange(UINT uFlags,LPCTSTR lpszSection)
   }
 }
 
+static int   g_dpi_x = USER_DEFAULT_SCREEN_DPI;
+static int   g_dpi_y = USER_DEFAULT_SCREEN_DPI;
+static CWnd* g_resize_wnd(nullptr);
+
 LRESULT
-StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM lParam)
+StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
 {
-  static int g_dpi_x = USER_DEFAULT_SCREEN_DPI;
-  static int g_dpi_y = USER_DEFAULT_SCREEN_DPI;
-  static HMONITOR g_newMonitor;
+  g_resize_wnd = this;
 
   // The new DPI
   g_dpi_x = m_dpi_x;
@@ -1114,44 +1119,79 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM lParam)
                  wrect.Height(),
                  SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
 
-  // Take the HMONITOR for the new monitor
-  extern StylingFramework g_styling;
-  const  StyleMonitor* mon = g_styling.GetMonitor(m_hWnd);
-  g_newMonitor = mon ? mon->GetMonitor() : nullptr;
-
   // Scale child windows using newDpi and oldDpi (the previous DPI)
   ::EnumChildWindows(m_hWnd,
-                      [](HWND hWnd,LPARAM lParam)
+                      [](HWND hWnd,LPARAM lParam) -> BOOL
                       {
                         const int dpi_x = HIWORD(lParam);
                         const int dpi_y = LOWORD(lParam);
-                        CRect rc;
-                        ::GetWindowRect(hWnd,rc);
-                        HWND parentWnd = ::GetParent(hWnd);
-                        POINT ptPos = {rc.left, rc.top};
-                        ::ScreenToClient(parentWnd,&ptPos);
-                        int dpiScaledX      = ::MulDiv(ptPos.x,    dpi_x,g_dpi_x);
-                        int dpiScaledY      = ::MulDiv(ptPos.y,    dpi_y,g_dpi_y);
-                        int dpiScaledWidth  = ::MulDiv(rc.Width(), dpi_x,g_dpi_x);
-                        int dpiScaledHeight = ::MulDiv(rc.Height(),dpi_y,g_dpi_y);
 
-                        ::SetWindowPos(hWnd,
-                                       nullptr,
-                                       dpiScaledX,
-                                       dpiScaledY,
-                                       dpiScaledWidth,
-                                       dpiScaledHeight,
-                                       SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
-                        ::SendMessage(hWnd,WM_DPICHANGED_AFTERPARENT,0,(LPARAM)g_newMonitor);
+                        // Getting child and parent
+                        // Do not handle CXSF and limiter windows.
+                        CWnd* child  = CWnd::FromHandle(hWnd);
+                        CWnd* parent = child->GetParent();
+                        if(parent != g_resize_wnd)
+                        {
+                          return TRUE;
+                        }
+
+                        // Getting the child window rectangle
+                        CRect rcChild;
+                        child->GetWindowRect(rcChild);
+
+                        // Getting the parent window to calc displacement
+                        CRect rcParent;
+                        parent->GetWindowRect(rcParent);
+
+                        // Creating the target rectangle
+                        CRect rcTarget;
+                        rcTarget.left   = rcChild.left   - rcParent.left;
+                        rcTarget.top    = rcChild.top    - rcParent.top;
+                        rcTarget.right  = rcChild.right  - rcParent.left;
+                        rcTarget.bottom = rcChild.bottom - rcParent.top;
+
+                        // Correct for StyleDialog
+                        int caption = WINDOWCAPTIONHEIGHT(g_resize_wnd->GetSafeHwnd());
+                        int sborder = WINDOWSHADOWBORDER (g_resize_wnd->GetSafeHwnd()) * 2;
+                        rcTarget.top    -= caption;
+                        rcTarget.bottom -= caption;
+                        rcTarget.left   -= sborder;
+                        rcTarget.right  -= sborder;
+
+                        // Now scale the target rectangle
+                        rcTarget.left   = ::MulDiv(rcTarget.left,  dpi_x,g_dpi_x);
+                        rcTarget.top    = ::MulDiv(rcTarget.top,   dpi_y,g_dpi_y);
+                        rcTarget.right  = ::MulDiv(rcTarget.right, dpi_x,g_dpi_x);
+                        rcTarget.bottom = ::MulDiv(rcTarget.bottom,dpi_x,g_dpi_x);
+
+                        child->MoveWindow(rcTarget);
                         return TRUE;
                       },
-                      MAKELPARAM(m_dpi_y,m_dpi_x));
+                      (LPARAM)wParam);
 
-  // Store the new DPI as old DPI for next time
-  TRACE("DPI now set to: %d/%d\n",m_dpi_x,m_dpi_y);
+  // Take the HMONITOR for the new monitor
+  extern StylingFramework g_styling;
+  const  StyleMonitor* mon = g_styling.GetMonitor(m_dpi_x,m_dpi_y);
+  HMONITOR newMonitor = mon ? mon->GetMonitor() : nullptr;
+
+  // Notify all child windows after parent has changed DPI
+  // So that we can handle different fonts etc.
+  ::EnumChildWindows(m_hWnd,
+                     [](HWND hWnd,LPARAM lParam) -> BOOL
+                     {
+                       ::SendMessage(hWnd,WM_DPICHANGED_AFTERPARENT,0,lParam);
+                       return TRUE;
+                     },
+                     (LPARAM)newMonitor);
 
   // Now redraw everything
   Invalidate(TRUE);
+
+  auto manager = GetDynamicLayout();
+  if(manager && !manager->IsEmpty())
+  {
+    manager->Adjust();
+  }
   return 0;
 }
 
@@ -1183,11 +1223,11 @@ StyleDialog::OnSize(UINT nType, int cx, int cy)
 {
   if ((GetStyle() & WS_POPUP) == 0)
   {
-    CDialog::OnSize(nType, cx, cy);
+    CDialogEx::OnSize(nType, cx, cy);
   }
   else
   {
-    CDialog::OnSize(nType,cx,cy);
+    CDialogEx::OnSize(nType,cx,cy);
 
     if(nType == SIZE_MAXIMIZED && ((GetStyle() & WS_MAXIMIZE) != 0) && !m_dtsize)
     {
@@ -1267,18 +1307,18 @@ StyleDialog::OnNcCalcSize(BOOL calcValidRects, NCCALCSIZE_PARAMS *params)
 {
   if ((GetStyle() & WS_POPUP) == 0)
   {
-    CDialog::OnNcCalcSize(calcValidRects, params);
+    CDialogEx::OnNcCalcSize(calcValidRects, params);
   }
   else
   {
-    CDialog::OnNcCalcSize(calcValidRects, params);
+    CDialogEx::OnNcCalcSize(calcValidRects, params);
 
     if (m_caption)
     {
       int border  = WINDOWSHADOWBORDER(m_hWnd);
       int caption = WINDOWCAPTIONHEIGHT(m_hWnd);
       int margin  = SIZEMARGIN(m_hWnd);
-      // Derived from CDialog
+      // Derived from CDialogEx
       params->rgrc[0].left   += margin - 1;
       params->rgrc[0].top    += caption;
       params->rgrc[0].bottom -= margin - 1 + border;
@@ -1298,7 +1338,7 @@ StyleDialog::OnNcPaint()
 {
   if ((GetStyle() & WS_POPUP) == 0)
   {
-    CDialog::OnNcPaint();
+    CDialogEx::OnNcPaint();
   }
   else
   {
@@ -1391,7 +1431,7 @@ StyleDialog::OnNcHitTest(CPoint point)
 {
   if((GetStyle() & WS_POPUP) == 0)
   {
-    return CDialog::OnNcHitTest(point);
+    return CDialogEx::OnNcHitTest(point);
   }
 
   CRect window;
@@ -1631,7 +1671,7 @@ StyleDialog::OnPaint()
     return;
   }
 
-  CDialog::OnPaint();
+  CDialogEx::OnPaint();
 
   if(m_canResize && (m_hasGripper || (GetParent() == nullptr) && (GetStyle() & WS_MAXIMIZE) == 0))
   {
@@ -1683,7 +1723,7 @@ StyleDialog::OnCancel()
   {
     return;
   }
-  CDialog::OnCancel();
+  CDialogEx::OnCancel();
 }
 
 // Try overridden OnClosing before closing the dialog.
@@ -1694,6 +1734,6 @@ StyleDialog::OnOK()
   {
     return;
   }
-  CDialog::OnOK();
+  CDialogEx::OnOK();
 }
 

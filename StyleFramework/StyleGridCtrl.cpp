@@ -45,12 +45,6 @@ BEGIN_MESSAGE_MAP(StyleGridCtrl, CGridCtrl)
   ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
 
-void
-StyleGridCtrl::PreSubclassWindow()
-{
-  ScaleControl(this);
-}
-
 /////////////////////////////////////////////////////////////////////////////
 // message handlers
 

@@ -50,50 +50,16 @@ StylingFramework::GetMonitor(HMONITOR p_monitor) const
   return m_monitors.GetMonitor(p_monitor);
 }
 
+const StyleMonitor*
+StylingFramework::GetMonitor(int p_dpi_x,int p_dpi_y) const
+{
+  return m_monitors.GetMonitor(p_dpi_x,p_dpi_y);
+}
+
 const StyleMonitor* 
 StylingFramework::GetPrimaryMonitor() const
 {
   return m_monitors.GetPrimaryMonitor();
-}
-
-void
-SFXResizeByFactor(HWND p_hwnd,CRect& p_rect)
-{
-  const StyleMonitor* monitor = g_styling.GetMonitor(p_hwnd);
-  if(!monitor)
-  {
-    return;
-  }
-  int dpi_x;
-  int dpi_y;
-  monitor->GetDPI(dpi_x,dpi_y);
-  int factorx = (dpi_x * 100) / USER_DEFAULT_SCREEN_DPI;
-  int factory = (dpi_y * 100) / USER_DEFAULT_SCREEN_DPI;
-
-  p_rect.top    = (p_rect.top    * factorx) / 100;
-  p_rect.bottom = (p_rect.bottom * factory) / 100;
-  p_rect.left   = (p_rect.left   * factorx) / 100;
-  p_rect.right  = (p_rect.right  * factory) / 100;
-}
-
-void 
-SFXResizeByFactor(HWND p_hwnd,int& p_x,int& p_y,int& p_w,int& p_h)
-{
-  const StyleMonitor* monitor = g_styling.GetMonitor(p_hwnd);
-  if(!monitor)
-  {
-    return;
-  }
-  int dpi_x;
-  int dpi_y;
-  monitor->GetDPI(dpi_x,dpi_y);
-  int factorx = (dpi_x * 100) / USER_DEFAULT_SCREEN_DPI;
-  int factory = (dpi_y * 100) / USER_DEFAULT_SCREEN_DPI;
-
-  p_x = (p_x * factorx) / 100;
-  p_y = (p_y * factory) / 100;
-  p_w = (p_w * factorx) / 100;
-  p_h = (p_h * factory) / 100;
 }
 
 int GetSFXSizeFactor(HWND p_hwnd)

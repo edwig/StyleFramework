@@ -79,7 +79,6 @@ BOOL StyleHyperLink::PreTranslateMessage(MSG* pMsg)
 
 void StyleHyperLink::PreSubclassWindow() 
 {
-  ScaleControl(this);
   CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFont);
   SetFont(font);
 

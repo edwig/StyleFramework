@@ -66,8 +66,6 @@ StyleListBox::PreSubclassWindow()
   ASSERT((style & LBS_OWNERDRAWVARIABLE) == 0);
   ASSERT((style & LBS_MULTICOLUMN)       == 0);
 
-  ScaleControl(this);
-
   if(m_directInit)
   {
     InitSkin();

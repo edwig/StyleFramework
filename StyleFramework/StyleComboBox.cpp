@@ -125,8 +125,7 @@ StyleComboBox::PreSubclassWindow()
 {
   CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFont);
   SetFont(font);
-  ScaleControl(this);
-
+  
   // Remove default box and list
   // Getting the default combobox implementation
   COMBOBOXINFO info;
@@ -157,10 +156,6 @@ StyleComboBox::PreSubclassWindow()
   int height = (rect.Height() * 13) / 11;
 
   // When size factors are set, apply these as well.
-  if(GetSFXSizeFactor(m_hWnd) != 100)
-  {
-    height = (height * GetSFXSizeFactor(m_hWnd)) / 100;
-  }
   ::MoveWindow(info.hwndCombo,rect.left,rect.top,rect.Width(),height,TRUE);
 }
 
@@ -718,8 +713,7 @@ StyleComboBox::OnGetItemData(WPARAM wParam, LPARAM lParam)
 LRESULT 
 StyleComboBox::OnGetItemHeight(WPARAM wParam, LPARAM lParam)
 {
-  int height = GetItemHeight((int)wParam);
-  return (height * GetSFXSizeFactor(m_hWnd)) / 100;
+  return GetItemHeight((int)wParam);
 }
 
 LRESULT 

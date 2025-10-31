@@ -47,12 +47,6 @@ StyleCheckbox::~StyleCheckbox()
 }
 
 void
-StyleCheckbox::PreSubclassWindow()
-{
-  ScaleControl(this);
-}
-
-void
 StyleCheckbox::SetErrorState(bool p_error /*= true*/)
 {
   if(m_error != p_error)
@@ -237,14 +231,8 @@ StyleCheckbox::Draw(CWnd* p_wnd
       p_dc->SetBkColor(ThemeColor::GetColor(Colors::ColorWindowFrame));
       p_dc->SelectObject(font);
       p_dc->SetTextColor(textcolor);
-      int margin = 28;
       int factor = GetSFXSizeFactor(p_wnd->GetSafeHwnd());
-             if(factor <= 100) margin = 28;  // x 1.0
-        else if(factor <= 125) margin = 42;  // x 1.5
-        else if(factor <= 150) margin = 56;  // x 2.0
-        else if(factor <= 175) margin = 84;  // * 3.0
-        else                   margin = 112; // * 4.0
-      p_rect.left += margin;
+      p_rect.left += 28 * factor / 100;
       p_dc->DrawText(text,&p_rect,DT_VCENTER | DT_SINGLELINE);
     }
   }

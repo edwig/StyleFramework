@@ -75,7 +75,7 @@ MyFrameDlg5::SetupDynamicLayout()
 
   manager.AddItem(IDC_EDIT,       manager.MoveNone(),                          manager.SizeHorizontal(100));
   manager.AddItem(m_buttonAdd,    manager.MoveHorizontal(100),                 manager.SizeNone());
-  manager.AddItem(IDC_LIST1,      manager.MoveNone(),                          manager.SizeHorizontalAndVertical(50,100));
+  manager.AddItem(IDC_LIST1,      manager.MoveHorizontal(0),                   manager.SizeHorizontalAndVertical(50,100));
   manager.AddItem(IDC_LIST2,      manager.MoveHorizontal(50),                  manager.SizeHorizontalAndVertical(50,100));
   manager.AddItem(m_buttonLegen,  manager.MoveVertical(100),                   manager.SizeNone());
   manager.AddItem(m_buttonPrinten,manager.MoveVertical(100),                   manager.SizeNone());

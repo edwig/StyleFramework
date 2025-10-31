@@ -203,6 +203,25 @@ StyleMonitors::GetMonitor(HMONITOR p_monitor) const
   return nullptr;
 }
 
+const StyleMonitor*
+StyleMonitors::GetMonitor(int p_dpi_x,int p_dpi_y) const
+{
+  // Check if already there
+  for(auto& monitor : m_monitors)
+  {
+    int dpi_x;
+    int dpi_y;
+    monitor->GetDPI(dpi_x,dpi_y);
+    if(dpi_x == p_dpi_x &&
+       dpi_y == p_dpi_y)
+    {
+      // Should be a compatible monitor
+      return monitor;
+    }
+  }
+  return nullptr;
+}
+
 // Remove the mark on all monitors before discovery
 void
 StyleMonitors::UnMarkAllMonitors()

@@ -77,12 +77,18 @@ public:
   // GETTERS
   const StyleMonitor* GetMonitor(HWND p_hwnd) const;
   const StyleMonitor* GetMonitor(HMONITOR p_monitor) const;
+  const StyleMonitor* GetMonitor(int p_dpi_x,int p_dpi_y) const;
   const StyleMonitor* GetPrimaryMonitor() const;
 
 private:
   StylingFramework* m_instance { nullptr };
   StyleMonitors     m_monitors;
 };
+
+// General resize a windows rectangle
+int    GetSFXSizeFactor(HWND p_hwnd);
+CFont* GetSFXFont(HWND p_hwnd,StyleFontType p_type);
+CFont* GetSFXFont(HMONITOR hm,StyleFontType p_type);
 
 // Selecting the right library to link with automatically
 // So we do not need to worry about which library to use in the linker settings

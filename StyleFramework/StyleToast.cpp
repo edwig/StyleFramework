@@ -162,10 +162,10 @@ StyleToast::OnCreate(LPCREATESTRUCT p_create)
 {
   int res = CDialog::OnCreate(p_create);
 
-  CRect rect;
-  GetWindowRect(&rect);
-  SFXResizeByFactor(m_hWnd,rect);
-  MoveWindow(&rect);
+//   CRect rect;
+//   GetWindowRect(&rect);
+//   SFXResizeByFactor(m_hWnd,rect);
+//   MoveWindow(&rect);
 
   return res;
 }
@@ -420,11 +420,8 @@ StyleToast* CreateToast(int      p_style
 
   CRect rect; // Total workarea on the desktop
   CRect size; // Size of the Toast window
-  StyleGetWorkArea(toast,rect);
   toast->GetWindowRect(size);
-  int y = 0;
-  int x = 0;
-  bool up = false;
+  StyleGetWorkArea(toast,rect);
 
   // Adjust the size if text is longer than expected
   // Can only GROW the toast control to be wider!
@@ -446,6 +443,9 @@ StyleToast* CreateToast(int      p_style
   toast->ReleaseDC(dc);
   
   // Top/middle/bottom
+  int y = 0;
+  int x = 0;
+  bool up = false;
   switch(p_position & 0xF0)
   {
     case 0x10:  y = rect.top + TOAST_SPACE; 

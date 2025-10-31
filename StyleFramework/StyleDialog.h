@@ -32,7 +32,7 @@ typedef struct
 } 
 SMessage, *PSMessage;
 
-class StyleDialog : public CDialog
+class StyleDialog : public CDialogEx
 {
   DECLARE_DYNAMIC(StyleDialog)
 

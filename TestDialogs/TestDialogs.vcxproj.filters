@@ -142,7 +142,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="TestDialogs.Manifest.xml">
+    <Xml Include="Manifest.xml">
       <Filter>Resource Files</Filter>
     </Xml>
   </ItemGroup>

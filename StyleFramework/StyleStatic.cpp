@@ -40,12 +40,6 @@ BEGIN_MESSAGE_MAP(StyleStatic,CStatic)
   ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
-void
-StyleStatic::PreSubclassWindow()
-{
-  ScaleControl(this);
-}
-
 /////////////////////////////////////////////////////////////////////////////
 // StyleStatic message handlers
 

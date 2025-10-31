@@ -49,12 +49,6 @@ BEGIN_MESSAGE_MAP(StyleStaticToast, CStatic)
   ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
-void
-StyleStaticToast::PreSubclassWindow()
-{
-  ScaleControl(this);
-}
-
 /////////////////////////////////////////////////////////////////////////////
 // StyleStaticToast message handlers
 
@@ -144,7 +138,7 @@ StyleStaticToast::OnPaint()
 	pDC->FillSolidRect(&rect, m_colorBackground);
 
 	// Paint the text
-	int fontheight = 2 * STANDARDFONTSIZE;
+	int fontheight = ((2 * STANDARDFONTSIZE) * GetSFXSizeFactor(GetSafeHwnd())) / 100;
 
   CFont* boldfont = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFontBold);
 

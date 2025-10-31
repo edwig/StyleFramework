@@ -217,7 +217,6 @@ void
 StyleListCtrl::PreSubclassWindow()
 {
   CMFCListCtrl::PreSubclassWindow();
-  ScaleControl(this);
   if(m_directInit)
   {
     InitSkin();

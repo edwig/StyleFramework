@@ -159,12 +159,6 @@ StyleButton::~StyleButton()
   DestroyWindow();
 }
 
-void 
-StyleButton::PreSubclassWindow()
-{
-  ScaleControl(this);
-}
-
 BOOL
 StyleButton::DestroyWindow()
 {

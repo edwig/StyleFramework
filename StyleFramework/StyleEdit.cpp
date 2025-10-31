@@ -81,8 +81,6 @@ StyleEdit::~StyleEdit()
 void
 StyleEdit::PreSubclassWindow()
 {
-  ScaleControl(this);
-
   if(m_directInit)
   {
     InitSkin();
