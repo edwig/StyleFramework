@@ -56,6 +56,8 @@ BEGIN_MESSAGE_MAP(StyleListBox, CListBox)
   ON_WM_DESTROY()
   ON_WM_ERASEBKGND()
   ON_WM_HSCROLL()
+  ON_MESSAGE(WM_DPICHANGED_AFTERPARENT,OnDpiChanged)
+  ON_MESSAGE(LB_GETITEMHEIGHT,         OnItemHeight)
 END_MESSAGE_MAP()
 
 void 
@@ -106,6 +108,16 @@ void
 StyleListBox::SetDirectInit(bool p_init)
 {
   m_directInit = p_init;
+}
+
+LRESULT
+StyleListBox::OnItemHeight(WPARAM /*wParam*/,LPARAM /*lParam*/)
+{
+  int height = LISTBOX_ITEMHEIGTH;
+  height *= GetSFXSizeFactor(m_hWnd);
+  height /= 100;
+
+  return height;
 }
 
 void
@@ -905,7 +917,7 @@ StyleListBox::Internal_Paint(CDC* p_cdc)
       focusRect = itemrect;
     }
     Internal_PaintItem(p_cdc,&itemrect,index,ODA_DRAWENTIRE,TRUE);
-    itemrect.top = itemrect.bottom;
+    itemrect.top = itemrect.bottom + 1;
 
     if(itemrect.top >= clientrect.Height())
     {
@@ -1032,11 +1044,13 @@ StyleListBox::ResetFont()
 {
   LOGFONT  lgFont;
 
+  int fontSize = (m_fontSize * GetSFXSizeFactor(m_hWnd)) / 100;
+
   lgFont.lfCharSet        = m_language;
   lgFont.lfClipPrecision  = 0;
   lgFont.lfEscapement     = 0;
   _tcscpy_s(lgFont.lfFaceName,LF_FACESIZE,m_fontName);
-  lgFont.lfHeight         = m_fontSize;
+  lgFont.lfHeight         = fontSize;
   lgFont.lfItalic         = m_italic;
   lgFont.lfOrientation    = 0;
   lgFont.lfOutPrecision   = 0;
@@ -1062,4 +1076,21 @@ StyleListBox::ResetFont()
   // Create new font and set it to this control
   m_font->CreatePointFontIndirect(&lgFont);
   SetFont(m_font);
+}
+
+LRESULT
+StyleListBox::OnDpiChanged(WPARAM wParam,LPARAM lParam)
+{
+  HMONITOR monitor = reinterpret_cast<HMONITOR>(lParam);
+  if(monitor)
+  {
+    CFont* font = GetSFXFont(monitor,StyleFontType::DialogFont);
+    if(font)
+    {
+      SetFont(font);
+      int height = LISTBOX_ITEMHEIGTH;
+      SetItemHeight(0,(height * GetSFXSizeFactor(m_hWnd)) / 100);
+    }
+  }
+  return 0;
 }

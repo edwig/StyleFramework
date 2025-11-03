@@ -30,7 +30,6 @@ protected:
 
   // Generated message map functions
   virtual BOOL    OnInitDialog();
-  afx_msg int     OnCreate(LPCREATESTRUCT lpCreateStruct);
   afx_msg void    OnDestroy();
   afx_msg void    OnSysCommand(UINT nID, LPARAM lParam);
 

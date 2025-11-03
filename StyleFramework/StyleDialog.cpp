@@ -1190,10 +1190,25 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
   ::EnumChildWindows(m_hWnd,
                      [](HWND hWnd,LPARAM lParam) -> BOOL
                      {
+                       CWnd* child = CWnd::FromHandle(hWnd);
+                       if(child)
+                       {
+                         CFont* font = GetSFXFont((HMONITOR)lParam,StyleFontType::DialogFont);
+                         if(font)
+                         {
+                           child->SetFont(font,FALSE);
+                         }
+                       }
                        ::SendMessage(hWnd,WM_DPICHANGED_AFTERPARENT,0,lParam);
                        return TRUE;
                      },
                      (LPARAM)newMonitor);
+
+  // Move and resize the status bar (if any)
+  if(::IsWindow(m_statusBar.GetSafeHwnd()))
+  {
+    RepositionBars(AFX_IDW_CONTROLBAR_FIRST,AFX_IDW_CONTROLBAR_LAST,0);
+  }
 
   // Now redraw everything
   Invalidate(TRUE);

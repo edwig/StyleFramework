@@ -23,6 +23,9 @@ MyFrameDlg7::~MyFrameDlg7()
 void MyFrameDlg7::DoDataExchange(CDataExchange* pDX)
 {
 	StyleDialog::DoDataExchange(pDX);
+
+  DDX_Control(pDX, IDC_ST_TOTAL,  m_staticTotal);
+  DDX_Control(pDX, IDC_ST_INTVAL, m_staticIntval);
   DDX_Control(pDX, IDC_RESET,     m_buttonReset);
   DDX_Control(pDX, IDC_PROGRESS1, m_progress1);
   DDX_Control(pDX, IDC_PROGRESS2, m_progress2);

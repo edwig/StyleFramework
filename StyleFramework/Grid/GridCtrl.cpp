@@ -125,7 +125,7 @@
 #include "GridCtrl.h"
 #include <algorithm>
 #include <VersionHelpers.h>
-#include "..\StyleColors.h"
+#include "..\StyleFramework.h"
 
 // OLE stuff for clipboard operations
 #include <afxadv.h>            // For CSharedFile
@@ -604,6 +604,7 @@ BEGIN_MESSAGE_MAP(CGridCtrl, CWnd)
   ON_MESSAGE(WM_IME_CHAR, OnImeChar)
   ON_NOTIFY(GVN_ENDLABELEDIT, IDC_INPLACE_CONTROL, OnEndInPlaceEdit)
   ON_CONTROL_REFLECT_EX(CBN_KILLFOCUS,OnComboKillFocus)
+  ON_MESSAGE(WM_DPICHANGED_AFTERPARENT,OnDpiChanged)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -3679,6 +3680,22 @@ LRESULT CGridCtrl::OnGetFont(WPARAM /*wParam*/, LPARAM /*lParam*/)
   return (LRESULT) m_cellDefault.GetFontObject()->GetSafeHandle();
 }
 
+LRESULT
+CGridCtrl::OnDpiChanged(WPARAM wParam,LPARAM lParam)
+{
+  HMONITOR monitor = reinterpret_cast<HMONITOR>(lParam);
+  if(monitor)
+  {
+    CFont* font = GetSFXFont(monitor,StyleFontType::DialogFont);
+    if(font)
+    {
+      SetFont(font);
+    }
+    RecalculateRowHeights();
+  }
+  return 0;
+}
+
 BOOL CGridCtrl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 {
   if (nHitTest == HTCLIENT)
@@ -3952,6 +3969,17 @@ BOOL CGridCtrl::SetRowCount(int nRows)
   Refresh();
 
   return bResult;
+}
+
+void
+CGridCtrl::RecalculateRowHeights()
+{
+  for(int row = 0; row < m_nRows; ++row)
+  {
+    m_arRowHeights[row] = m_cellDefault.GetHeight();
+  }
+  ResetScrollBars();
+  Refresh();
 }
 
 BOOL CGridCtrl::SetColumnCount(int nCols)

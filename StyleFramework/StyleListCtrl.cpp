@@ -43,6 +43,50 @@ StyleHeaderCtrl::~StyleHeaderCtrl()
 {
 }
 
+BEGIN_MESSAGE_MAP(StyleHeaderCtrl, CMFCHeaderCtrl)
+  ON_MESSAGE(WM_DPICHANGED_AFTERPARENT,OnDpiChanged)
+  ON_MESSAGE(HDM_LAYOUT,OnLayout)
+END_MESSAGE_MAP()
+
+LRESULT
+StyleHeaderCtrl::OnDpiChanged(WPARAM wParam,LPARAM lParam)
+{
+  HMONITOR monitor = reinterpret_cast<HMONITOR>(lParam);
+  if(monitor)
+  {
+    CFont* font = GetSFXFont(monitor,StyleFontType::DialogFont);
+    if(font)
+    {
+      SetFont(font);
+      RedrawWindow();
+    }
+  }
+  return 0;
+}
+
+LRESULT StyleHeaderCtrl::OnLayout(WPARAM wParam,LPARAM lParam)
+{
+  // Call the base class's default window procedure to get the original layout info
+  LRESULT lResult = CMFCHeaderCtrl::DefWindowProc(HDM_LAYOUT,0,lParam);
+
+  HD_LAYOUT& hdl = *(HD_LAYOUT*)lParam;
+  RECT*      prc = hdl.prc;   // Bounding rectangle for the header
+  WINDOWPOS* pwp = hdl.pwpos; // Total window position structure
+
+  // Calculate the new height based on the current font
+  CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFont);
+  LOGFONT logFont;
+  font->GetLogFont(&logFont);
+  int nNewHeight = abs(logFont.lfHeight) + WS(GetSafeHwnd(),12);
+
+  // Modify the window position structure for the header control
+  pwp->cy   = nNewHeight;
+  // Adjust the parent's client area (prc) below the header control
+  prc->top  = nNewHeight;
+
+  return lResult; // Or 0 if you handle everything
+}
+
 void 
 StyleHeaderCtrl::OnDrawItem(CDC* pDC,int iItem,CRect rect,BOOL bIsPressed,BOOL bIsHighlighted)
 {
@@ -211,6 +255,7 @@ BEGIN_MESSAGE_MAP(StyleListCtrl,CMFCListCtrl)
   ON_WM_SIZE()
   ON_WM_ERASEBKGND()
   ON_WM_SHOWWINDOW()
+  ON_MESSAGE(WM_DPICHANGED_AFTERPARENT,OnDpiChanged)
 END_MESSAGE_MAP()
 
 void
@@ -281,6 +326,23 @@ SkinScrollWnd*
 StyleListCtrl::GetSkin()
 {
   return (SkinScrollWnd*)GetWindowLongPtr(GetSafeHwnd(), GWLP_USERDATA);
+}
+
+LRESULT
+StyleListCtrl::OnDpiChanged(WPARAM wParam,LPARAM lParam)
+{
+  GetHeaderCtrl().SendMessage(WM_DPICHANGED,wParam,lParam);
+
+  HMONITOR monitor = reinterpret_cast<HMONITOR>(lParam);
+  if(monitor)
+  {
+    CFont* font = GetSFXFont(monitor,StyleFontType::DialogFont);
+    if(font)
+    {
+      SetFont(font);
+    }
+  }
+  return 0;
 }
 
 LRESULT 

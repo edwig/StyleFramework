@@ -87,6 +87,7 @@ private:
 
 // General resize a windows rectangle
 int    GetSFXSizeFactor(HWND p_hwnd);
+int    GetSFXSizeFactor(HMONITOR p_monitor);
 CFont* GetSFXFont(HWND p_hwnd,StyleFontType p_type);
 CFont* GetSFXFont(HMONITOR hm,StyleFontType p_type);
 

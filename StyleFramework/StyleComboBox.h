@@ -230,6 +230,7 @@ protected:
   afx_msg LRESULT OnShowDropDown          (WPARAM wParam,LPARAM lParam);
   afx_msg LRESULT OnGetText               (WPARAM wParam,LPARAM lParam);
   afx_msg LRESULT OnGetTextLength         (WPARAM wParam,LPARAM lParam);
+  afx_msg LRESULT OnDpiChanged            (WPARAM wParam,LPARAM lParam);
 
 public:
   afx_msg void    OnCloseup(bool p_force = false);

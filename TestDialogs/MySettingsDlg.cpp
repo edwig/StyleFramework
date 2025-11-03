@@ -31,13 +31,6 @@ BEGIN_MESSAGE_MAP(MySettingsDlg, StyleDialog)
   ON_WM_SYSCOMMAND()
 END_MESSAGE_MAP()
 
-int
-MySettingsDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-  m_grayWindow.CreateEx(0, AfxRegisterWndClass(0), _T(""), WS_POPUP, CRect(0, 0, 0, 0), this, 0);
-  return 0;
-}
-
 void
 MySettingsDlg::OnDestroy()
 {
@@ -51,6 +44,7 @@ BOOL MySettingsDlg::OnInitDialog()
   StyleDialog::OnInitDialog();
   SetWindowText(_T("My Settings dialog"));
   SetAboutBoxAndIcon(IDM_ABOUTBOX,IDS_ABOUTBOX);
+  ShowMinMaxButton(true,false);
 
   m_tab.InsertItem(0, nullptr, _T("First"));
   m_tab.InsertItem(1, nullptr, _T("Second tab"));

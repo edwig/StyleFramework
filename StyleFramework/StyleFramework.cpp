@@ -75,6 +75,19 @@ int GetSFXSizeFactor(HWND p_hwnd)
   return (dpi_y * 100) / USER_DEFAULT_SCREEN_DPI;
 }
 
+int GetSFXSizeFactor(HMONITOR p_monitor)
+{
+  const StyleMonitor* monitor = g_styling.GetMonitor(p_monitor);
+  if(!monitor)
+  {
+    return 100;
+  }
+  int dpi_x;
+  int dpi_y;
+  monitor->GetDPI(dpi_x,dpi_y);
+  return (dpi_y * 100) / USER_DEFAULT_SCREEN_DPI;
+}
+
 // Global function to get the correct font for a window
 // based on its monitor
 CFont*

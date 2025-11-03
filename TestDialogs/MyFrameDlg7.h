@@ -27,6 +27,8 @@ protected:
   StyleEdit         m_editInterval;
   StyleProgressCtrl m_progress1;
   StyleProgressCtrl m_progress2;
+  StyleStatic       m_staticTotal;
+  StyleStatic       m_staticIntval;
   StyleButton       m_buttonReset;
   StyleButton       m_buttonStartMarquee;
   StyleButton       m_buttonStopMarquee;

@@ -112,6 +112,7 @@ BEGIN_MESSAGE_MAP(StyleComboBox,CEdit)
   ON_MESSAGE(CB_SHOWDROPDOWN,         OnShowDropDown)
   ON_MESSAGE(WM_GETTEXT,              OnGetText)
   ON_MESSAGE(WM_GETTEXTLENGTH,        OnGetTextLength)
+  ON_MESSAGE(WM_DPICHANGED_AFTERPARENT,OnDpiChanged)
   /* NOTIFICATIONS TO THE PARENT 
   CBN_ERRSPACE      // NEVER SENT
   WM_COMPAREITEM    // WE NEVER ASK THE OWNER
@@ -919,6 +920,21 @@ StyleComboBox::OnChar(UINT nChar,UINT nRepCnt,UINT nFlags)
     }
   }
   CEdit::OnChar(nChar,nRepCnt,nFlags);
+}
+
+LRESULT
+StyleComboBox::OnDpiChanged(WPARAM wParam,LPARAM lParam)
+{
+  HMONITOR monitor = reinterpret_cast<HMONITOR>(lParam);
+  if(monitor)
+  {
+    m_itemControl->SendMessage(WM_DPICHANGED_AFTERPARENT,wParam,lParam);
+    m_listControl->SendMessage(WM_DPICHANGED_AFTERPARENT,wParam,lParam);
+
+    int height = LISTBOX_ITEMHEIGTH;
+    m_listControl->SetItemHeight(0,(height * GetSFXSizeFactor(monitor)) / 100);
+  }
+  return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -86,6 +86,7 @@ MyFrameDlg3::OnInitDialog()
   // m_string7 = "Testing";
   m_edit7.SetPassword();
   m_edit7.SetEmpty(true,_T("Enter password"));
+  m_edit7.UsePasswordEye();
 
   // Our status field
   m_status = _T("The current status");
