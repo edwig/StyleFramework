@@ -1686,7 +1686,7 @@ void CGridCtrl::OnDraw(CDC* pDC)
       if (pCell)
     	{
 		    pCell->SetCoords(row,col);
-        pCell->Draw(pDC, row, col, rect, FALSE);
+        pCell->Draw(GetSafeHwnd(),pDC, row, col, rect, FALSE);
 	    }
     }
   }
@@ -1726,7 +1726,7 @@ void CGridCtrl::OnDraw(CDC* pDC)
       if(pCell)
     	{
 		    pCell->SetCoords(row,col);
-        pCell->Draw(pDC, row, col, rect, FALSE);
+        pCell->Draw(GetSafeHwnd(),pDC,row,col,rect,FALSE);
 	    }
     }
   }
@@ -1759,7 +1759,7 @@ void CGridCtrl::OnDraw(CDC* pDC)
       if (pCell)
 			{
 				pCell->SetCoords(row,col);
-        pCell->Draw(pDC, row, col, rect, FALSE);
+        pCell->Draw(GetSafeHwnd(),pDC,row,col,rect,FALSE);
 			}
     }
   }
@@ -1793,7 +1793,7 @@ void CGridCtrl::OnDraw(CDC* pDC)
       if (pCell)
 			{
 				pCell->SetCoords(row,col);
-        pCell->Draw(pDC, row, col, rect, FALSE);
+        pCell->Draw(GetSafeHwnd(),pDC,row,col,rect,FALSE);
 			}
     }
   }
@@ -1930,7 +1930,7 @@ BOOL CGridCtrl::RedrawCell(int nRow, int nCol, CDC* pDC /* = NULL */)
       CGridCellBase* pCell = GetCell(nRow, nCol);
       if(pCell)
       {
-        bResult = pCell->Draw(pDC,nRow,nCol,rect,TRUE);
+        bResult = pCell->Draw(GetSafeHwnd(),pDC,nRow,nCol,rect,TRUE);
       }
     }
     else
@@ -1938,7 +1938,7 @@ BOOL CGridCtrl::RedrawCell(int nRow, int nCol, CDC* pDC /* = NULL */)
       CGridCellBase* pCell = GetCell(nRow, nCol);
       if(pCell)
       {
-        bResult = pCell->Draw(pDC,nRow,nCol,rect,TRUE);
+        bResult = pCell->Draw(GetSafeHwnd(),pDC,nRow,nCol,rect,TRUE);
       }
       // Since we have erased the background, we will need to redraw the gridlines
       CPen pen;

@@ -376,7 +376,8 @@ void StyleButton::OnPaint()
     UINT state  = GetState();
     DWORD style = GetStyle();
 
-    CRect bmpRect(0, 0, WS(16), WS(16));
+    int bmpSize = WS(GetSafeHwnd(),16);
+    CRect bmpRect(0, 0, bmpSize, bmpSize);
     CString txt;
     GetWindowText(txt);
 
@@ -655,9 +656,9 @@ StyleButton::Draw(CDC*    pDC
     {
       if (p_themeColor)
       {
-        CWSExpander(pDC, rect).DrawIcon(hicon
-                                       ,ThemeColor::GetColor(Colors::ColorWindowFrame)
-                                       ,ThemeColor::GetColor(Colors::ColorComboActive));
+        CWSExpander(GetSafeHwnd(),pDC, rect).DrawIcon(hicon
+                   ,ThemeColor::GetColor(Colors::ColorWindowFrame)
+                   ,ThemeColor::GetColor(Colors::ColorComboActive));
         // Alternative without scaling
         // bmpRect.DeflateRect(1, 1);
         // br.DeleteObject();
@@ -666,10 +667,10 @@ StyleButton::Draw(CDC*    pDC
       }
       else
       {
-        int b = WS(16);
+        int b = WS(GetSafeHwnd(),16);
         if(bmpRect.left < 1)
         {
-          b = WS(16) - abs(bmpRect.left);
+          b = WS(GetSafeHwnd(),16) - abs(bmpRect.left);
           if (b < 0) b = 0;
           bmpRect.left = 1;
         }
@@ -681,7 +682,7 @@ StyleButton::Draw(CDC*    pDC
     }
     else
     {
-      CWSExpander(pDC, rect).DrawIcon(hicon,ThemeColor::GetColor(Colors::ColorWindowFrame),textcolor);
+      CWSExpander(GetSafeHwnd(),pDC,rect).DrawIcon(hicon,ThemeColor::GetColor(Colors::ColorWindowFrame),textcolor);
       // Alternative without scaling
       // br.DeleteObject();
       // br.CreateSolidBrush(textcolor);

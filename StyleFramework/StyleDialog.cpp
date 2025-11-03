@@ -345,8 +345,10 @@ StyleDialog::SetCanResize(bool p_resize)
     // Do not bother: it's already 'ON'
     return;
   }
-  GetWindowRect(m_originalSize);
-
+  if(m_originalSize.Width() == 0 && m_originalSize.Height() == 0)
+  {
+    GetWindowRect(m_originalSize);
+  }
   if(p_resize)
   {
     SetupDynamicLayout();
@@ -1098,19 +1100,28 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
 {
   g_resize_wnd = this;
 
+  // Remove the invalid layout manager
+  auto manager = GetDynamicLayout();
+  bool layoutEnabled(manager != nullptr);
+  if(manager)
+  {
+    m_pDynamicLayout = nullptr;
+    delete manager;
+  }
+
   // The new DPI
   g_dpi_x = m_dpi_x;
   g_dpi_y = m_dpi_y;
   m_dpi_x = HIWORD(wParam);
   m_dpi_y = LOWORD(wParam);
 
+  // Set the new window size/position as suggested by the system
   CRect wrect;
   GetWindowRect(wrect);
 
   wrect.right  = wrect.left + ::MulDiv(wrect.Width(), m_dpi_x,g_dpi_x);
   wrect.bottom = wrect.top  + ::MulDiv(wrect.Height(),m_dpi_x,g_dpi_y);
 
-  // Set the new window size/position as suggested by the system
   ::SetWindowPos(m_hWnd,
                  nullptr,
                  wrect.left,
@@ -1120,7 +1131,7 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
                  SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
 
   // Scale child windows using newDpi and oldDpi (the previous DPI)
-  ::EnumChildWindows(m_hWnd,
+  ::EnumChildWindows( m_hWnd,
                       [](HWND hWnd,LPARAM lParam) -> BOOL
                       {
                         const int dpi_x = HIWORD(lParam);
@@ -1186,11 +1197,16 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
 
   // Now redraw everything
   Invalidate(TRUE);
+  OnNcPaint();
 
-  auto manager = GetDynamicLayout();
-  if(manager && !manager->IsEmpty())
+  // Create a new dynamic layout manager for the new DPI
+  if(layoutEnabled)
   {
-    manager->Adjust();
+    // Scale the original size
+    m_originalSize.right  = m_originalSize.left + ::MulDiv(m_originalSize.Width(), m_dpi_x,g_dpi_x);
+    m_originalSize.bottom = m_originalSize.top  + ::MulDiv(m_originalSize.Height(),m_dpi_y,g_dpi_y);
+
+    SetCanResize(true);
   }
   return 0;
 }
@@ -1245,6 +1261,7 @@ StyleDialog::OnSize(UINT nType, int cx, int cy)
     {
       RepositionBars(AFX_IDW_CONTROLBAR_FIRST,AFX_IDW_CONTROLBAR_LAST,0);
     }
+    OnNcPaint();
   }
 
   if(m_canResize)
@@ -1532,117 +1549,54 @@ StyleDialog::DrawButton(CDC* pDC, CRect rect, LRESULT type)
                                                        : ThemeColor::GetColor(Colors::ColorControlTextHover)
                                                        : ColorWindowHeaderIcon);
   HGDIOBJ orgpen = pDC->SelectObject(pen);
+  int hpos3 = WS(GetSafeHwnd(),3);
+  int hpos4 = WS(GetSafeHwnd(),4);
+  int hpos5 = WS(GetSafeHwnd(),5);
+  int hpos6 = WS(GetSafeHwnd(),6);
+  int hpos7 = WS(GetSafeHwnd(),7);
 
   switch (type) 
   {
-    case HTMENU:      pDC->MoveTo(rect.CenterPoint().x - WS(7),rect.CenterPoint().y - WS(5));
-                      pDC->LineTo(rect.CenterPoint().x + WS(7),rect.CenterPoint().y - WS(5));
-                      pDC->MoveTo(rect.CenterPoint().x - WS(7),rect.CenterPoint().y);
-                      pDC->LineTo(rect.CenterPoint().x + WS(7),rect.CenterPoint().y);
-                      pDC->MoveTo(rect.CenterPoint().x - WS(7),rect.CenterPoint().y + WS(5));
-                      pDC->LineTo(rect.CenterPoint().x + WS(7),rect.CenterPoint().y + WS(5));
+    case HTMENU:      pDC->MoveTo(rect.CenterPoint().x - hpos7,rect.CenterPoint().y - hpos5);
+                      pDC->LineTo(rect.CenterPoint().x + hpos7,rect.CenterPoint().y - hpos5);
+                      pDC->MoveTo(rect.CenterPoint().x - hpos7,rect.CenterPoint().y);
+                      pDC->LineTo(rect.CenterPoint().x + hpos7,rect.CenterPoint().y);
+                      pDC->MoveTo(rect.CenterPoint().x - hpos7,rect.CenterPoint().y + hpos5);
+                      pDC->LineTo(rect.CenterPoint().x + hpos7,rect.CenterPoint().y + hpos5);
                       break;
-    case HTCLOSE:     pDC->MoveTo(rect.CenterPoint().x - WS(5), rect.CenterPoint().y - WS(5));
-                      pDC->LineTo(rect.CenterPoint().x + WS(6), rect.CenterPoint().y + WS(6));
-                      pDC->MoveTo(rect.CenterPoint().x + WS(5), rect.CenterPoint().y - WS(5));
-                      pDC->LineTo(rect.CenterPoint().x - WS(6), rect.CenterPoint().y + WS(6));
+    case HTCLOSE:     pDC->MoveTo(rect.CenterPoint().x - hpos5, rect.CenterPoint().y - hpos5);
+                      pDC->LineTo(rect.CenterPoint().x + hpos6, rect.CenterPoint().y + hpos6);
+                      pDC->MoveTo(rect.CenterPoint().x + hpos5, rect.CenterPoint().y - hpos5);
+                      pDC->LineTo(rect.CenterPoint().x - hpos6, rect.CenterPoint().y + hpos6);
                       break;
     
-    case HTMINBUTTON: pDC->MoveTo(rect.CenterPoint().x - WS(6), rect.CenterPoint().y + WS(6));
-                      pDC->LineTo(rect.CenterPoint().x + WS(6), rect.CenterPoint().y + WS(6));
+    case HTMINBUTTON: pDC->MoveTo(rect.CenterPoint().x - hpos6, rect.CenterPoint().y + hpos6);
+                      pDC->LineTo(rect.CenterPoint().x + hpos6, rect.CenterPoint().y + hpos6);
                       break;
 
     case HTMAXBUTTON: if ((GetStyle() & WS_MAXIMIZE) != 0)
                       {
                         // 'front' window
-                        pDC->MoveTo(rect.CenterPoint().x - WS(6), rect.CenterPoint().y - WS(3));
-                        pDC->LineTo(rect.CenterPoint().x + WS(4), rect.CenterPoint().y - WS(3));
-                        pDC->LineTo(rect.CenterPoint().x + WS(4), rect.CenterPoint().y + WS(7));
-                        pDC->LineTo(rect.CenterPoint().x - WS(6), rect.CenterPoint().y + WS(7));
-                        pDC->LineTo(rect.CenterPoint().x - WS(6), rect.CenterPoint().y - WS(3));
+                        pDC->MoveTo(rect.CenterPoint().x - hpos5, rect.CenterPoint().y - hpos3);
+                        pDC->LineTo(rect.CenterPoint().x + hpos4, rect.CenterPoint().y - hpos3);
+                        pDC->LineTo(rect.CenterPoint().x + hpos4, rect.CenterPoint().y + hpos7);
+                        pDC->LineTo(rect.CenterPoint().x - hpos5, rect.CenterPoint().y + hpos7);
+                        pDC->LineTo(rect.CenterPoint().x - hpos5, rect.CenterPoint().y - hpos3);
 
                         // 'behind' window
-                        pDC->MoveTo(rect.CenterPoint().x - WS(3), rect.CenterPoint().y - WS(4));
-                        pDC->LineTo(rect.CenterPoint().x - WS(3), rect.CenterPoint().y - WS(6));
-                        pDC->LineTo(rect.CenterPoint().x + WS(7), rect.CenterPoint().y - WS(6));
-                        pDC->LineTo(rect.CenterPoint().x + WS(7), rect.CenterPoint().y + WS(4));
-                        pDC->LineTo(rect.CenterPoint().x + WS(4), rect.CenterPoint().y + WS(4));
+                        pDC->MoveTo(rect.CenterPoint().x - hpos3, rect.CenterPoint().y - hpos4);
+                        pDC->LineTo(rect.CenterPoint().x - hpos3, rect.CenterPoint().y - hpos5);
+                        pDC->LineTo(rect.CenterPoint().x + hpos7, rect.CenterPoint().y - hpos5);
+                        pDC->LineTo(rect.CenterPoint().x + hpos7, rect.CenterPoint().y + hpos4);
+                        pDC->LineTo(rect.CenterPoint().x + hpos4, rect.CenterPoint().y + hpos4);
                       }
                       else
                       {
-                        pDC->MoveTo(rect.CenterPoint().x - WS(5), rect.CenterPoint().y - WS(5));
-                        pDC->LineTo(rect.CenterPoint().x + WS(6), rect.CenterPoint().y - WS(5));
-                        pDC->LineTo(rect.CenterPoint().x + WS(6), rect.CenterPoint().y + WS(6));
-                        pDC->LineTo(rect.CenterPoint().x - WS(5), rect.CenterPoint().y + WS(6));
-                        pDC->LineTo(rect.CenterPoint().x - WS(5), rect.CenterPoint().y - WS(5));
-                      }
-                      break;
-  }
-  pDC->SelectObject(orgpen);
-}
-
-void 
-StyleDialog::Button(CDC* pDC, CRect rect, LRESULT type,StyleDialog::BUTTONSTATE state, bool max)
-{
-  CPen pen;
-
-  switch (state) 
-  {
-    case BS_NORMAL:   // Fall through
-    case BS_DISABLED: pDC->FillSolidRect(rect, ColorWindowHeader);
-                      pen.CreatePen(PS_SOLID,1,ColorWindowHeaderIcon);
-                      break;
-    case BS_HOVER:    pDC->FillSolidRect(rect, ThemeColor::GetColor(Colors::ColorControlHover));
-                      pen.CreatePen(PS_SOLID,1,ThemeColor::GetColor(Colors::ColorControlTextHover));
-                      break;
-    case BS_PRESSED:  pDC->FillSolidRect(rect, ThemeColor::GetColor(Colors::ColorControlPressed));
-                      pen.CreatePen(PS_SOLID,1,ThemeColor::GetColor(Colors::ColorControlTextPressed));
-                      break;
-    default:          assert(false);
-                      return;
-  }
-  HGDIOBJ orgpen = pDC->SelectObject(pen);
-
-  switch(type) 
-  {
-    case HTMENU:      pDC->MoveTo(rect.CenterPoint().x - WS(7),rect.CenterPoint().y - WS(5));
-                      pDC->LineTo(rect.CenterPoint().x + WS(7),rect.CenterPoint().y - WS(5));
-                      pDC->MoveTo(rect.CenterPoint().x - WS(7),rect.CenterPoint().y);
-                      pDC->LineTo(rect.CenterPoint().x + WS(7),rect.CenterPoint().y);
-                      pDC->MoveTo(rect.CenterPoint().x - WS(7),rect.CenterPoint().y + WS(5));
-                      pDC->LineTo(rect.CenterPoint().x + WS(7),rect.CenterPoint().y + WS(5));
-                      break;
-    case HTCLOSE:     pDC->MoveTo(rect.CenterPoint().x - WS(5), rect.CenterPoint().y - WS(5));
-                      pDC->LineTo(rect.CenterPoint().x + WS(6), rect.CenterPoint().y + WS(6));
-                      pDC->MoveTo(rect.CenterPoint().x + WS(5), rect.CenterPoint().y - WS(5));
-                      pDC->LineTo(rect.CenterPoint().x - WS(6), rect.CenterPoint().y + WS(6));
-                      break;
-    case HTMINBUTTON: pDC->MoveTo(rect.CenterPoint().x - WS(6), rect.CenterPoint().y + WS(6));
-                      pDC->LineTo(rect.CenterPoint().x + WS(6), rect.CenterPoint().y + WS(6));
-                      break;
-    case HTMAXBUTTON: if(max)
-                      {
-                        // 'Front' window
-                        pDC->MoveTo(rect.CenterPoint().x - WS(6), rect.CenterPoint().y - WS(3));
-                        pDC->LineTo(rect.CenterPoint().x + WS(4), rect.CenterPoint().y - WS(3));
-                        pDC->LineTo(rect.CenterPoint().x + WS(4), rect.CenterPoint().y + WS(7));
-                        pDC->LineTo(rect.CenterPoint().x - WS(6), rect.CenterPoint().y + WS(7));
-                        pDC->LineTo(rect.CenterPoint().x - WS(6), rect.CenterPoint().y - WS(3));
-
-                        // 'Behind' window
-                        pDC->MoveTo(rect.CenterPoint().x - WS(3), rect.CenterPoint().y - WS(4));
-                        pDC->LineTo(rect.CenterPoint().x - WS(3), rect.CenterPoint().y - WS(6));
-                        pDC->LineTo(rect.CenterPoint().x + WS(7), rect.CenterPoint().y - WS(6));
-                        pDC->LineTo(rect.CenterPoint().x + WS(7), rect.CenterPoint().y + WS(4));
-                        pDC->LineTo(rect.CenterPoint().x + WS(4), rect.CenterPoint().y + WS(4));
-                      }
-                      else
-                      {
-                        pDC->MoveTo(rect.CenterPoint().x - WS(5), rect.CenterPoint().y - WS(5));
-                        pDC->LineTo(rect.CenterPoint().x + WS(6), rect.CenterPoint().y - WS(5));
-                        pDC->LineTo(rect.CenterPoint().x + WS(6), rect.CenterPoint().y + WS(6));
-                        pDC->LineTo(rect.CenterPoint().x - WS(5), rect.CenterPoint().y + WS(6));
-                        pDC->LineTo(rect.CenterPoint().x - WS(5), rect.CenterPoint().y - WS(5));
+                        pDC->MoveTo(rect.CenterPoint().x - hpos5, rect.CenterPoint().y - hpos5);
+                        pDC->LineTo(rect.CenterPoint().x + hpos6, rect.CenterPoint().y - hpos5);
+                        pDC->LineTo(rect.CenterPoint().x + hpos6, rect.CenterPoint().y + hpos6);
+                        pDC->LineTo(rect.CenterPoint().x - hpos5, rect.CenterPoint().y + hpos6);
+                        pDC->LineTo(rect.CenterPoint().x - hpos5, rect.CenterPoint().y - hpos5);
                       }
                       break;
   }

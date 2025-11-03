@@ -130,7 +130,7 @@ public:
 public:
   virtual void Reset();
 
-  virtual BOOL  Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
+  virtual BOOL  Draw(HWND p_hwnd,CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
   virtual BOOL  GetTextRect( LPRECT pRect);    // i/o:  i=dims of cell rect; o=dims of text rect
   virtual BOOL  GetTipTextRect( LPRECT pRect) { return GetTextRect( pRect); }  // may override for btns, etc.
   virtual CSize GetTextExtent(LPCTSTR str, CDC* pDC = NULL);

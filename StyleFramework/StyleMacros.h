@@ -22,20 +22,20 @@
 
 // Macro to scale FONT and other sizes related to MS-Windows scaling
 #ifndef WS
-#define WS(val)             MulDiv(val, CWindowDC(0).GetDeviceCaps(LOGPIXELSY), 96)
+#define WS(h,val)              ((val * GetSFXSizeFactor(h)) / 100)
 #endif
 
-#define MARGIN(h)              ((  1 * GetSFXSizeFactor(h)) / 100)  // MulDiv(  1, StyleFonts::logpixelsy(), 96)
-#define PANELHEADERHEIGHT(h)   ((  0 * GetSFXSizeFactor(h)) / 100)  // MulDiv(  0, StyleFonts::logpixelsy(), 96)
-#define CAPTIONHEIGHT(h)       (( 46 * GetSFXSizeFactor(h)) / 100)  // MulDiv( 46, StyleFonts::logpixelsy(), 96)
-#define WINCAPTIONHEIGHT(h)    (( 30 * GetSFXSizeFactor(h)) / 100)  // MulDiv( 30, StyleFonts::logpixelsy(), 96)
-#define HALF_ICONSIZE(h)       (( 16 * GetSFXSizeFactor(h)) / 100)  // MulDiv( 16, StyleFonts::logpixelsy(), 96)
-#define SIZEMARGIN(h)          ((  4 * GetSFXSizeFactor(h)) / 100)  // MulDiv(  4, StyleFonts::logpixelsy(), 96)
-#define MENUITEMWIDTH_MIN(h)   (( 48 * GetSFXSizeFactor(h)) / 100)  // MulDiv( 48, StyleFonts::logpixelsy(), 96)
-#define MENUITEMWIDTH(h)       (( 60 * GetSFXSizeFactor(h)) / 100)  // MulDiv( 60, StyleFonts::logpixelsy(), 96)
-#define MENUITEMWIDTH_MAX(h)   ((120 * GetSFXSizeFactor(h)) / 100)  // MulDiv(120, StyleFonts::logpixelsy(), 96)
-#define WINDOWSHADOWBORDER(h)  ((  2 * GetSFXSizeFactor(h)) / 100)  // MulDiv(  2, StyleFonts::logpixelsy(), 96)
-#define WINDOWCAPTIONHEIGHT(h) (( 30 * GetSFXSizeFactor(h)) / 100)  // MulDiv( 30, StyleFonts::logpixelsy(), 96)
+#define MARGIN(h)              ((  1 * GetSFXSizeFactor(h)) / 100)
+#define PANELHEADERHEIGHT(h)   ((  0 * GetSFXSizeFactor(h)) / 100)
+#define CAPTIONHEIGHT(h)       (( 46 * GetSFXSizeFactor(h)) / 100)
+#define WINCAPTIONHEIGHT(h)    (( 30 * GetSFXSizeFactor(h)) / 100)
+#define HALF_ICONSIZE(h)       (( 16 * GetSFXSizeFactor(h)) / 100)
+#define SIZEMARGIN(h)          ((  4 * GetSFXSizeFactor(h)) / 100)
+#define MENUITEMWIDTH_MIN(h)   (( 48 * GetSFXSizeFactor(h)) / 100)
+#define MENUITEMWIDTH(h)       (( 60 * GetSFXSizeFactor(h)) / 100)
+#define MENUITEMWIDTH_MAX(h)   ((120 * GetSFXSizeFactor(h)) / 100)
+#define WINDOWSHADOWBORDER(h)  ((  2 * GetSFXSizeFactor(h)) / 100)
+#define WINDOWCAPTIONHEIGHT(h) (( 30 * GetSFXSizeFactor(h)) / 100)
 
 #define VK_LOGICAL_LBUTTON  GetSystemMetrics(SM_SWAPBUTTON) ? VK_RBUTTON : VK_LBUTTON
 #define VK_LOGICAL_RBUTTON  GetSystemMetrics(SM_SWAPBUTTON) ? VK_LBUTTON : VK_RBUTTON
@@ -43,5 +43,5 @@
 #define LBUTTONDOWN        (GetAsyncKeyState(VK_LOGICAL_LBUTTON) & KF_UP) != 0
 #define RBUTTONDOWN        (GetAsyncKeyState(VK_LOGICAL_RBUTTON) & KF_UP) != 0
 
-
+// Registered message for style changes
 #define STYLEFXCHANGED     _T("STYLEFXCHANGED")

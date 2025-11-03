@@ -22,8 +22,8 @@
 // CSG_TextEdit window
 
 // Password eye: Number of DLU's the inner eye is within the eyebrow
-#define   EDIT_INNER_EYE  WS(5)
-#define   EDIT_EYE_WEIGHT WS(2)
+#define   EDIT_INNER_EYE  5
+#define   EDIT_EYE_WEIGHT 2
 
 // The password character
 #define   EDIT_PASSWORD_CHAR _T('•')

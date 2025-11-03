@@ -130,9 +130,9 @@ void CGridCellCheck::SetCenter(bool p_center /*= true*/)
 //////////////////////////////////////////////////////////////////////
 
 // Override draw so that when the cell is selected, a drop arrow is shown in the RHS.
-BOOL CGridCellCheck::Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd /*=TRUE*/)
+BOOL CGridCellCheck::Draw(HWND p_hwnd,CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd /*=TRUE*/)
 {
-  BOOL bResult = CGridCell::Draw(pDC, nRow, nCol, rect, bEraseBkgnd);
+  BOOL bResult = CGridCell::Draw(p_hwnd,pDC, nRow, nCol, rect, bEraseBkgnd);
 
   // Store the cell's dimensions for later
   m_Rect = rect;

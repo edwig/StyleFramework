@@ -139,7 +139,7 @@ StyleDialogCA::OnEraseBkgnd(CDC* pDC)
     GetWindowText(titel);
     pDC->DrawText(titel, captionrc, DT_LEFT | DT_SINGLELINE | DT_VCENTER);
     
-    if (m_close)
+    if(m_close)
     {
       // close button
       if (m_over)
@@ -163,10 +163,13 @@ StyleDialogCA::OnEraseBkgnd(CDC* pDC)
       HGDIOBJ orgpen = pDC->SelectObject(pen);
 
       CPoint center(m_closeRect.right - caption / 2, m_closeRect.top + caption/ 2);
-      pDC->MoveTo(center.x - WS(3), center.y - WS(3));
-      pDC->LineTo(center.x + WS(4), center.y + WS(4));
-      pDC->MoveTo(center.x + WS(3), center.y - WS(3));
-      pDC->LineTo(center.x - WS(4), center.y + WS(4));
+      int tl = WS(GetSafeHwnd(),3);
+      int tr = WS(GetSafeHwnd(),4);
+
+      pDC->MoveTo(center.x - tl, center.y - tl);
+      pDC->LineTo(center.x + tr, center.y + tr);
+      pDC->MoveTo(center.x + tl, center.y - tl);
+      pDC->LineTo(center.x - tr, center.y + tr);
       pDC->SelectObject(orgpen);
     }
   }
@@ -377,72 +380,4 @@ void
 StyleDialogCA::ReDrawFrame()
 {
   // Does nothing
-}
-
-// Paint a system button on the NonClient area
-void 
-StyleDialogCA::Button(CDC* pDC, CRect rect, LRESULT type,BUTTONSTATE state, bool max)
-{
-  CPen pen;
-
-  switch (state) 
-  {
-    case BS_NORMAL:
-    case BS_DISABLED: pDC->FillSolidRect(rect, ThemeColor::GetColor(Colors::AccentColor1));
-                      pen.CreatePen(PS_SOLID,1,ThemeColor::GetColor(Colors::AccentColor2));
-                      break;
-    case BS_HOVER:    pDC->FillSolidRect(rect, ThemeColor::GetColor(Colors::ColorControlHover));
-                      pen.CreatePen(PS_SOLID,1,ThemeColor::GetColor(Colors::ColorControlTextHover));
-                      break;
-    case BS_PRESSED:  pDC->FillSolidRect(rect, ThemeColor::GetColor(Colors::ColorControlPressed));
-                      pen.CreatePen(PS_SOLID,1,ThemeColor::GetColor(Colors::ColorControlTextPressed));
-                      break;
-    default:          assert(false);
-                      return;
-  }
-  HGDIOBJ orgpen = pDC->SelectObject(pen);
-
-  switch (type) 
-  {
-    case HTCLOSE:
-                      pDC->MoveTo(rect.CenterPoint().x - WS(5), rect.CenterPoint().y - WS(5));
-                      pDC->LineTo(rect.CenterPoint().x + WS(6), rect.CenterPoint().y + WS(6));
-                      pDC->MoveTo(rect.CenterPoint().x + WS(5), rect.CenterPoint().y - WS(5));
-                      pDC->LineTo(rect.CenterPoint().x - WS(6), rect.CenterPoint().y + WS(6));
-                      break;
-
-    case HTMINBUTTON:
-                      pDC->MoveTo(rect.CenterPoint().x - WS(6), rect.CenterPoint().y + WS(6));
-                      pDC->LineTo(rect.CenterPoint().x + WS(6), rect.CenterPoint().y + WS(6));
-                      break;
-
-    case HTMAXBUTTON:
-                      if(max)
-                      {
-                        // window before
-                        pDC->MoveTo(rect.CenterPoint().x - WS(6), rect.CenterPoint().y - WS(3));
-                        pDC->LineTo(rect.CenterPoint().x + WS(4), rect.CenterPoint().y - WS(3));
-                        pDC->LineTo(rect.CenterPoint().x + WS(4), rect.CenterPoint().y + WS(7));
-                        pDC->LineTo(rect.CenterPoint().x - WS(6), rect.CenterPoint().y + WS(7));
-                        pDC->LineTo(rect.CenterPoint().x - WS(6), rect.CenterPoint().y - WS(3));
-
-                        // window behind
-                        pDC->MoveTo(rect.CenterPoint().x - WS(3), rect.CenterPoint().y - WS(4));
-                        pDC->LineTo(rect.CenterPoint().x - WS(3), rect.CenterPoint().y - WS(6));
-                        pDC->LineTo(rect.CenterPoint().x + WS(7), rect.CenterPoint().y - WS(6));
-                        pDC->LineTo(rect.CenterPoint().x + WS(7), rect.CenterPoint().y + WS(4));
-                        pDC->LineTo(rect.CenterPoint().x + WS(4), rect.CenterPoint().y + WS(4));
-                      }
-                      else
-                      {
-                        // One window to maximize
-                        pDC->MoveTo(rect.CenterPoint().x - WS(5), rect.CenterPoint().y - WS(5));
-                        pDC->LineTo(rect.CenterPoint().x + WS(6), rect.CenterPoint().y - WS(5));
-                        pDC->LineTo(rect.CenterPoint().x + WS(6), rect.CenterPoint().y + WS(6));
-                        pDC->LineTo(rect.CenterPoint().x - WS(5), rect.CenterPoint().y + WS(6));
-                        pDC->LineTo(rect.CenterPoint().x - WS(5), rect.CenterPoint().y - WS(5));
-                      }
-                      break;
-  }
-  pDC->SelectObject(orgpen);
 }

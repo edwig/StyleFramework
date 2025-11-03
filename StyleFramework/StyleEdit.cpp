@@ -874,14 +874,14 @@ StyleEdit::DrawPasswordEye()
 
   // Take a colored pen
   CPen pen;
-  pen.CreatePen(PS_SOLID,EDIT_EYE_WEIGHT,color);
+  pen.CreatePen(PS_SOLID,WS(GetSafeHwnd(),EDIT_EYE_WEIGHT) ,color);
   CPen* oldpen = dc->SelectObject(&pen);
 
   // Draw the eyebrow
   dc->Arc(left,top,right,bottom,startx,starty,endx,endy);
 
   // Size of the eye circle
-  int inner = EDIT_INNER_EYE;
+  int inner = WS(GetSafeHwnd(),EDIT_INNER_EYE);
   left   += inner;
   right  -= inner;
   top    += inner;

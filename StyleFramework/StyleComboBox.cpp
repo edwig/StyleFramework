@@ -1863,22 +1863,24 @@ StyleComboBox::DrawComboButton(CDC* p_dc,CRect& p_but)
   p_but.CenterPoint();
 
   POINT points[3];
+  int half  = WS(GetSafeHwnd(),4);
+  int extra = WS(GetSafeHwnd(),6);
   if(m_buttonDown)
   {
-    points[0].x = p_but.CenterPoint().x - WS(4);
-    points[0].y = p_but.CenterPoint().y + WS(4);
+    points[0].x = p_but.CenterPoint().x - half;
+    points[0].y = p_but.CenterPoint().y + half;
     points[1].x = p_but.CenterPoint().x + 1;
     points[1].y = p_but.CenterPoint().y - 1;
-    points[2].x = p_but.CenterPoint().x + WS(4) + 2;
-    points[2].y = p_but.CenterPoint().y + WS(4);
+    points[2].x = p_but.CenterPoint().x + extra;
+    points[2].y = p_but.CenterPoint().y + half;
   }
   else
   {
-    points[0].x = p_but.CenterPoint().x - WS(4);
+    points[0].x = p_but.CenterPoint().x - half;
     points[0].y = p_but.CenterPoint().y - 1;
     points[1].x = p_but.CenterPoint().x + 1;
-    points[1].y = p_but.CenterPoint().y + WS(4);
-    points[2].x = p_but.CenterPoint().x + WS(4) + 2;
+    points[1].y = p_but.CenterPoint().y + half;
+    points[2].x = p_but.CenterPoint().x + extra;
     points[2].y = p_but.CenterPoint().y - 1;
   }
 

@@ -17,6 +17,7 @@
 // For license: See the file "LICENSE.txt" in the root folder
 //
 #include "stdafx.h"
+#include "StyleMacros.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -205,9 +206,16 @@ StyleCheckbox::Draw(CWnd* p_wnd
 
     if ((p_state & BST_CHECKED) != 0)
     {
-      p_dc->MoveTo(mark.CenterPoint().x - WS(6), mark.CenterPoint().y - WS(1));
-      p_dc->LineTo(mark.CenterPoint().x - WS(2), mark.CenterPoint().y + WS(3));
-      p_dc->LineTo(mark.CenterPoint().x + WS(5), mark.CenterPoint().y - WS(4));
+      // Draw the check mark
+      int xs = WS(p_wnd->GetSafeHwnd(),6);
+      int ys = WS(p_wnd->GetSafeHwnd(),1);
+      int xm = WS(p_wnd->GetSafeHwnd(),2);
+      int ym = WS(p_wnd->GetSafeHwnd(),3);
+      int xe = WS(p_wnd->GetSafeHwnd(),5);
+      int ye = WS(p_wnd->GetSafeHwnd(),4);
+      p_dc->MoveTo(mark.CenterPoint().x - xs, mark.CenterPoint().y - ys);
+      p_dc->LineTo(mark.CenterPoint().x - xm, mark.CenterPoint().y + ym);
+      p_dc->LineTo(mark.CenterPoint().x + xe, mark.CenterPoint().y - ye);
     }
     else if ((p_state & BST_INDETERMINATE) != 0)
     {

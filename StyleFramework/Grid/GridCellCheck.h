@@ -42,7 +42,7 @@ public:
   virtual BOOL GetTextRect( LPRECT pRect);
 
 protected:
-  virtual BOOL Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
+  virtual BOOL Draw(HWND p_hwnd,CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
   CRect GetCheckPlacement();
   // Data
   BOOL  m_bChecked;

@@ -89,7 +89,6 @@ protected:
   void    ReDrawButton(LRESULT type);
   void    DrawButton(CDC* pDC,CRect rect,LRESULT type);
   void    PositionButtons();
-  void    Button(CDC* pDC, CRect rect, LRESULT type, BUTTONSTATE state = BS_NORMAL, bool max = true);
   void    SendMessageToAllChildWindows(UINT MessageId,WPARAM wParam,LPARAM lParam);
   void    PerformMenu();
   void    InitStatusBar();

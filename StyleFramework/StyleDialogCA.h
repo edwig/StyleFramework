@@ -49,9 +49,6 @@ public:
   void    ReDrawFrame();
   void    SetWindowText(LPCTSTR lpstString);
 
-  // Paint window button from hooked framework
-  static void Button(CDC* pDC, CRect rect, LRESULT type, BUTTONSTATE state = BS_NORMAL, bool max = true);
-
 protected:
   virtual BOOL    PreCreateWindow(CREATESTRUCT& cs) override;
 

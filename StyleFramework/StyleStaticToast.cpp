@@ -66,7 +66,7 @@ HBRUSH StyleStaticToast::CtlColor(CDC* pDC, UINT nCtlColor)
 void 
 StyleStaticToast::SetLeftOffset(int p_offset)
 {
-  m_leftOffset = WS(p_offset);
+  m_leftOffset = WS(GetSafeHwnd(),p_offset);
 }
 
 void 
@@ -106,7 +106,7 @@ StyleStaticToast::GetPosition(int p_height)
   int space = p_height / (lines + 1);
 
   // Middle minus half a textline
-  return space - (WS(20) / 2);
+  return space - (WS(GetSafeHwnd(),20) / 2);
 }
 
 void

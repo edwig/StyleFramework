@@ -48,7 +48,7 @@ StyleStatic::SetLeftOffset(int p_offset)
 {
   if(p_offset > 0)
   {
-    m_leftOffset = WS(p_offset);
+    m_leftOffset = WS(GetSafeHwnd(),p_offset);
   }
 }
 
