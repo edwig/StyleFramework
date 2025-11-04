@@ -38,6 +38,8 @@ public:
   const bool        GetIsPrimary() const;
   const bool        GetIsMarked()  const;
   const StyleFonts& GetFonts()     const;
+  const int         GetHeight()    const;
+  const int         GetWidth()     const;
   void              GetDPI(int& p_dpi_x,int& p_dpi_y) const;
 
   void SetAsMarked(bool p_mark = true);

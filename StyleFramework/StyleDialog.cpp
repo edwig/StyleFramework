@@ -89,6 +89,7 @@ BEGIN_MESSAGE_MAP(StyleDialog,CDialogEx)
   ON_MESSAGE(WM_CTLCOLORSTATIC,       OnCtlColorStatic)
   ON_MESSAGE(WM_CTLCOLORLISTBOX,      OnCtlColorListBox)
   ON_MESSAGE(WM_DPICHANGED,           OnDpiChanged)
+  ON_MESSAGE(WM_DISPLAYCHANGE,        OnDisplayChange)
 END_MESSAGE_MAP()
 
 BOOL
@@ -126,11 +127,6 @@ StyleDialog::OnCreate(LPCREATESTRUCT p_create)
   p_create->dwExStyle |= WS_EX_CONTROLPARENT;
 
   int res = CDialogEx::OnCreate(p_create);
-
-//   CRect rect;
-//   GetWindowRect(&rect);
-//   SFXResizeByFactor(m_hWnd,rect);
-//   MoveWindow(&rect);
 
   // Getting the DPI
   GetDpi(GetSafeHwnd(),m_dpi_x,m_dpi_y);
@@ -1115,6 +1111,16 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
   m_dpi_x = HIWORD(wParam);
   m_dpi_y = LOWORD(wParam);
 
+  // Check if anything has changed
+  if(m_dpi_x == g_dpi_x && m_dpi_y == g_dpi_y)
+  {
+    // No change
+    return 0;
+  }
+
+  // Current monitor configuration
+  g_styling.RefreshMonitors();
+
   // Set the new window size/position as suggested by the system
   CRect wrect;
   GetWindowRect(wrect);
@@ -1223,6 +1229,18 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
 
     SetCanResize(true);
   }
+  return 0;
+}
+
+// Monitor gewisseld!
+LRESULT 
+StyleDialog::OnDisplayChange(WPARAM wParam,LPARAM lParam)
+{
+  // Current monitor configuration
+  g_styling.RefreshMonitors();
+
+  // Move to original monitor if needed
+
   return 0;
 }
 

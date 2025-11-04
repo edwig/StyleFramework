@@ -103,6 +103,7 @@ protected:
   afx_msg LPARAM  OnCtlColorStatic (WPARAM wParam,LPARAM lParam);
   afx_msg LPARAM  OnCtlColorListBox(WPARAM wParam,LPARAM lParam);
   afx_msg LRESULT OnDpiChanged(WPARAM wParam,LPARAM lParam);
+  afx_msg LRESULT OnDisplayChange(WPARAM wParam,LPARAM lParam);
   afx_msg void    OnNcMouseMove(UINT nFlags, CPoint point);
   afx_msg void    OnNcLButtonDown(UINT nFlags, CPoint point);
   afx_msg void    OnNcRButtonUp(UINT nFlags, CPoint point);

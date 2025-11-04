@@ -100,7 +100,8 @@ BOOL TestPropertiesDlg::OnInitDialog()
 	// MUST be called after all init
 	SetCanResize();
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	m_editType.SetFocus();
+	return FALSE;
 }
 
 void 

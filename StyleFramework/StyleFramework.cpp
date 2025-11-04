@@ -33,6 +33,13 @@ StylingFramework::StylingFramework()
   m_monitors.DiscoverAllMonitors();
 }
 
+// Getting all monitors and fonts
+void
+StylingFramework::RefreshMonitors()
+{
+  m_monitors.ReDiscoverMonitors();
+}
+
 const StyleMonitor* 
 StylingFramework::GetMonitor(HWND p_hwnd) const
 {

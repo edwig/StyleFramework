@@ -80,6 +80,8 @@ public:
   const StyleMonitor* GetMonitor(int p_dpi_x,int p_dpi_y) const;
   const StyleMonitor* GetPrimaryMonitor() const;
 
+  void  RefreshMonitors();
+
 private:
   StylingFramework* m_instance { nullptr };
   StyleMonitors     m_monitors;

@@ -78,6 +78,18 @@ StyleMonitor::GetFonts() const
   return m_fonts;
 }
 
+const int
+StyleMonitor::GetHeight() const
+{
+  return m_rect.Height();
+}
+
+const int
+StyleMonitor::GetWidth() const
+{
+  return m_rect.Width();
+}
+
 void
 StyleMonitor::GetDPI(int& p_dpi_x,int& p_dpi_y) const
 {
@@ -174,9 +186,25 @@ StyleMonitors::TryAddMonitor(StyleMonitor* p_monitor)
   {
     if(monitor->GetMonitor() == p_monitor->GetMonitor())
     {
-      // Already present
-      monitor->SetAsMarked();
-      return false;
+      // Same size monitor?
+      if(p_monitor->GetWidth()  == monitor->GetWidth() &&
+         p_monitor->GetHeight() == monitor->GetHeight())
+      {
+        int newx = 0;
+        int newy = 0;
+        int thisx = 0;
+        int thisy = 0;
+          monitor->GetDPI(thisx,thisy);
+        p_monitor->GetDPI(newx, newy);
+
+        // Same DPI monitor?
+        if(newx == thisx ||  newy == thisy)
+        {
+          // Different DPI, update the existing monitor DPI info
+          monitor->SetAsMarked();
+          return false;
+        }
+      }
     }
   }
   // Init the fonts
