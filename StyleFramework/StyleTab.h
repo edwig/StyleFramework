@@ -45,11 +45,13 @@ protected:
   void RegisterTooltip(StyleComboBox& p_wnd,LPCTSTR p_text);
 
 private:
-  bool      m_error     { false  };
+  bool      m_error     { false };
   bool      m_canResize { false };
   CRect     m_originalSize;
   ToolTips  m_tooltips;
   CBrush    m_defaultBrush;
+  int       m_dpi_x     { 0     };
+  int       m_dpi_y     { 0     };
   
   DECLARE_MESSAGE_MAP();
 
@@ -60,6 +62,7 @@ private:
   afx_msg LPARAM  OnCtlColorListBox(WPARAM wParam,LPARAM lParam);
   afx_msg HBRUSH  OnCtlColor(CDC* pDC,CWnd* pWnd,UINT nCtlColor);
   afx_msg LRESULT OnStyleChanged(WPARAM,LPARAM);
+  afx_msg LRESULT OnDpiChanged(WPARAM wParam,LPARAM lParam);
   afx_msg void    OnCancel();
   afx_msg void    OnOK();
 };

@@ -33,10 +33,11 @@ IMPLEMENT_DYNAMIC(StyleTab,CDialog);
 BEGIN_MESSAGE_MAP(StyleTab,CDialog)
   ON_WM_ERASEBKGND()
   ON_WM_CTLCOLOR()
-  ON_REGISTERED_MESSAGE(g_msg_changed,OnStyleChanged)
-  ON_NOTIFY_EX(TTN_NEEDTEXT,0,  OnToolTipNotify)
-  ON_MESSAGE(WM_CTLCOLORSTATIC, OnCtlColorStatic)
-  ON_MESSAGE(WM_CTLCOLORLISTBOX,OnCtlColorListBox)
+  ON_REGISTERED_MESSAGE(g_msg_changed,  OnStyleChanged)
+  ON_NOTIFY_EX(TTN_NEEDTEXT,0,          OnToolTipNotify)
+  ON_MESSAGE(WM_CTLCOLORSTATIC,         OnCtlColorStatic)
+  ON_MESSAGE(WM_CTLCOLORLISTBOX,        OnCtlColorListBox)
+  ON_MESSAGE(WM_DPICHANGED_AFTERPARENT, OnDpiChanged)
 END_MESSAGE_MAP()
 
 StyleTab::StyleTab(UINT  p_IDTemplate,CWnd* p_parentWnd)
@@ -58,6 +59,8 @@ StyleTab::OnInitDialog()
 
   ASSERT(GetStyle()   & WS_CHILD);
   ASSERT(GetExStyle() & WS_EX_CONTROLPARENT);
+
+  GetDpi(GetSafeHwnd(),m_dpi_x,m_dpi_y);
   return TRUE;
 }
 
@@ -350,6 +353,132 @@ StyleTab::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
                           break;
   }
   return CDialog::OnCtlColor(pDC,pWnd,nCtlColor);
+}
+
+CWnd* g_resize_tab = nullptr;
+int   g_tab_dpi_x  = 0;
+int   g_tab_dpi_y  = 0;
+
+LRESULT
+StyleTab::OnDpiChanged(WPARAM wParam,LPARAM lParam)
+{
+  HMONITOR monitor = reinterpret_cast<HMONITOR>(lParam);
+  if(monitor == nullptr)
+  {
+    return 0;
+  }
+  extern StylingFramework g_styling;
+  const StyleMonitor* styleMonitor = g_styling.GetMonitor(monitor);
+  
+  g_resize_tab = this;
+
+  // Remove the invalid layout manager
+  auto manager = GetDynamicLayout();
+  bool layoutEnabled(manager != nullptr);
+  if(manager)
+  {
+    m_pDynamicLayout = nullptr;
+    delete manager;
+  }
+
+  // The new DPI
+  g_tab_dpi_x = m_dpi_x;
+  g_tab_dpi_y = m_dpi_y;
+  styleMonitor->GetDPI(m_dpi_x,m_dpi_y);
+
+  // Set the new window size/position as suggested by the system
+  CRect wrect;
+  GetWindowRect(wrect);
+  CRect rcParent;
+  GetParent()->GetWindowRect(rcParent);
+
+  // Creating the target rectangle
+  CRect rcTarget;
+  rcTarget.left   = wrect.left   - rcParent.left;
+  rcTarget.top    = wrect.top    - rcParent.top;
+  rcTarget.right  = wrect.right  - rcParent.left;
+  rcTarget.bottom = wrect.bottom - rcParent.top;
+
+  rcTarget.left   = ::MulDiv(rcTarget.left,  m_dpi_x,g_tab_dpi_x);
+  rcTarget.top    = ::MulDiv(rcTarget.top,   m_dpi_y,g_tab_dpi_y);
+  rcTarget.right  = ::MulDiv(rcTarget.right, m_dpi_x,g_tab_dpi_x);
+  rcTarget.bottom = ::MulDiv(rcTarget.bottom,m_dpi_y,g_tab_dpi_y);
+
+  MoveWindow(rcTarget);
+
+  // Scale child windows using newDpi and oldDpi (the previous DPI)
+  ::EnumChildWindows(m_hWnd,
+                     [](HWND hWnd,LPARAM lParam) -> BOOL
+                     {
+                        const int dpi_x = HIWORD(lParam);
+                        const int dpi_y = LOWORD(lParam);
+
+                        // Getting child and parent
+                        // Do not handle CXSF and limiter windows.
+                        CWnd* child = CWnd::FromHandle(hWnd);
+                        CWnd* parent = child->GetParent();
+                        if(parent != g_resize_tab)
+                        {
+                          return TRUE;
+                        }
+
+                        // Getting the child window rectangle
+                        CRect rcChild;
+                        child->GetWindowRect(rcChild);
+
+                        // Getting the parent window to calc displacement
+                        CRect rcParent;
+                        parent->GetWindowRect(rcParent);
+
+                        // Creating the target rectangle
+                        CRect rcTarget;
+                        rcTarget.left   = rcChild.left   - rcParent.left;
+                        rcTarget.top    = rcChild.top    - rcParent.top;
+                        rcTarget.right  = rcChild.right  - rcParent.left;
+                        rcTarget.bottom = rcChild.bottom - rcParent.top;
+
+                        rcTarget.left   = ::MulDiv(rcTarget.left,  dpi_x,g_tab_dpi_x);
+                        rcTarget.top    = ::MulDiv(rcTarget.top,   dpi_y,g_tab_dpi_y);
+                        rcTarget.right  = ::MulDiv(rcTarget.right, dpi_x,g_tab_dpi_x);
+                        rcTarget.bottom = ::MulDiv(rcTarget.bottom,dpi_y,g_tab_dpi_y);
+
+                        child->MoveWindow(rcTarget);
+                        return TRUE;
+                     },
+                     MAKELPARAM(m_dpi_y,m_dpi_x));
+
+  // Notify all child windows after parent has changed DPI
+  // So that we can handle different fonts etc.
+  ::EnumChildWindows(m_hWnd,
+                    [](HWND hWnd,LPARAM lParam) -> BOOL
+                    {
+                      CWnd* child = CWnd::FromHandle(hWnd);
+                      if(child)
+                      {
+                        CFont* font = GetSFXFont((HMONITOR)lParam,StyleFontType::DialogFont);
+                        if(font)
+                        {
+                          child->SetFont(font,FALSE);
+                        }
+                      }
+                      ::SendMessage(hWnd,WM_DPICHANGED_AFTERPARENT,0,lParam);
+                      return TRUE;
+                    },
+                    (LPARAM)monitor);
+
+  // Now redraw everything
+  Invalidate(TRUE);
+
+  // Create a new dynamic layout manager for the new DPI
+  if(layoutEnabled)
+  {
+    // Scale the original size
+    m_originalSize.right  = m_originalSize.left + ::MulDiv(m_originalSize.Width(), m_dpi_x,g_tab_dpi_x);
+    m_originalSize.bottom = m_originalSize.top  + ::MulDiv(m_originalSize.Height(),m_dpi_y,g_tab_dpi_y);
+
+    SetCanResize(true);
+  }
+  return 0;
 }
 
 void

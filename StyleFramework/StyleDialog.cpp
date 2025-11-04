@@ -1173,7 +1173,7 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
                         rcTarget.left   = ::MulDiv(rcTarget.left,  dpi_x,g_dpi_x);
                         rcTarget.top    = ::MulDiv(rcTarget.top,   dpi_y,g_dpi_y);
                         rcTarget.right  = ::MulDiv(rcTarget.right, dpi_x,g_dpi_x);
-                        rcTarget.bottom = ::MulDiv(rcTarget.bottom,dpi_x,g_dpi_x);
+                        rcTarget.bottom = ::MulDiv(rcTarget.bottom,dpi_y,g_dpi_y);
 
                         child->MoveWindow(rcTarget);
                         return TRUE;
@@ -1225,29 +1225,6 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
   }
   return 0;
 }
-
-void
-StyleDialog::PumpMessage()
-{
-  // We just handle the paint messages, so we get visible
-  // for larger and longer processes.
-  // We could face an eternal loop, so we put a time constriction on it!
-  MSG msg;
-  UINT ticks = GetTickCount();
-  while(GetTickCount() - ticks < 500 && PeekMessage(&msg,NULL,WM_CREATE,WM_APP,PM_REMOVE))
-  {
-    try
-    {
-      ::TranslateMessage(&msg);
-      ::DispatchMessage(&msg);
-    }
-    catch(...)
-    {
-      // How now, brown cow?
-    }
-  }
-}
-
 
 void 
 StyleDialog::OnSize(UINT nType, int cx, int cy)

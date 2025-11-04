@@ -64,7 +64,7 @@ StyleTabCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
   {
     return -1;
   }
-  ModifyStyle(0, TCS_OWNERDRAWFIXED);
+  ModifyStyle(0, TCS_OWNERDRAWFIXED | WS_TABSTOP);
   m_font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFontBold);
   return 0;
 }
@@ -111,6 +111,21 @@ StyleTabCtrl::OnDpiChanged(WPARAM wParam,LPARAM lParam)
     int height = (tabHeaderHeight * GetSFXSizeFactor(monitor)) / 100;
     CSize size(0,height);
     SetItemSize(size);
+
+    // Tell it to all tab windows as well
+    int count = GetItemCount();
+    for(int ind = 0;ind < count; ++ind)
+    {
+      CWnd* wnd = GetTabWindow(ind);
+      if(wnd)
+      {
+        wnd->SendMessage(WM_DPICHANGED_AFTERPARENT,wParam,lParam);
+      }
+    }
+    // Adjust all windows in the tab control
+    CRect rect;
+    GetWindowRect(&rect);
+    OnSize(0,rect.Width(),rect.Height());
   }
   return 0;
 }
@@ -225,7 +240,7 @@ StyleTabCtrl::ResizeTab(int p_tab)
     CRect rect;
     GetClientRect(&rect);
 
-    rect.top    += 4 + WS(GetSafeHwnd(),tabHeaderHeight);
+    rect.top    += WS(GetSafeHwnd(),4) + WS(GetSafeHwnd(),tabHeaderHeight);
     rect.left   += 1;
     rect.right  -= 1;
     rect.bottom -= 1;

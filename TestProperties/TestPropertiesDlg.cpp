@@ -54,7 +54,6 @@ CAboutDlg::OnInitDialog()
 // TestPropertiesDlg dialog
 
 
-
 TestPropertiesDlg::TestPropertiesDlg(CWnd* pParent /*=nullptr*/)
 	                 :StyleDialog(IDD_TESTPROPERTIES, pParent)
 {

@@ -93,7 +93,6 @@ protected:
   void    PerformMenu();
   void    InitStatusBar();
   void    EraseGripper();
-  void    PumpMessage();
 
   DECLARE_MESSAGE_MAP();
 
