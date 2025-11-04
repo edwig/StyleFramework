@@ -105,10 +105,11 @@ private:
 
   DECLARE_MESSAGE_MAP();
 
-  afx_msg void OnPaint();
-  afx_msg void OnBnClickedPrior();
-  afx_msg void OnBnClickedNext();
-  afx_msg void OnSize(UINT p_type,int cx,int cy);
-  afx_msg void OnCancel();
+  afx_msg void    OnPaint();
+  afx_msg void    OnBnClickedPrior();
+  afx_msg void    OnBnClickedNext();
+  afx_msg void    OnSize(UINT p_type,int cx,int cy);
+  afx_msg LRESULT OnDpiChanged(WPARAM wParam,LPARAM lParam);
+  afx_msg void    OnCancel();
 };
 
