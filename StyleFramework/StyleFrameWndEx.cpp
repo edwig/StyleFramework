@@ -20,6 +20,7 @@
 #include "stdafx.h"
 #include "RegistryManager.h"
 #include "resource.h"
+#include "StyleDIB.h"
 #include <afxglobalutils.h>
 
 #ifdef _DEBUG
@@ -723,6 +724,12 @@ StyleFrameWndEx::ReDrawIcon(int index)
 void 
 StyleFrameWndEx::DrawIcon(CDC* pDC, int index)
 {
+  // Menu index in the right domain
+  if(index < 0 || index >= MENUCOUNT)
+  {
+    return;
+  }
+
   // Fill icon rectangle
   COLORREF frame = ThemeColor::GetColor(Colors::ColorWindowFrame);
   pDC->FillSolidRect(m_iconRects[index], index == m_selectedMenu ? ColorWindowHeader == frame ? Assistant5 : frame : ColorWindowHeader);
@@ -730,23 +737,15 @@ StyleFrameWndEx::DrawIcon(CDC* pDC, int index)
   // Get position of the icon
   int iconsize = HALF_ICONSIZE(m_hWnd);
   CRect rect = m_iconRects[index];
-  rect.SetRect(rect.CenterPoint().x - iconsize
-              ,rect.CenterPoint().y - iconsize
-              ,rect.CenterPoint().x + iconsize
-              ,rect.CenterPoint().y + iconsize);
-
-  // Menu index in the right domain
-  if (index < 0 || index >= MENUCOUNT)
-  {
-    return;
-  }
+  CPoint center = rect.CenterPoint();
+  rect.SetRect(center.x - iconsize
+              ,center.y - iconsize
+              ,center.x + iconsize
+              ,center.y + iconsize);
 
   // Load bitmap in compatible memory DC
-  CDC memdc;
-  CBitmap bitmap;
+  StyleDIB bitmap;
   bitmap.LoadBitmap(m_menuicon[index]);
-  memdc.CreateCompatibleDC(pDC);
-  CBitmap* prev = memdc.SelectObject(&bitmap);
 
   // Paint the icon
   int stretch = (index == m_selectedMenu) ? BLACKONWHITE : WHITEONBLACK;
@@ -754,10 +753,9 @@ StyleFrameWndEx::DrawIcon(CDC* pDC, int index)
 
   int mode = pDC->SetStretchBltMode(stretch);
   SetBrushOrgEx(pDC->m_hDC, 0, 0, NULL);
-  pDC->BitBlt(rect.left,rect.top,rect.right,rect.bottom,&memdc,0,0, paint);
+  bitmap.Draw(pDC,rect.left,rect.top,rect.Width(),rect.Height(),0,0,bitmap.GetWidth(),bitmap.GetHeight(),paint);
+  // Restore previous mode
   pDC->SetStretchBltMode(mode);
-  // Restore old
-  memdc.SelectObject(prev);
 }
 
 LRESULT StyleFrameWndEx::OnNcHitTest(CPoint point)
