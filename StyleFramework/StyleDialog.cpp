@@ -1212,7 +1212,7 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
 
 // A change of monitors could have happened
 // or a change in the display rate (width/height) could have been performed
-LRESULT 
+LRESULT
 StyleDialog::OnDisplayChange(WPARAM wParam,LPARAM lParam)
 {
   // Current monitor configuration
