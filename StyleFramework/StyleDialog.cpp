@@ -1188,7 +1188,7 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
 
   // Take the HMONITOR for the new monitor
   extern StylingFramework g_styling;
-  const  StyleMonitor* mon = g_styling.GetMonitor(m_dpi_x,m_dpi_y);
+  const  StyleMonitor* mon = g_styling.GetMonitor(GetSafeHwnd()); // m_dpi_x,m_dpi_y);
   HMONITOR newMonitor = mon ? mon->GetMonitor() : nullptr;
 
   // Notify all child windows after parent has changed DPI
@@ -1239,8 +1239,30 @@ StyleDialog::OnDisplayChange(WPARAM wParam,LPARAM lParam)
   // Current monitor configuration
   g_styling.RefreshMonitors();
 
-  // Move to original monitor if needed
+  // Take the HMONITOR for the new monitor
+  const  StyleMonitor* mon = g_styling.GetMonitor(GetSafeHwnd());
+  HMONITOR newMonitor = mon ? mon->GetMonitor() : nullptr;
 
+  // Notify all child windows after parent has changed DPI
+  // So that we can handle different fonts etc.
+  ::EnumChildWindows(GetSafeHwnd(),
+                     [](HWND hWnd,LPARAM lParam) -> BOOL
+  {
+    CWnd* child = CWnd::FromHandle(hWnd);
+    if(child)
+    {
+      CFont* font = GetSFXFont((HMONITOR)lParam,StyleFontType::DialogFont);
+      if(font)
+      {
+        child->SetFont(font,FALSE);
+      }
+    }
+    ::SendMessage(hWnd,WM_DPICHANGED_AFTERPARENT,0,lParam);
+    return TRUE;
+  },
+                     (LPARAM)newMonitor);
+
+  // Move to original monitor if needed
   return 0;
 }
 

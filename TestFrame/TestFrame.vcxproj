@@ -546,6 +546,9 @@
   <ItemGroup>
     <None Include="res\TestFrame.rc2" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="Manifest.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
