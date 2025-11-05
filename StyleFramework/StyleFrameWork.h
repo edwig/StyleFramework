@@ -93,6 +93,9 @@ int    GetSFXSizeFactor(HMONITOR p_monitor);
 CFont* GetSFXFont(HWND p_hwnd,StyleFontType p_type);
 CFont* GetSFXFont(HMONITOR hm,StyleFontType p_type);
 
+// The one-and-only global
+extern StylingFramework g_styling;
+
 // Selecting the right library to link with automatically
 // So we do not need to worry about which library to use in the linker settings
 

@@ -29,7 +29,8 @@ public:
               ,bool     p_primary);
  ~StyleMonitor() = default;
 
- void InitMonitor();
+  // Initialize the monitor (fonts!)
+  void InitMonitor();
 
   // GETTERS
   const HMONITOR    GetMonitor()   const;
@@ -45,15 +46,15 @@ public:
   void SetAsMarked(bool p_mark = true);
 
 private:
-  HMONITOR   m_monitor;
-  CString    m_name;
-  CRect      m_rect;
-  bool       m_primary;
-  bool       m_mark { false };
+  HMONITOR   m_monitor;             // Monitor handle for the OS
+  CString    m_name;                // Internal name of the monitor
+  CRect      m_rect;                // Usable portion of the virtual desktop
+  bool       m_primary;             // Is the primary monitor in the system?
+  bool       m_mark { false };      // Mark status for rescanning all monitors
 
-  StyleFonts m_fonts;
-  int        m_dpi_x { USER_DEFAULT_SCREEN_DPI };
-  int        m_dpi_y { USER_DEFAULT_SCREEN_DPI };
+  StyleFonts m_fonts;               // All style fonts usable on the monitor
+  int        m_dpi_x { USER_DEFAULT_SCREEN_DPI };  // Current horizontal DPI setting
+  int        m_dpi_y { USER_DEFAULT_SCREEN_DPI };  // Current vertical   DPI setting
 };
 
 using MonitorMap = std::vector<StyleMonitor*>;
@@ -79,6 +80,7 @@ public:
   const StyleMonitor* GetPrimaryMonitor() const;
   const StyleMonitor* GetMonitor(HMONITOR p_monitor) const;
   const StyleMonitor* GetMonitor(int p_dpi_x,int p_dpi_y) const;
+  const StyleMonitor* GetMonitor(CString m_name) const;
 
 private:
   void UnMarkAllMonitors();

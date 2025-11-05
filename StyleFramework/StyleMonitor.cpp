@@ -115,9 +115,6 @@ StyleMonitor::SetAsMarked(bool p_mark /* = true */)
 //
 //////////////////////////////////////////////////////////////////////////
 
-// All monitors in the system
-StyleMonitors g_monitors;
-
 StyleMonitors::~StyleMonitors()
 {
   for(auto& monitor : m_monitors)
@@ -244,6 +241,19 @@ StyleMonitors::GetMonitor(int p_dpi_x,int p_dpi_y) const
        dpi_y == p_dpi_y)
     {
       // Should be a compatible monitor
+      return monitor;
+    }
+  }
+  return nullptr;
+}
+
+const StyleMonitor* 
+StyleMonitors::GetMonitor(CString m_name) const
+{
+  for(auto& monitor : m_monitors)
+  {
+    if(monitor->GetName().CompareNoCase(m_name) == 0)
+    {
       return monitor;
     }
   }

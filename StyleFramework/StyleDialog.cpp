@@ -37,8 +37,6 @@ static UINT auIDStatusBar[] =
   ID_SEPARATOR
 };
 
-extern StylingFramework g_styling;
-
 IMPLEMENT_DYNAMIC(StyleDialog,CDialogEx);
 
 StyleDialog::StyleDialog(UINT  p_IDTemplate
@@ -579,13 +577,6 @@ StyleDialog::LoadStyleTheme()
   }
 }
 
-BOOL CALLBACK EnumChildProc(HWND hwnd,LPARAM lParam)
-{
-  PSMessage psMessage = (PSMessage) lParam;
-  SendMessage(hwnd,psMessage->MessageId,psMessage->wParam,psMessage->lParam);
-  return TRUE;
-}
-
 void 
 StyleDialog::SendMessageToAllChildWindows(UINT MessageId,WPARAM wParam,LPARAM lParam)
 {
@@ -596,7 +587,14 @@ StyleDialog::SendMessageToAllChildWindows(UINT MessageId,WPARAM wParam,LPARAM lP
 
   if(GetSafeHwnd())
   {
-    EnumChildWindows(GetSafeHwnd(),EnumChildProc,(LPARAM)&sMessage);
+    ::EnumChildWindows(m_hWnd,
+                       [](HWND p_wnd,LPARAM lParam) -> BOOL
+                       {
+                          PSMessage psMessage = (PSMessage)lParam;
+                          ::SendMessage(p_wnd,psMessage->MessageId,psMessage->wParam,psMessage->lParam);
+                         return TRUE;
+                       },
+                       (LPARAM)&sMessage);
   }
 }
 
@@ -1186,29 +1184,9 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
                       },
                       (LPARAM)wParam);
 
-  // Take the HMONITOR for the new monitor
-  extern StylingFramework g_styling;
-  const  StyleMonitor* mon = g_styling.GetMonitor(m_dpi_x,m_dpi_y);
-  HMONITOR newMonitor = mon ? mon->GetMonitor() : nullptr;
-
   // Notify all child windows after parent has changed DPI
   // So that we can handle different fonts etc.
-  ::EnumChildWindows(m_hWnd,
-                     [](HWND hWnd,LPARAM lParam) -> BOOL
-                     {
-                       CWnd* child = CWnd::FromHandle(hWnd);
-                       if(child)
-                       {
-                         CFont* font = GetSFXFont((HMONITOR)lParam,StyleFontType::DialogFont);
-                         if(font)
-                         {
-                           child->SetFont(font,FALSE);
-                         }
-                       }
-                       ::SendMessage(hWnd,WM_DPICHANGED_AFTERPARENT,0,lParam);
-                       return TRUE;
-                     },
-                     (LPARAM)newMonitor);
+  NotifyMonitorToAllChilds();
 
   // Move and resize the status bar (if any)
   if(::IsWindow(m_statusBar.GetSafeHwnd()))
@@ -1232,16 +1210,41 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
   return 0;
 }
 
-// Monitor gewisseld!
+// A change of monitors could have happened
+// or a change in the display rate (width/height) could have been performed
 LRESULT 
 StyleDialog::OnDisplayChange(WPARAM wParam,LPARAM lParam)
 {
   // Current monitor configuration
   g_styling.RefreshMonitors();
 
-  // Move to original monitor if needed
+  NotifyMonitorToAllChilds();
 
+  // Move to original monitor if needed
   return 0;
+}
+
+// After a DPI change or a change in monitors or monitor settings
+void
+StyleDialog::NotifyMonitorToAllChilds()
+{
+  // Take the HMONITOR for the new monitor
+  const  StyleMonitor* mon = g_styling.GetMonitor(GetSafeHwnd());
+  if(!mon)
+  {
+    return;
+  }
+  HMONITOR newMonitor = mon->GetMonitor();
+
+  // Notify all child windows after parent has changed DPI
+  // So that we can handle different fonts etc.
+  CFont* font = GetSFXFont(newMonitor,StyleFontType::DialogFont);
+  if(font)
+  {
+    SendMessageToAllChildWindows(WM_SETFONT,(WPARAM)(HFONT)font,(LPARAM)TRUE);
+  }
+  // Let Style controls 'do-their-thing'
+  SendMessageToAllChildWindows(WM_DPICHANGED_AFTERPARENT,0,(LPARAM)newMonitor);
 }
 
 void 

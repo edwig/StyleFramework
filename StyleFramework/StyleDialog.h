@@ -90,6 +90,7 @@ protected:
   void    DrawButton(CDC* pDC,CRect rect,LRESULT type);
   void    PositionButtons();
   void    SendMessageToAllChildWindows(UINT MessageId,WPARAM wParam,LPARAM lParam);
+  void    NotifyMonitorToAllChilds();
   void    PerformMenu();
   void    InitStatusBar();
   void    EraseGripper();
