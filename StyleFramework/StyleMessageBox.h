@@ -19,6 +19,7 @@
 #pragma once
 #include "StyleDialogCA.h"
 #include "StyleButton.h"
+#include "StyleEdit.h"
 #include "StyleCheckbox.h"
 #include "resource.h"
 
@@ -115,7 +116,7 @@ private:
 
   // DATA
   CFont*        m_font;                       // Font we use for the message
-  CEdit         m_edit;                       // Edit box with the message
+  StyleEdit     m_edit;                       // Edit box with the message
   CString       m_title;                      // Title of the dialog
   CString       m_message;                    // The message we want to show
   int           m_styles;                     // Signal styles

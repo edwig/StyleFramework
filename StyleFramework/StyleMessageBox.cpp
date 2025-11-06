@@ -25,12 +25,11 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-const int    OFFSET               =   8;    // Spaces between controls and texts
-const int    EXTRA_LINESPACING    =  14;    // Extra space for "Do not show again" check box 
-const int    ID_OFFSET            =  10;    // Keep away from IDOK / IDCANCEL
-const double ButtonWidthFactor    =   8;    // With of a button in "W"-letters
-const int    FOREGROUND_TIMER     = 100;    // Timer (higher then number of labels)
-const int    FOREGROUND_INTERVAL  = 1000;   // Timer 1000ms back in the foreground
+#define OFFSET                   8     // Spaces between controls and texts
+#define ID_OFFSET               10     // Keep away from IDOK / IDCANCEL
+#define ButtonWidthFactor        8     // With of a button in number of "W"-letters
+#define FOREGROUND_TIMER       100     // Timer (higher then number of labels)
+#define FOREGROUND_INTERVAL   1000     // Timer 1000ms back in the foreground
 
 static void SuppressMessage(CString p_message);
 static bool IsSuppressableMessage(CString p_message);
@@ -378,7 +377,7 @@ void MessageDialog::DoDataExchange(CDataExchange* pDX)
 {
   StyleDialogCA::DoDataExchange(pDX);
 
-  DDX_Control(pDX,IDC_BOODSCHAP,m_edit);
+  DDX_Control(pDX,IDC_BOODSCHAP,m_edit,m_message);
 }
 
 // Init buttons
@@ -843,17 +842,18 @@ MessageDialog::OnInitDialog()
 
   ShowCloseButton(false);
 
+  int offset = WS(GetSafeHwnd(),OFFSET);
+
   // MB_ICONERROR message?
   m_font = GetSFXFont(GetSafeHwnd(),(m_image == IDI_SHIELD) ? StyleFontType::ErrorFont : StyleFontType::DialogFont);
   SetWindowText(m_title); 
 
   // Grab control and put font on it
-  CEdit* edit = (CEdit*)GetDlgItem(IDC_BOODSCHAP);
-  edit->SetFont(m_font);
+  m_edit.SetFont(m_font);
   
   // GetDC will **NOT** get you a dc with the right font
   // So we select the correct font here to do the calculations
-  CClientDC dc(edit);
+  CClientDC dc(&m_edit);
   dc.SelectObject(m_font);
 
   // Getting the text
@@ -872,50 +872,53 @@ MessageDialog::OnInitDialog()
   // so the edit control will become big enough to show margins itself
   int caption = WINDOWCAPTIONHEIGHT(m_hWnd);
   CRect margins;
-  edit->GetRect(margins);
+  m_edit.GetRect(margins);
   tekstRect.OffsetRect(0, caption);
   tekstRect.right  += margins.left * 2;
-  tekstRect.bottom += margins.top * 2;
+  tekstRect.bottom += margins.top  * 2;
 
   // If it gets to high, constraint it and use an extra scroll bar
   int maxHeight = (GetSystemMetrics(SM_CYSCREEN) * 80) / 100;
   if (tekstRect.bottom > maxHeight)
   {
-    edit->ModifyStyle(0, WS_VSCROLL);
+    m_edit.ModifyStyle(0, WS_VSCROLL);
     tekstRect.bottom = maxHeight;
     tekstRect.right += GetSystemMetrics(SM_CXHTHUMB);
   }
 
   // Add fixed offsets 
-  tekstRect.OffsetRect(OFFSET,OFFSET);
+  tekstRect.OffsetRect(offset,offset);
 
   // Information pictograph
   if (m_image)
   {
     // Extra space at the left side of 32 pixels for the icon
-    tekstRect.OffsetRect(32 + OFFSET,0);
+    tekstRect.OffsetRect(32 + offset,0);
     if (tekstRect.bottom - caption < 32)
     {
       // Still to do: vertically centering
-      tekstRect.bottom = caption + 32 + OFFSET;
+      tekstRect.bottom = caption + 32 + offset;
     }
   }
 
   // Place the edit control and the text
-  edit->MoveWindow(tekstRect);
-  edit->SetWindowText(text);
+  m_edit.SetWindowText(text);
+  m_edit.SetWindowPos(nullptr
+                     ,tekstRect.left
+                     ,tekstRect.top
+                     ,tekstRect.Width()
+                     ,tekstRect.Height()
+                     ,SWP_NOZORDER | SWP_NOACTIVATE);
 
   // See to it that a very long title will be visible
   NONCLIENTMETRICS ncm;
   ncm.cbSize = sizeof(ncm);
   if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(ncm), &ncm, 0))
   {
-    CFont fnt;
-    fnt.CreateFontIndirect(&ncm.lfCaptionFont);
-    HGDIOBJ obj = dc.SelectObject(fnt);
+    CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::CaptionFont);
+    HGDIOBJ obj = dc.SelectObject(font);
     CSize size = dc.GetTextExtent(CString(m_title));
     dc.SelectObject(obj);
-    DeleteObject(fnt);
     if (size.cx > (GetSystemMetrics(SM_CXSCREEN) * 90) / 100)
     {
       size.cx = (GetSystemMetrics(SM_CXSCREEN) * 90) / 100;
@@ -931,40 +934,38 @@ MessageDialog::OnInitDialog()
   // and for the height the 'real' font-height
   CSize tsize = dc.GetTextExtent("W");
 
-  int buttonTop    = tekstRect.bottom + OFFSET;
-  int buttonWidth  = (int) (ButtonWidthFactor * tsize.cx) + (3 * OFFSET);
-  int buttonHeight = tsize.cy + (2 * GetSystemMetrics(SM_CYFIXEDFRAME));
-  int totalWidth   = OFFSET;
+  int buttonTop    = tekstRect.bottom + offset;
+  int buttonWidth  = (int) (ButtonWidthFactor * tsize.cx) + (3 * offset);
+  int buttonHeight = tsize.cy + 2 * GetSystemMetrics(SM_CYFIXEDFRAME);
+  int totalWidth   = offset;
 
   // Consider the widths
   int layout = 0; 
   if (!layout)
   {
-    buttonWidth -= (3 * OFFSET);
+    buttonWidth -= (3 * offset);
   }
   // Calculate the width of all buttons together
   for (int i = 0; i < MAX_LABELS; ++i)
   {
     if (!m_label[i].IsEmpty())
     {
-      if (totalWidth > OFFSET) 
+      if (totalWidth > offset) 
       {
-        totalWidth += OFFSET;
+        totalWidth += offset;
       }
       m_width[i] = buttonWidth;
+      int breedte = m_label[i].GetLength() * tsize.cx + 2 * offset;
+      if (breedte > buttonWidth)
       {
-        int breedte = (((m_label[i].GetLength() * tsize.cx) * 2) / 3) + (3 * OFFSET);
-        if (breedte > buttonWidth)
-        {
-          m_width[i] = breedte;
-        }
+        m_width[i] = breedte;
       }
       totalWidth += m_width[i];
     }
   }
   // Calculate the beginning of the buttons
   // If the text is wider than the buttons, use the text width for the button
-  int buttonBegin = OFFSET;
+  int buttonBegin = offset;
   if (tekstRect.right > totalWidth)
   {
     buttonBegin += tekstRect.right - totalWidth;
@@ -1025,26 +1026,26 @@ MessageDialog::OnInitDialog()
                           );
       m_button[i]->SetFont(m_font);
       // For the next button
-      buttonBegin += buttonWidth + OFFSET;
+      buttonBegin += buttonWidth + offset;
     }
   }
   // Recalculate the window size
   int border = WINDOWSHADOWBORDER(m_hWnd);
-  CRect rect(0, 0, totalWidth + OFFSET + border, buttonTop + OFFSET + buttonHeight + border);
+  CRect rect(0, 0, totalWidth + offset + border, buttonTop + offset + buttonHeight + border);
   if (m_suppressable || (m_notAgainPtr != NULL))
   {
-    int hcb = (tsize.cy + 2*GetSystemMetrics(SM_CYFIXEDFRAME));
+    int hcb = (tsize.cy + 2 * GetSystemMetrics(SM_CYFIXEDFRAME));
     rect.bottom += hcb;
-    rect.bottom += OFFSET;
+    rect.bottom += offset;
 
     // Make the check box
-    int top = buttonTop + buttonHeight + 2 * OFFSET;
-    m_line.left   = OFFSET;
-    m_line.top    = top - OFFSET;
-    m_line.right  = buttonBegin - OFFSET;
+    int top = buttonTop + buttonHeight + 2 * offset;
+    m_line.left   = offset;
+    m_line.top    = top - offset;
+    m_line.right  = buttonBegin - offset;
     m_line.bottom = m_line.top;
 
-    CRect brect(OFFSET,top+hcb-24, OFFSET+ 16 + 160,top +hcb-6);
+    CRect brect(offset,top+hcb-24, offset + 16 + 160,top +hcb-6);
     m_suppress = new StyleCheckbox();
     // Beware: Text must be very small, so it will always fit into the message box and be readable
     m_suppress->Create( GetStyleText(TXT_NO_REPEAT),  // "Do not repeat"
@@ -1054,7 +1055,6 @@ MessageDialog::OnInitDialog()
                         ID_SUPPRESS);
   }
   AdjustWindowRect(rect, GetStyle(), false);
-
   MoveWindow(rect);
   CenterWindow();
 
@@ -1099,7 +1099,8 @@ MessageDialog::OnPaint()
     // We must draw the signal icon
     if(m_image)
     {
-      dc.DrawIcon(OFFSET,WINDOWCAPTIONHEIGHT(m_hWnd) + OFFSET,m_icon);
+      int offset = WS(GetSafeHwnd(),OFFSET);
+      dc.DrawIcon(offset,WINDOWCAPTIONHEIGHT(m_hWnd) + offset,m_icon);
     }
 
     // Drawing a line above the checkbox

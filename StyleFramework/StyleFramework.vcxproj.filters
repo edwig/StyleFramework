@@ -413,6 +413,15 @@
     <Image Include="res\ScrollBar7.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Icons\40_LeftSingle.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icons\43_RightSingle.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\ScrollBar8.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="WorkToDo.txt" />

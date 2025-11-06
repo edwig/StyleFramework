@@ -456,6 +456,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Icons\12_help.ico" />
+    <Image Include="Icons\40_LeftSingle.ico" />
+    <Image Include="Icons\43_RightSingle.ico" />
     <Image Include="IconS\73_map-openen.ico" />
     <Image Include="Icons\30_Save.ico" />
     <Image Include="Icons\60_OK.ico" />
@@ -470,6 +472,7 @@
     <Image Include="res\ScrollBar5.bmp" />
     <Image Include="res\ScrollBar6.bmp" />
     <Image Include="res\ScrollBar7.bmp" />
+    <Image Include="res\ScrollBar8.bmp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="WorkToDo.txt" />
