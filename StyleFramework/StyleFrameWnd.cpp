@@ -52,8 +52,11 @@ BEGIN_MESSAGE_MAP(StyleFrameWnd, CFrameWndEx)
   ON_WM_NCLBUTTONDBLCLK()
   ON_WM_SETTINGCHANGE()
   ON_WM_NCACTIVATE()
-  ON_MESSAGE(WM_GRAYSCREEN,OnGrayScreen)
-  ON_MESSAGE(WM_NCMOUSELEAVE,OnNcMouseLeave)
+  ON_MESSAGE(WM_GRAYSCREEN,           OnGrayScreen)
+  ON_MESSAGE(WM_NCMOUSELEAVE,         OnNcMouseLeave)
+  ON_MESSAGE(WM_GETDPISCALEDSIZE,     OnGetDpiScaledSize)
+  ON_MESSAGE(WM_DPICHANGED,           OnDpiChanged)
+  ON_MESSAGE(WM_DISPLAYCHANGE,        OnDisplayChange)
   ON_REGISTERED_MESSAGE(ThemeColor::g_msg_changed,OnStyleChanged)
 END_MESSAGE_MAP()
 
@@ -65,7 +68,7 @@ StyleFrameWnd::PreCreateWindow(CREATESTRUCT& cs)
              WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_OVERLAPPED;
   cs.dwExStyle |= WS_EX_WINDOWEDGE | WS_EX_APPWINDOW;
 
-  if (!CFrameWndEx::PreCreateWindow(cs))
+  if(!CFrameWndEx::PreCreateWindow(cs))
   {
     return FALSE;
   }
@@ -80,7 +83,139 @@ StyleFrameWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
   m_grayScreen.CreateEx(0,AfxRegisterWndClass(0),_T(""),WS_POPUP,CRect(0,0,0,0),this,0);
 
-  return CFrameWndEx::OnCreate(lpCreateStruct);
+  int ret = CFrameWndEx::OnCreate(lpCreateStruct);
+
+  // Getting the DPI
+  GetDpi(GetSafeHwnd(),m_dpi_x,m_dpi_y);
+
+  return ret;
+}
+
+// Get the DPI scaled size for all child windows
+// Called before resizing the dialog itself and the DPI change
+LRESULT
+StyleFrameWnd::OnGetDpiScaledSize(WPARAM wParam,LPARAM lParam)
+{
+  SendMessageToAllChildWindows(WM_GETDPISCALEDSIZE,wParam,lParam);
+  // Do the default resizing
+  return 0;
+}
+
+static int   g_dpi_x = USER_DEFAULT_SCREEN_DPI;
+static int   g_dpi_y = USER_DEFAULT_SCREEN_DPI;
+static CWnd* g_resize_wnd(nullptr);
+
+LRESULT
+StyleFrameWnd::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
+{
+  g_resize_wnd = this;
+
+  // The new DPI
+  g_dpi_x = m_dpi_x;
+  g_dpi_y = m_dpi_y;
+  m_dpi_x = HIWORD(wParam);
+  m_dpi_y = LOWORD(wParam);
+
+  // Check if anything has changed
+  if(m_dpi_x == g_dpi_x && m_dpi_y == g_dpi_y)
+  {
+    // No change
+    return 0;
+  }
+
+  // Current monitor configuration
+  g_styling.RefreshMonitors();
+
+  // Set the new window size/position as suggested by the system
+  CRect wrect;
+  GetWindowRect(wrect);
+
+  wrect.right = wrect.left + ::MulDiv(wrect.Width(),m_dpi_x,g_dpi_x);
+  wrect.bottom = wrect.top + ::MulDiv(wrect.Height(),m_dpi_x,g_dpi_y);
+
+  ::SetWindowPos(m_hWnd,
+                 nullptr,
+                 wrect.left,
+                 wrect.top,
+                 wrect.Width(),
+                 wrect.Height(),
+                 SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+
+  // Notify all child windows after parent has changed DPI
+  // So that we can handle different fonts etc.
+  NotifyMonitorToAllChilds();
+
+  // Move and resize the status bar (if any)
+  RepositionBars(AFX_IDW_CONTROLBAR_FIRST,AFX_IDW_CONTROLBAR_LAST,0);
+
+  // Now redraw everything
+  Invalidate(TRUE);
+  OnNcPaint();
+
+  return 0;
+}
+
+// A change of monitors could have happened
+// or a change in the display rate (width/height) could have been performed
+LRESULT
+StyleFrameWnd::OnDisplayChange(WPARAM wParam,LPARAM lParam)
+{
+  // Current monitor configuration
+  g_styling.RefreshMonitors();
+
+  NotifyMonitorToAllChilds();
+
+  // Move to original monitor if needed
+  return 0;
+}
+
+// After a DPI change or a change in monitors or monitor settings
+void
+StyleFrameWnd::NotifyMonitorToAllChilds()
+{
+  // Take the HMONITOR for the new monitor
+  const  StyleMonitor* mon = g_styling.GetMonitor(GetSafeHwnd());
+  if(!mon)
+  {
+    return;
+  }
+  HMONITOR newMonitor = mon->GetMonitor();
+
+  // Notify all child windows after parent has changed DPI
+  // So that we can handle different fonts etc.
+  CFont* font = GetSFXFont(newMonitor,StyleFontType::DialogFont);
+  if(font)
+  {
+    SendMessageToAllChildWindows(WM_SETFONT,(WPARAM)font->GetSafeHandle(),(LPARAM)TRUE);
+
+    // Update all menubars in the system
+    LOGFONT lf;
+    GetObject(font->GetSafeHandle(),sizeof(lf),&lf);
+    CMFCMenuBar::SetMenuFont(&lf);
+  }
+  // Let Style controls 'do-their-thing'
+  SendMessageToAllChildWindows(WM_DPICHANGED_AFTERPARENT,0,(LPARAM)newMonitor);
+}
+
+void
+StyleFrameWnd::SendMessageToAllChildWindows(UINT MessageId,WPARAM wParam,LPARAM lParam)
+{
+  SMessage sMessage;
+  sMessage.MessageId = MessageId;
+  sMessage.wParam = wParam;
+  sMessage.lParam = lParam;
+
+  if(GetSafeHwnd())
+  {
+    ::EnumChildWindows(m_hWnd,
+                       [](HWND p_wnd,LPARAM lParam) -> BOOL
+    {
+      PSMessage psMessage = (PSMessage)lParam;
+      ::SendMessage(p_wnd,psMessage->MessageId,psMessage->wParam,psMessage->lParam);
+      return TRUE;
+    },
+                       (LPARAM)&sMessage);
+  }
 }
 
 BOOL StyleFrameWnd::PreTranslateMessage(MSG* message)
@@ -143,7 +278,18 @@ StyleFrameWnd::SetSysMenu(UINT p_menuResource)
   {
     m_menu.DestroyMenu();
   }
-  return m_menu.LoadMenu(m_sysmenu);
+  BOOL ret = m_menu.LoadMenu(m_sysmenu);
+
+  CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFont);
+  if(font)
+  {
+    // Update all menubars in the system
+    LOGFONT lf;
+    GetObject(font->GetSafeHandle(),sizeof(lf),&lf);
+    CMFCMenuBar::SetMenuFont(&lf);
+  }
+
+  return ret;
 }
 
 void

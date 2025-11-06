@@ -233,7 +233,6 @@ StyleFrameWndEx::SendMessageToAllChildWindows(UINT MessageId,WPARAM wParam,LPARA
 
 // After setting of a theme,
 
-
 BOOL StyleFrameWndEx::PreTranslateMessage(MSG* p_msg)
 {
   m_menuTooltip.RelayEvent(p_msg);
