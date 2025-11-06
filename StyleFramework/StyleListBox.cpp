@@ -48,6 +48,12 @@ StyleListBox::~StyleListBox()
   RemoveLineInfo();
   ResetSkin();
   OnNcDestroy();
+
+  if(m_font)
+  {
+    delete m_font;
+    m_font = nullptr;
+  }
 }
 
 BEGIN_MESSAGE_MAP(StyleListBox, CListBox)
@@ -58,6 +64,7 @@ BEGIN_MESSAGE_MAP(StyleListBox, CListBox)
   ON_WM_HSCROLL()
   ON_MESSAGE(WM_DPICHANGED_AFTERPARENT,OnDpiChanged)
   ON_MESSAGE(LB_GETITEMHEIGHT,         OnItemHeight)
+  ON_MESSAGE(LB_GETITEMRECT,           OnItemRect)
 END_MESSAGE_MAP()
 
 void 
@@ -113,11 +120,32 @@ StyleListBox::SetDirectInit(bool p_init)
 LRESULT
 StyleListBox::OnItemHeight(WPARAM /*wParam*/,LPARAM /*lParam*/)
 {
-  int height = LISTBOX_ITEMHEIGTH;
-  height *= GetSFXSizeFactor(m_hWnd);
-  height /= 100;
+  return WS(GetSafeHwnd(),LISTBOX_ITEMHEIGTH);
+}
 
-  return height;
+LRESULT
+StyleListBox::OnItemRect(WPARAM wParam,LPARAM lParam)
+{
+  int   index = static_cast<int>(wParam);
+  CRect* rect = reinterpret_cast<CRect*>(lParam);
+
+  int itemHeight = WS(GetSafeHwnd(),LISTBOX_ITEMHEIGTH);
+  int topIndex   = GetTopIndex();
+
+  CRect client;
+  GetClientRect(&client);
+
+  if(index < topIndex || index > (topIndex + (client.Height() / itemHeight)))
+  {
+    // Item is not visible
+    rect->SetRectEmpty();
+    return 0;
+  }
+  rect->top    = (index - topIndex) * itemHeight;
+  rect->bottom = rect->top + itemHeight;
+  rect->right  = client.Width();
+
+  return 0;
 }
 
 void
@@ -291,7 +319,6 @@ StyleListBox::MeasureItem(LPMEASUREITEMSTRUCT p_measureItemStruct)
 void 
 StyleListBox::DrawItem(LPDRAWITEMSTRUCT p_drawItemStruct)
 {
-  // TODO: Add your code to draw the specified item
   ASSERT(p_drawItemStruct->CtlType == ODT_LISTBOX);
 
   // Getting a DC
@@ -889,7 +916,6 @@ StyleListBox::Internal_Paint(CDC* p_cdc)
   CRect itemrect(clientrect);
 
   // Should get the brush from the parent normally
-  // hbrush = (HBRUSH)SendMessageW(GetParent()->GetSafeHwnd(),WM_CTLCOLORLISTBOX,(WPARAM)p_cdc->GetSafeHdc(),(LPARAM)GetSafeHwnd());
   CBrush brush;
   brush.CreateSolidBrush(ThemeColor::GetColor(Colors::ColorCtrlBackground));
   HBRUSH oldBrush = (HBRUSH) p_cdc->SelectObject(brush);
@@ -917,7 +943,7 @@ StyleListBox::Internal_Paint(CDC* p_cdc)
       focusRect = itemrect;
     }
     Internal_PaintItem(p_cdc,&itemrect,index,ODA_DRAWENTIRE,TRUE);
-    itemrect.top = itemrect.bottom + 1;
+    itemrect.top = itemrect.bottom;
 
     if(itemrect.top >= clientrect.Height())
     {
@@ -1040,17 +1066,25 @@ StyleListBox::SetFontName(CString p_fontName,int p_fontSize,BYTE p_language)
 }
 
 void
-StyleListBox::ResetFont()
+StyleListBox::ResetFont(HMONITOR p_monitor /*= nullptr*/)
 {
-  LOGFONT  lgFont;
+  // Getting the font scaling factor
+  int scale = 100;
+  if(p_monitor)
+  {
+    scale = GetSFXSizeFactor(p_monitor);
+  }
+  else
+  {
+    scale = GetSFXSizeFactor(GetSafeHwnd());
+  }
 
-  int fontSize = (m_fontSize * GetSFXSizeFactor(m_hWnd)) / 100;
-
+  LOGFONT lgFont;
   lgFont.lfCharSet        = m_language;
   lgFont.lfClipPrecision  = 0;
   lgFont.lfEscapement     = 0;
   _tcscpy_s(lgFont.lfFaceName,LF_FACESIZE,m_fontName);
-  lgFont.lfHeight         = fontSize;
+  lgFont.lfHeight         = (m_fontSize * scale) / 100;
   lgFont.lfItalic         = m_italic;
   lgFont.lfOrientation    = 0;
   lgFont.lfOutPrecision   = 0;
@@ -1084,13 +1118,8 @@ StyleListBox::OnDpiChanged(WPARAM wParam,LPARAM lParam)
   HMONITOR monitor = reinterpret_cast<HMONITOR>(lParam);
   if(monitor)
   {
-    CFont* font = GetSFXFont(monitor,StyleFontType::DialogFont);
-    if(font)
-    {
-      SetFont(font);
-      int height = LISTBOX_ITEMHEIGTH;
-      SetItemHeight(0,(height * GetSFXSizeFactor(m_hWnd)) / 100);
-    }
+    ResetFont(monitor);
+    SetItemHeight(0,(LISTBOX_ITEMHEIGTH * GetSFXSizeFactor(monitor)) / 100);
   }
   return 0;
 }

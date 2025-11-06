@@ -30,7 +30,7 @@
 #define ERRORFONTSIZE      12
 #define CAPTIONTEXTSIZE    18
 
-#define LISTBOX_ITEMHEIGTH 16 // For StyleListBox
+#define LISTBOX_ITEMHEIGTH 18 // For StyleListBox
 
 enum class StyleFontType
 {

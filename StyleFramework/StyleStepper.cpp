@@ -420,7 +420,10 @@ LRESULT
 StyleStepper::OnDpiChanged(WPARAM wParam,LPARAM lParam)
 {
   StyleDialog::OnDpiChanged(wParam,lParam);
-  DisplayPage();
+  if(!m_pages.empty() && m_pages[0].m_page->GetSafeHwnd())
+  {
+    DisplayPage();
+  }
   return TRUE;
 }
 

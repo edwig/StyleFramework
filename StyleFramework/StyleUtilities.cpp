@@ -302,3 +302,62 @@ bool GetDpiMonitor(HMONITOR hMonitor,int& p_dpi_x,int& p_dpi_y)
   p_dpi_y = USER_DEFAULT_SCREEN_DPI;
   return false;
 }
+
+// Saving and restoring the window on a multi-monitor setup
+void StyleSaveWindowPosition(CWnd* p_wnd)
+{
+  CWinApp* app = AfxGetApp();
+  const StyleMonitor* monitor = g_styling.GetMonitor(p_wnd->GetSafeHwnd());
+  if(!monitor)
+  {
+    return;
+  }
+  // Save the name of the monitor
+  const CString name = monitor->GetName();
+  app->WriteProfileString(_T("Monitor"),_T("Name"),name);
+
+  // Save the window position relative to the monitor
+  CRect monRect = monitor->GetRect();
+  CRect winRect;
+  p_wnd->GetWindowRect(&winRect);
+
+  int left = winRect.left - monRect.left;
+  int top  = winRect.top  - monRect.top;
+  app->WriteProfileInt(_T("Monitor"),_T("Left"),left);
+  app->WriteProfileInt(_T("Monitor"),_T("Top"), top);
+}
+
+void
+StyleRestoreWindowPosition(CWnd* p_wnd)
+{
+  CWinApp* app = AfxGetApp();
+  CString name = app->GetProfileString(_T("Monitor"),_T("Name"),_T(""));
+  if(name.IsEmpty())
+  {
+    return;
+  }
+  const StyleMonitor* monitor = g_styling.GetMonitor(name);
+  if(!monitor)
+  {
+    return;
+  }
+  // Getting the saved position
+  int top  = app->GetProfileInt(_T("Monitor"),_T("Top"), -1);
+  int left = app->GetProfileInt(_T("Monitor"),_T("Left"),-1);
+  if(top == -1 && left == -1)
+  {
+    return;
+  }
+
+  // Getting the relative monitor position
+  CRect rect = monitor->GetRect();
+  rect.left += left;
+  rect.top  += top;
+
+  // Move our window to this position
+  CRect winrect;
+  p_wnd->GetWindowRect(&winrect);
+  ::SetWindowPos(p_wnd->GetSafeHwnd(),nullptr
+                ,rect.left,rect.top,winrect.Width(),winrect.Height()
+                ,SWP_NOZORDER | SWP_NOACTIVATE);
+}

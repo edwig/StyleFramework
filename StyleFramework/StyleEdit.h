@@ -138,7 +138,7 @@ protected:
   afx_msg void    OnShowWindow(BOOL bShow, UINT nStatus);
   afx_msg BOOL    OnKillFocus();
   afx_msg BOOL    OnSetfocus();
-  afx_msg LRESULT OnDpiChanged(WPARAM wParam,LPARAM lParam);
+  afx_msg LRESULT OnDpiChangedAfter (WPARAM wParam,LPARAM lParam);
   afx_msg void    OnLButtonDown(UINT   nFlags,CPoint point);
   afx_msg void    OnLButtonUp  (UINT   nFlags,CPoint point);
   afx_msg LRESULT OnDoubleClick(WPARAM wParam,LPARAM lParam);
@@ -163,7 +163,7 @@ protected:
 
 private:
   void     ResetEditColors();
-  void     ResetFont();
+  void     ResetFont(HMONITOR p_monitor = nullptr);
   void     CreateBackgroundBrush(DWORD p_color);
   void     CreateBackgroundEmptyBrush(DWORD p_color);
   void     DrawPasswordEye();

@@ -38,3 +38,7 @@ bool    GetDpiMonitor(HMONITOR hMonitor,int& p_dpi_x,int& p_dpi_y);
 // Unicode aware Clipboard handling
 CString StyleGetStringFromClipboard(HWND p_wnd = NULL);
 bool    StylePutStringToClipboard(CString p_string,HWND p_wnd = NULL,bool p_append = false);
+
+// Saving and restoring the window on a multi-monitor setup
+void    StyleSaveWindowPosition   (CWnd* p_wnd);
+void    StyleRestoreWindowPosition(CWnd* p_wnd);

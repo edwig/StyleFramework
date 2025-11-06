@@ -60,10 +60,21 @@ StyleDialog::StyleDialog(UINT  p_IDTemplate
   // Set default background brush
   m_defaultBrush.DeleteObject();
   m_defaultBrush.CreateSolidBrush(ThemeColor::GetColor(Colors::ColorWindowFrame));
+
+  // See if we must preserve our position
+  if(p_parentWnd == nullptr)
+  {
+    m_saveMonitor = true;
+  }
+}
+
+StyleDialog::~StyleDialog()
+{
 }
 
 BEGIN_MESSAGE_MAP(StyleDialog,CDialogEx)
   ON_WM_CREATE()
+  ON_WM_DESTROY()
   ON_WM_ERASEBKGND()
   ON_WM_CTLCOLOR()
   ON_WM_NCMOUSEMOVE()
@@ -86,6 +97,7 @@ BEGIN_MESSAGE_MAP(StyleDialog,CDialogEx)
   ON_NOTIFY_EX(TTN_NEEDTEXT,0,        OnToolTipNotify)
   ON_MESSAGE(WM_CTLCOLORSTATIC,       OnCtlColorStatic)
   ON_MESSAGE(WM_CTLCOLORLISTBOX,      OnCtlColorListBox)
+  ON_MESSAGE(WM_GETDPISCALEDSIZE,     OnGetDpiScaledSize)
   ON_MESSAGE(WM_DPICHANGED,           OnDpiChanged)
   ON_MESSAGE(WM_DISPLAYCHANGE,        OnDisplayChange)
 END_MESSAGE_MAP()
@@ -116,6 +128,10 @@ StyleDialog::OnInitDialog()
   {
     InitStatusBar();
   }
+  if(m_saveMonitor)
+  {
+    StyleRestoreWindowPosition(this);
+  }
   return InitFirstFocus();
 }
 
@@ -128,8 +144,18 @@ StyleDialog::OnCreate(LPCREATESTRUCT p_create)
 
   // Getting the DPI
   GetDpi(GetSafeHwnd(),m_dpi_x,m_dpi_y);
-
   return res;
+}
+
+void
+StyleDialog::OnDestroy()
+{
+  // Save window position on the monitor
+  if(m_saveMonitor)
+  {
+    StyleSaveWindowPosition(this);
+  }
+  CDialogEx::OnDestroy();
 }
 
 void
@@ -1085,10 +1111,21 @@ StyleDialog::OnSettingChange(UINT uFlags,LPCTSTR lpszSection)
   }
 }
 
+// Get the DPI scaled size for all child windows
+// Called before resizing the dialog itself and the DPI change
+LRESULT
+StyleDialog::OnGetDpiScaledSize(WPARAM wParam,LPARAM lParam)
+{
+  SendMessageToAllChildWindows(WM_GETDPISCALEDSIZE,wParam,lParam);
+  // Do the default resizing
+  return 0;
+}
+
 static int   g_dpi_x = USER_DEFAULT_SCREEN_DPI;
 static int   g_dpi_y = USER_DEFAULT_SCREEN_DPI;
 static CWnd* g_resize_wnd(nullptr);
 
+// A change in DPI has happened
 LRESULT
 StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
 {
@@ -1132,7 +1169,7 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
                  wrect.top,
                  wrect.Width(),
                  wrect.Height(),
-                 SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+                 SWP_NOZORDER | SWP_NOACTIVATE);
 
   // Scale child windows using newDpi and oldDpi (the previous DPI)
   ::EnumChildWindows( m_hWnd,
@@ -1241,10 +1278,10 @@ StyleDialog::NotifyMonitorToAllChilds()
   CFont* font = GetSFXFont(newMonitor,StyleFontType::DialogFont);
   if(font)
   {
-    SendMessageToAllChildWindows(WM_SETFONT,(WPARAM)(HFONT)font,(LPARAM)TRUE);
+    SendMessageToAllChildWindows(WM_SETFONT,(WPARAM)font->GetSafeHandle(),(LPARAM)TRUE);
   }
   // Let Style controls 'do-their-thing'
-  SendMessageToAllChildWindows(WM_DPICHANGED_AFTERPARENT,0,(LPARAM)newMonitor);
+  SendMessageToAllChildWindows(WM_DPICHANGED_AFTERPARENT,g_dpi_x,(LPARAM)newMonitor);
 }
 
 void 

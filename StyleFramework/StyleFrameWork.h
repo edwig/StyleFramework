@@ -78,6 +78,7 @@ public:
   const StyleMonitor* GetMonitor(HWND p_hwnd) const;
   const StyleMonitor* GetMonitor(HMONITOR p_monitor) const;
   const StyleMonitor* GetMonitor(int p_dpi_x,int p_dpi_y) const;
+  const StyleMonitor* GetMonitor(CString p_name) const;
   const StyleMonitor* GetPrimaryMonitor() const;
 
   void  RefreshMonitors();

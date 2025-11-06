@@ -74,6 +74,7 @@ public:
   int           m_scrollBias;   // Bias for the scrollbars
   int           m_clientBias;   // Bias for the client area (e.g. tree controls, combobox list controls)
   WNDPROC       m_funOldProc;   // Original WindowsProc before sub-classing
+  CRect         m_dpiRect;      // DPI Awareness
 
   // Generated message map functions
   afx_msg LRESULT OnLimiterMove(WPARAM wParam, LPARAM lParam);
@@ -101,6 +102,8 @@ public:
   afx_msg LRESULT OnXButtonDown  (WPARAM wParam,LPARAM lParam);
   afx_msg LRESULT OnXButtonUp    (WPARAM wParam,LPARAM lParam);
   afx_msg LRESULT OnXButtonDblClk(WPARAM wParam,LPARAM lParam);
+  afx_msg LRESULT OnGetDpiScaledSize(WPARAM wParam,LPARAM lParam);
+  afx_msg LRESULT OnDpiChangedAfter (WPARAM wParam,LPARAM lParam);
 
 protected:
   DECLARE_MESSAGE_MAP();

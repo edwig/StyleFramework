@@ -43,6 +43,7 @@ StyleFrameWndEx::StyleFrameWndEx()
 }
 
 BEGIN_MESSAGE_MAP(StyleFrameWndEx, CFrameWndEx)
+  ON_WM_DESTROY()
   ON_WM_SIZE()
   ON_WM_NCCALCSIZE()
   ON_WM_ERASEBKGND()
@@ -55,8 +56,11 @@ BEGIN_MESSAGE_MAP(StyleFrameWndEx, CFrameWndEx)
   ON_WM_NCLBUTTONDBLCLK()
   ON_WM_SETTINGCHANGE()
   ON_WM_NCACTIVATE()
-  ON_MESSAGE(WM_GRAYSCREEN,OnGrayScreen)
+  ON_MESSAGE(WM_GRAYSCREEN,           OnGrayScreen)
   ON_REGISTERED_MESSAGE(g_msg_changed,OnStyleChanged)
+  ON_MESSAGE(WM_GETDPISCALEDSIZE,     OnGetDpiScaledSize)
+  ON_MESSAGE(WM_DPICHANGED,           OnDpiChanged)
+  ON_MESSAGE(WM_DISPLAYCHANGE,        OnDisplayChange)
 END_MESSAGE_MAP()
 
 // Remove the title bar from the main window frame
@@ -82,8 +86,153 @@ StyleFrameWndEx::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
   m_grayScreen.CreateEx(0,AfxRegisterWndClass(0),_T(""),WS_POPUP,CRect(0,0,0,0),this,0);
 
-  return CFrameWndEx::OnCreate(lpCreateStruct);
+  int res = CFrameWndEx::OnCreate(lpCreateStruct);
+
+  if(m_saveMonitor)
+  {
+    StyleRestoreWindowPosition(this);
+  }
+  // Getting the DPI
+  GetDpi(GetSafeHwnd(),m_dpi_x,m_dpi_y);
+
+  return res;
 }
+
+void
+StyleFrameWndEx::OnDestroy()
+{
+  // Save window position on the monitor
+  if(m_saveMonitor)
+  {
+    StyleSaveWindowPosition(this);
+  }
+  CFrameWndEx::OnDestroy();
+}
+
+// Get the DPI scaled size for all child windows
+// Called before resizing the dialog itself and the DPI change
+LRESULT
+StyleFrameWndEx::OnGetDpiScaledSize(WPARAM wParam,LPARAM lParam)
+{
+  SendMessageToAllChildWindows(WM_GETDPISCALEDSIZE,wParam,lParam);
+  // Do the default resizing
+  return 0;
+}
+
+static int   g_dpi_x = USER_DEFAULT_SCREEN_DPI;
+static int   g_dpi_y = USER_DEFAULT_SCREEN_DPI;
+static CWnd* g_resize_wnd(nullptr);
+
+LRESULT
+StyleFrameWndEx::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
+{
+  g_resize_wnd = this;
+
+  // The new DPI
+  g_dpi_x = m_dpi_x;
+  g_dpi_y = m_dpi_y;
+  m_dpi_x = HIWORD(wParam);
+  m_dpi_y = LOWORD(wParam);
+
+  // Check if anything has changed
+  if(m_dpi_x == g_dpi_x && m_dpi_y == g_dpi_y)
+  {
+    // No change
+    return 0;
+  }
+
+  // Current monitor configuration
+  g_styling.RefreshMonitors();
+
+  // Set the new window size/position as suggested by the system
+  CRect wrect;
+  GetWindowRect(wrect);
+
+  wrect.right  = wrect.left + ::MulDiv(wrect.Width(), m_dpi_x,g_dpi_x);
+  wrect.bottom = wrect.top  + ::MulDiv(wrect.Height(),m_dpi_x,g_dpi_y);
+
+  ::SetWindowPos(m_hWnd,
+                 nullptr,
+                 wrect.left,
+                 wrect.top,
+                 wrect.Width(),
+                 wrect.Height(),
+                 SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+
+  // Notify all child windows after parent has changed DPI
+  // So that we can handle different fonts etc.
+  NotifyMonitorToAllChilds();
+
+  // Move and resize the status bar (if any)
+  RepositionBars(AFX_IDW_CONTROLBAR_FIRST,AFX_IDW_CONTROLBAR_LAST,0);
+
+  // Now redraw everything
+  Invalidate(TRUE);
+  OnNcPaint();
+
+  return 0;
+}
+
+// A change of monitors could have happened
+// or a change in the display rate (width/height) could have been performed
+LRESULT
+StyleFrameWndEx::OnDisplayChange(WPARAM wParam,LPARAM lParam)
+{
+  // Current monitor configuration
+  g_styling.RefreshMonitors();
+
+  NotifyMonitorToAllChilds();
+
+  // Move to original monitor if needed
+  return 0;
+}
+
+// After a DPI change or a change in monitors or monitor settings
+void
+StyleFrameWndEx::NotifyMonitorToAllChilds()
+{
+  // Take the HMONITOR for the new monitor
+  const  StyleMonitor* mon = g_styling.GetMonitor(GetSafeHwnd());
+  if(!mon)
+  {
+    return;
+  }
+  HMONITOR newMonitor = mon->GetMonitor();
+
+  // Notify all child windows after parent has changed DPI
+  // So that we can handle different fonts etc.
+  CFont* font = GetSFXFont(newMonitor,StyleFontType::DialogFont);
+  if(font)
+  {
+    SendMessageToAllChildWindows(WM_SETFONT,(WPARAM)font->GetSafeHandle(),(LPARAM)TRUE);
+  }
+  // Let Style controls 'do-their-thing'
+  SendMessageToAllChildWindows(WM_DPICHANGED_AFTERPARENT,0,(LPARAM)newMonitor);
+}
+
+void 
+StyleFrameWndEx::SendMessageToAllChildWindows(UINT MessageId,WPARAM wParam,LPARAM lParam)
+{
+  SMessage sMessage;
+  sMessage.MessageId = MessageId;
+  sMessage.wParam    = wParam;
+  sMessage.lParam    = lParam;
+
+  if(GetSafeHwnd())
+  {
+    ::EnumChildWindows(m_hWnd,
+                       [](HWND p_wnd,LPARAM lParam) -> BOOL
+                       {
+                          PSMessage psMessage = (PSMessage)lParam;
+                          ::SendMessage(p_wnd,psMessage->MessageId,psMessage->wParam,psMessage->lParam);
+                         return TRUE;
+                       },
+                       (LPARAM)&sMessage);
+  }
+}
+
+// After setting of a theme,
+
 
 BOOL StyleFrameWndEx::PreTranslateMessage(MSG* p_msg)
 {

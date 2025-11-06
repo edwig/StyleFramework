@@ -249,6 +249,7 @@ StyleComboBox::CreateListControl()
     m_listControl->GetSkin()->SetMouseCapture(TRUE,TME_HOVER);
     m_listControl->GetSkin()->SkinSetMouseTracking();
   }
+  m_listControl->PostMessage(WM_SETFONT,(WPARAM)GetFont()->GetSafeHandle(),MAKELPARAM(TRUE,0));
 }
 
 // Needs to be called when created dynamic and not through a resource *.rc file
@@ -2557,7 +2558,7 @@ SCBListBox::OnMouseMove(UINT nFlags,CPoint point)
     INT itemHeight = GetItemHeight(0);
 
     // Compute which index to check/unchecked
-    INT index = topIndex + point.y / itemHeight;
+    INT index = topIndex + (point.y / itemHeight);
 
     CRect rcItem;
     GetItemRect(index,&rcItem);

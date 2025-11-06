@@ -94,7 +94,7 @@ protected:
   void    RemoveLineNumber(CString& p_text);
   void    RemoveLineInfo();
   void    SetItemPointer(int p_index,void* p_data);
-  void    ResetFont();
+  void    ResetFont(HMONITOR p_monitor = nullptr);
 
   // Owner painting inside OnPaint
   void    Internal_Paint(CDC* p_cdc);
@@ -107,6 +107,7 @@ protected:
   afx_msg void    OnHScroll(UINT nSBCode,UINT nPos,CScrollBar* pScrollBar);
   afx_msg LRESULT OnDpiChanged(WPARAM wParam,LPARAM lParam);
   afx_msg LRESULT OnItemHeight(WPARAM wParam,LPARAM lParam);
+  afx_msg LRESULT OnItemRect  (WPARAM wParam,LPARAM lParam);
 
   SkinScrollWnd* m_skin;
   int  m_width      { 0     };

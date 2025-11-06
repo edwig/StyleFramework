@@ -64,6 +64,12 @@ StylingFramework::GetMonitor(int p_dpi_x,int p_dpi_y) const
 }
 
 const StyleMonitor* 
+StylingFramework::GetMonitor(CString p_name) const
+{
+  return m_monitors.GetMonitor(p_name);
+}
+
+const StyleMonitor* 
 StylingFramework::GetPrimaryMonitor() const
 {
   return m_monitors.GetPrimaryMonitor();

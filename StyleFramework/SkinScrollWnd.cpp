@@ -281,6 +281,7 @@ SkinScrollWnd::SkinScrollWnd()
   m_clientBias   = 0;
   m_captureFlags = 0;
   m_hoverTime    = 0;
+  m_dpiRect.SetRectEmpty();
 }
 
 SkinScrollWnd::~SkinScrollWnd()
@@ -299,7 +300,9 @@ BEGIN_MESSAGE_MAP(SkinScrollWnd, CWnd)
   ON_WM_SETFOCUS()
   ON_WM_MOUSEMOVE()
   ON_WM_CAPTURECHANGED()
-  ON_MESSAGE(SF_LIMITERMOVE,  OnLimiterMove)
+  ON_MESSAGE(SF_LIMITERMOVE,           OnLimiterMove)
+  ON_MESSAGE(WM_GETDPISCALEDSIZE,      OnGetDpiScaledSize)
+  ON_MESSAGE(WM_DPICHANGED_AFTERPARENT,OnDpiChangedAfter)
   // MOUSE BUTTON MESSAGES
   ON_MESSAGE(WM_MOUSEHOVER,   OnMouseHover)
   ON_MESSAGE(WM_MOUSELEAVE,   OnMouseLeave)
@@ -1159,4 +1162,77 @@ SkinScrollWnd::OnXButtonDblClk(WPARAM wParam,LPARAM lParam)
     return child->SendMessage(WM_XBUTTONDBLCLK,wParam,lParam);
   }
   return FALSE;
+}
+
+
+LRESULT
+SkinScrollWnd::OnGetDpiScaledSize(WPARAM wParam,LPARAM lParam)
+{
+  CWnd* child = m_wndLimit.GetWindow(GW_CHILD);
+  if(!child)
+  {
+    return 0;
+  }
+  StyleEdit* edit = dynamic_cast<StyleEdit*>(child);
+  if(!edit)
+  {
+    return 0;
+  }
+  // The only control that needs DPI scaling is a multi-line edit
+  // Beware: this message can be sent multiple times, so only store once
+  if(((edit->GetStyle() & ES_MULTILINE) == 0) || !m_dpiRect.IsRectNull())
+  {
+    return 0;
+  }
+  // Getting the child window rectangle
+  CRect rcChild;
+  GetWindowRect(rcChild);
+
+  // Getting the parent window to calc displacement
+  CRect rcParent;
+  GetParent()->GetWindowRect(rcParent);
+
+  // Store the rectangle for later scaling
+  m_dpiRect.left = rcChild.left - rcParent.left;
+  m_dpiRect.top  = rcChild.top  - rcParent.top;
+  CWnd* dialog = dynamic_cast<StyleDialog*>(GetParent());
+  if(dialog)
+  {
+    m_dpiRect.top  -= WINDOWCAPTIONHEIGHT(dialog->GetSafeHwnd());
+    m_dpiRect.left -= WINDOWSHADOWBORDER (dialog->GetSafeHwnd()) * 2;
+  }
+  m_dpiRect.right  = m_dpiRect.left + rcChild.Width();
+  m_dpiRect.bottom = m_dpiRect.top  + rcChild.Height();
+  return 0;
+}
+
+LRESULT
+SkinScrollWnd::OnDpiChangedAfter(WPARAM wParam,LPARAM lParam)
+{
+  HMONITOR monitor = reinterpret_cast<HMONITOR>(lParam);
+  if(monitor == nullptr || lParam == 0L)
+  {
+    return 0;
+  }
+  if(!m_dpiRect.IsRectNull())
+  {
+    // Scale the cooridinates
+    int newDpi_x = USER_DEFAULT_SCREEN_DPI;
+    int newDpi_y = USER_DEFAULT_SCREEN_DPI;
+    const StyleMonitor* mon = g_styling.GetMonitor(monitor);
+    mon->GetDPI(newDpi_x,newDpi_y);
+
+    m_dpiRect.left   = MulDiv(m_dpiRect.left,  newDpi_x,(int)wParam);
+    m_dpiRect.top    = MulDiv(m_dpiRect.top,   newDpi_y,(int)wParam);
+    m_dpiRect.right  = MulDiv(m_dpiRect.right, newDpi_x,(int)wParam);
+    m_dpiRect.bottom = MulDiv(m_dpiRect.bottom,newDpi_y,(int)wParam);
+
+    // Repositioning the child window
+    CRect rect;
+    GetWindowRect(rect);
+    MoveWindow(m_dpiRect);
+
+    m_dpiRect.SetRectEmpty();
+  }
+  return 0;
 }
