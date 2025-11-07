@@ -18,6 +18,7 @@
 //
 #pragma once
 #include <map>
+#include <afxdialogex.h>
 
 class StyleComboBox;
 class AutoBlockActivation;

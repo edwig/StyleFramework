@@ -27,6 +27,11 @@ VERSION 1.2.0 of 07-11-2025
 
     BEWARE: It may be needed to override and handle some of these messages in your own code
 
+4)  The source directory (StyleFramework) contains a file "Manifest.xml" that you can include in 
+    your application project directory in order to set the "MonitorV2" manifest. Also see under 1)
+    In addition you can remove the standard linker comment section in your "stdafx.h" file to
+    add the comctrl version 6.0 manifestdependency. It is already included in the manifest.xml file.
+
 VERSION 1.1.0 OF 24-12-2023
 ---------------------------
 1) Small fix for the StyleComboBox OnSetFocus function while destructing the object.

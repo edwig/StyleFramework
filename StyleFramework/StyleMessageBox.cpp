@@ -374,7 +374,7 @@ MessageDialog::InitStyle(CString& p_labels)
   // Find signal icon on the first label
   int signal = 0;
   p_labels.TrimLeft();
-  char style = p_labels.GetAt(0);
+  TCHAR style = p_labels.GetAt(0);
 
   if(style == '!')
   {
