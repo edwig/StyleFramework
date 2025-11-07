@@ -32,9 +32,6 @@ static char THIS_FILE[] = __FILE__;
 #define TIME_DELAY		   50
 #define TIME_INTER		  100
 
-#define THUMB_BORDER	  3
-#define THUMB_MINSIZE	  (THUMB_BORDER*2)
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // SkinScrollBar: One of the two skinned scrollbars of a control

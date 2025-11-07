@@ -102,9 +102,6 @@
     <ClInclude Include="StyleGridCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StyleDialogCA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="StyleDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -267,9 +264,6 @@
       <Filter>Grid</Filter>
     </ClCompile>
     <ClCompile Include="StyleGridCtrl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StyleDialogCA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StyleDialog.cpp">

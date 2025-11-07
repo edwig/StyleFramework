@@ -19,6 +19,9 @@
 //
 #pragma once
 
+#define THUMB_BORDER	  3
+#define THUMB_MINSIZE	  (THUMB_BORDER*2)
+
 class SkinScrollBar : public CScrollBar
 {
 // Construction

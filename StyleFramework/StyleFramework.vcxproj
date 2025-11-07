@@ -373,7 +373,6 @@
     <ClInclude Include="StyleButton.h" />
     <ClInclude Include="StyleCheckbox.h" />
     <ClInclude Include="StyleColors.h" />
-    <ClInclude Include="StyleDialogCA.h" />
     <ClInclude Include="StyleFonts.h" />
     <ClInclude Include="StyleFrameWndEx.h" />
     <ClInclude Include="StyleMacros.h" />
@@ -438,7 +437,6 @@
     <ClCompile Include="StyleButton.cpp" />
     <ClCompile Include="StyleCheckBox.cpp" />
     <ClCompile Include="StyleColors.cpp" />
-    <ClCompile Include="StyleDialogCA.cpp" />
     <ClCompile Include="StyleFonts.cpp" />
     <ClCompile Include="StyleFrameWndEx.cpp" />
     <ClCompile Include="StyleMDIFrameWnd.cpp" />
