@@ -10,8 +10,25 @@
 //
 // RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES
 
-VERSION OF 24-12-2023
----------------------
+VERSION 1.2.0 of 07-11-2025
+---------------------------
+1)  This version supports High DPI and multiple monitors with different DPI settings
+    To convert a program, add the "Manifest.xml" file to your project in the project settings
+    in the "Manifest Tool" section. This sets the DPI-awareness to "Per Monitor v2".
+    Turn off all other DPI settings in the project settings.
+2)  The Multi-monitor capabilites are implemented in the StyleDialog and StyleFrameWnd(Ex) classes.
+    They will automatically adjust their scaling when moved to another monitor with a different DPI.
+3)  The following Multi-monitor messages are handled automatically:
+    WM_GETDPISCALEDSIZE         -> Get the scaled size of the window for the current DPI (Sent first)
+    WM_DPICHANGED_BEFOREPARENT  -> Sent to all the controls before the parent is resized
+    WM_DPICHANGED               -> Sent to parent, resizing takes place here
+    WM_DPICHANGED_AFTERPARENT   -> Sent to all the controls after the parent is resized
+    WM_DISPLAYCHANGE            -> Sent when a monitor is added/removed or resolution changed
+
+    BEWARE: It may be needed to override and handle some of these messages in your own code
+
+VERSION 1.1.0 OF 24-12-2023
+---------------------------
 1) Small fix for the StyleComboBox OnSetFocus function while destructing the object.
 2) Added tooltips to individual cells of the grid. This is a work instruction
    1) Add to be used tooltips to the grid as a whole under a reference number with

@@ -18,7 +18,7 @@
 //
 #pragma once
 
-#define SFX_VERSION "1.1.0"       // Current SFX version number
+#define SFX_VERSION "1.2.0"       // Current SFX version number
 
 // General headers
 #include "AutoFocus.h"
