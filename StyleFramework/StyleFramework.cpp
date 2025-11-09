@@ -29,6 +29,9 @@ StylingFramework::StylingFramework()
   }
   m_instance = this;
 
+  // Support for StyleRichEdit
+  LoadLibrary(_T("Riched32.dll"));
+
   // Getting all monitors and fonts
   m_monitors.DiscoverAllMonitors();
 }

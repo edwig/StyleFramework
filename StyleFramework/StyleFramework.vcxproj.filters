@@ -195,6 +195,9 @@
     <ClInclude Include="StyleMonitor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StyleRichEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GrayWindow.cpp">
@@ -348,6 +351,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StyleMonitor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StyleRichEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

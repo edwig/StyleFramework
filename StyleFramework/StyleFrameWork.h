@@ -56,6 +56,7 @@
 #include "StyleListBox.h"         // CListBox         -> StyleListBox
 #include "StyleListCtrl.h"        // CListCtrl        -> StyleListCtrl
 #include "StyleProgressCtrl.h"    // CProgressCtrl    -> StyleProgressCtrl
+#include "StyleRichEdit.h"        // CRichEditCtrl    -> StyleRichEdit
 #include "StyleStatic.h"          // CStatic          -> StyleStatic
 #include "StyleStaticToast.h"     // ----             -> For StyleToast
 #include "StyleSpinButtonCtrl.h"  // CSpinButtonCtrl  -> StyleSpinButtonCtrl

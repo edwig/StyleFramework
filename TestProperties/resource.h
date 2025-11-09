@@ -2,10 +2,11 @@
 // Microsoft Visual C++ generated include file.
 // Used by TestProperties.rc
 //
+#define IDC_TOAST                       11
+#define IDC_MONTH                       12
 #define IDM_ABOUTBOX                    0x010
-
+#define IDC_BOODSCHAP                   20
 #define IDR_MAINFRAME                   128
-
 #define IDD_BOODSCHAP                   130
 #define IDD_TOAST                       131
 #define IDI_HELP                        132
@@ -24,16 +25,6 @@
 #define IDB_SCROLLBAR8                  145
 #define IDD_CALENDAR                    146
 #define IDI_CALENDAR                    147
-// #define IDB_MLD_STOP                    150
-// #define IDB_MLD_INFO                    151
-// #define IDB_MLD_VRAAG                   152
-// #define IDB_MLD_UITROEP                 153
-// #define IDR_MELDINGEN                   180
-
-#define IDC_BOODSCHAP                    20
-#define IDC_TOAST                        11
-#define IDC_MONTH                        12
-
 #define IDD_ABOUTBOX                    201
 #define IDS_ABOUTBOX                    202
 #define IDD_TESTPROPERTIES_DIALOG       203
@@ -42,7 +33,6 @@
 #define IDB_BITMAP1                     206
 #define IDB_TABICONS                    207
 #define IDD_TESTPAGE2                   208
-
 #define IDC_EDIT1                       1000
 #define IDC_TYPE                        1000
 #define IDC_STATIC1                     1001
@@ -62,6 +52,7 @@
 #define IDC_EDIT14                      1013
 #define IDC_EDIT16                      1014
 #define IDC_EDIT15                      1015
+#define IDC_RICHEDIT21                  1016
 
 // Next default values for new objects
 // 
@@ -69,7 +60,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        209
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1016
+#define _APS_NEXT_CONTROL_VALUE         1017
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

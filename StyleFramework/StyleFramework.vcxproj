@@ -360,6 +360,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StyleMonitor.h" />
     <ClInclude Include="StyleProgressCtrl.h" />
+    <ClInclude Include="StyleRichEdit.h" />
     <ClInclude Include="StyleSpinButtonCtrl.h" />
     <ClInclude Include="StyleStatic.h" />
     <ClInclude Include="StyleStaticToast.h" />
@@ -424,6 +425,7 @@
     </ClCompile>
     <ClCompile Include="StyleMonitor.cpp" />
     <ClCompile Include="StyleProgressCtrl.cpp" />
+    <ClCompile Include="StyleRichEdit.cpp" />
     <ClCompile Include="StyleSpinButtonCtrl.cpp" />
     <ClCompile Include="StyleStatic.cpp" />
     <ClCompile Include="StyleStaticToast.cpp" />
