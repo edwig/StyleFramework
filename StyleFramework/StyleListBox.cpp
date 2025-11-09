@@ -62,6 +62,7 @@ BEGIN_MESSAGE_MAP(StyleListBox, CListBox)
   ON_WM_DESTROY()
   ON_WM_ERASEBKGND()
   ON_WM_HSCROLL()
+  ON_WM_VSCROLL()
   ON_MESSAGE(WM_DPICHANGED_AFTERPARENT,OnDpiChanged)
   ON_MESSAGE(LB_GETITEMHEIGHT,         OnItemHeight)
   ON_MESSAGE(LB_GETITEMRECT,           OnItemRect)
@@ -188,6 +189,13 @@ void
 StyleListBox::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
   CListBox::OnHScroll(nSBCode,nPos,pScrollBar);
+  Invalidate();
+}
+
+void
+StyleListBox::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+  CListBox::OnVScroll(nSBCode, nPos, pScrollBar);
   Invalidate();
 }
 

@@ -2574,8 +2574,10 @@ SCBListBox::OnMouseMove(UINT nFlags,CPoint point)
       SetCurSel(index);
       // Paint optimizations:
       // Only redraw the changed items!
-      InvalidateRect(rcCurrent);
-      InvalidateRect(rcItem);
+      Invalidate();
+
+//       InvalidateRect(rcCurrent);
+//       InvalidateRect(rcItem);
     }
   }
 }
