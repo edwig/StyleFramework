@@ -3,14 +3,14 @@
 // File: StyleRichEdit.cpp
 // Function: Styled RTF Rich Edit control
 //
-//   _____ _         _ _             ______                                           _    
-//  / ____| |       | (_)           |  ____|                                         | |   
+//   _____ _         _ _             ______                                           _
+//  / ____| |       | (_)           |  ____|                                         | |
 // | (___ | |_ _   _| |_ _ __   __ _| |__ _ __ __ _ _ __ ___   _____      _____  _ __| | __
 //  \___ \| __| | | | | | '_ \ / _` |  __| '__/ _` | '_ ` _ \ / _ \ \ /\ / / _ \| '__| |/ /
-//  ____) | |_| |_| | | | | | | (_| | |  | | | (_| | | | | | |  __/\ V  V / (_) | |  |   < 
+//  ____) | |_| |_| | | | | | | (_| | |  | | | (_| | | | | | |  __/\ V  V / (_) | |  |   <
 // |_____/ \__|\__, |_|_|_| |_|\__, |_|  |_|  \__,_|_| |_| |_|\___| \_/\_/ \___/|_|  |_|\_\
-//              __/ |           __/ |                                                      
-//             |___/           |___/                                                       
+//              __/ |           __/ |
+//             |___/           |___/
 //
 //
 // Author: ir. W.E. Huisman
@@ -19,6 +19,7 @@
 #include "stdafx.h"
 #include "StyleRichEdit.h"
 #include "StyleColors.h"
+#include "StyleFonts.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -26,13 +27,15 @@ static char THIS_FILE[] = __FILE__;
 #define new DEBUG_NEW
 #endif
 
+#define STYLE_RICHEDIT_MAX_FONTS   10                     // Maximum number of different fonts
+#define STYLE_RICHEDIT_DEF_SIZE    (2 * DIALOOGFONTSIZE)  // RTF is in half-pica points, so multiply by 2
+
 using namespace ThemeColor;
 
 IMPLEMENT_DYNAMIC(StyleRichEdit,CRichEditCtrl)
 
 StyleRichEdit::StyleRichEdit()
 {
-  m_borderColor = ThemeColor::GetColor(Colors::AccentColor1);
 }
 
 BEGIN_MESSAGE_MAP(StyleRichEdit,CRichEditCtrl)
@@ -68,6 +71,7 @@ StyleRichEdit::OnDpiChangedAfter(WPARAM wParam, LPARAM lParam)
   HMONITOR monitor = reinterpret_cast<HMONITOR>(lParam);
   if(monitor)
   {
+    m_factor = GetSFXSizeFactor(monitor);
     Redisplay();
     Invalidate();
   }
@@ -81,9 +85,16 @@ void StyleRichEdit::OnPaint()
   CDC* dc = GetDC();
   CRect rect;
   GetClientRect(&rect);
+
+  int borderColor(m_borderColor);
+  if(borderColor < 0)
+  {
+    borderColor = ThemeColor::GetColor(Colors::AccentColor1);
+  }
+
   for(int index = 0; index < m_borderSize; ++index)
   {
-    dc->Draw3dRect(rect,m_borderColor,m_borderColor);
+    dc->Draw3dRect(rect,borderColor,borderColor);
     rect.DeflateRect(1,1);
   }
   ReleaseDC(dc);
@@ -151,6 +162,8 @@ StyleRichEdit::GetRTFText()
 void
 StyleRichEdit::SetRTFText(CString p_text)
 {
+  SetTextMode(TM_RICHTEXT);
+
   EDITSTREAM es;
   es.dwCookie    = (DWORD_PTR)&p_text;    // Pass a pointer to the CString to the callback function
   es.pfnCallback = EditStreamInCallback;  // Specify the pointer to the callback function
@@ -164,7 +177,10 @@ StyleRichEdit::SetRTFText(CString p_text)
 CString
 StyleRichEdit::FormatRTFText(CString p_text)
 {
-  SetTextMode(TM_RICHTEXT);
+  if(!m_factor)
+  {
+    m_factor = GetSFXSizeFactor(GetSafeHwnd());
+  }
 
   // Keep the unformatted text
   m_unformatted = p_text;
@@ -210,10 +226,8 @@ StyleRichEdit::CreateRTFHeader()
   for(auto& font : m_fonts)
   {
     CString fontname = font.second;
-    int     fontsize = GetFontsize(font.first);
     if(!fontname.IsEmpty())
     {
-      if(fontsize <= 0) fontsize = 20;
       header.AppendFormat(_T("{\\f%d \\fcharset0 %s; }"),font.first,fontname.GetString());
     }
   }
@@ -229,9 +243,13 @@ StyleRichEdit::CreateRTFHeader()
     }
   }
   header += _T("\\red0\\green0\\blue0;");   // Last color: BLACK
-  header += _T("}\n"); // End color table
-  header += _T("\\viewkind4\\uc1\\pard\\f0\\fs20\n");
-  header += _T("\\plain\\f0\\fs20\n");
+  header += _T("}\n");                      // End color table
+
+  // Set default font size
+  int fontsize = (m_factor * STYLE_RICHEDIT_DEF_SIZE) / 100;
+
+  header.AppendFormat(_T("\\viewkind4\\uc1\\pard\\f0\\fs%d\n"),fontsize);
+  header.AppendFormat(_T("\\plain\\f0\\fs%d\n"),fontsize);
 
   return header;
 }
@@ -239,8 +257,6 @@ StyleRichEdit::CreateRTFHeader()
 void
 StyleRichEdit::PrepareRTFText(CString& p_text)
 {
-  int factor = GetSFXSizeFactor(GetSafeHwnd());
-
   p_text.Replace(_T("\n"), _T("\\par\n"));
   p_text.Replace(_T("\t"), _T("\\tab "));
 
@@ -252,7 +268,7 @@ StyleRichEdit::PrepareRTFText(CString& p_text)
     {
       CString font;
       int size = GetFontsize(fs.first);
-      font.Format(_T("\\f%d\\fs%d"),fs.first,(factor * size) / 100);
+      font.Format(_T("\\f%d\\fs%d"),fs.first,(m_factor * size) / 100);
       p_text.Replace(tofind,font);
     }
   }

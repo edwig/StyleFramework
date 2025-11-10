@@ -21,8 +21,6 @@
 #include <afxcmn.h>
 #include <map>
 
-#define STYLE_RICHEDIT_MAX_FONTS   10
-
 using RTFFonts  = std::map<int,CString>;
 using RTFSizes  = std::map<int,int>;
 using RTFColors = std::map<int,int>;
@@ -69,13 +67,14 @@ protected:
 
 private:
   // Border
-  int       m_borderColor { RGB(127,127,127) };  // Gray border
-  int       m_borderSize  { 1 };                 // Size of one line
+  int       m_borderColor { -1 };   // Gray border
+  int       m_borderSize  {  1 };   // Size of one line
   // Contents
-  CString   m_unformatted;                   // Original unformatted text
+  CString   m_unformatted;          // Original unformatted text
   // How to format the text
-  RTFFonts  m_fonts;
-  RTFSizes  m_sizes;
-  RTFColors m_colors;
+  int       m_factor { 0 };         // Scaling factor for sizes
+  RTFFonts  m_fonts;                // All fontnames
+  RTFSizes  m_sizes;                // All font sizes
+  RTFColors m_colors;               // All color codes + BLACK
 };
 

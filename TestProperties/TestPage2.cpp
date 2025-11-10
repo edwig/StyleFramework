@@ -60,13 +60,15 @@ TestPage2::SetRTF()
                     _T("This is some {\\ul underlined} text.\n")
                     _T("This is some {\\cf1 colored} text.\n")
                     _T("This is some {\\f1 different font} text.\n")
-                    _T("This is some {\\fs36 \\cf2 large} text.\n")
-                    _T("{\\f2 \\cf3 This is monospaced console text}\n")
-    ;
+                    _T("This is some {\\f3 \\cf2 large} text.\n")
+                    _T("{\\f2 \\cf3 This is monospaced console text}\n");
+
   m_editTest13.SetFontname(1,_T("Arial"));
   m_editTest13.SetFontsize(1,24);
   m_editTest13.SetFontname(2,_T("Courier New"));
   m_editTest13.SetFontsize(2,18);
+  m_editTest13.SetFontname(3,_T("Verdana"));
+  m_editTest13.SetFontsize(3,36);
   m_editTest13.SetColor(1,RGB(255,0,0)); // Red
   m_editTest13.SetColor(2,RGB(0,0,255)); // Blue
   m_editTest13.SetColor(3,RGB(0,255,0)); // Green
