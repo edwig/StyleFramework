@@ -21,7 +21,8 @@
 #include "SkinScrollWnd.h"
 #include "StyleEdit.h"
 
-#define LIST_MAGIC 0xDEBAC1
+#define LIST_MAGIC         0xDEBAC1   // Marker for ownerdraw lines
+#define LISTBOX_ITEMHEIGTH 22         // Standard heigth of an item
 
 /////////////////////////////////////////////////////////////////////////////
 // CMulitLineListBox window
