@@ -154,7 +154,7 @@ StyleComboBox::PreSubclassWindow()
   {
     parent->ScreenToClient(rect);
   }
-  int height = (rect.Height() * 13) / 11;
+  int height = WS(GetSafeHwnd(),(LISTBOX_ITEMHEIGTH + COMBO_EDIT_HEIGHT_EXTRA));
 
   // When size factors are set, apply these as well.
   ::MoveWindow(info.hwndCombo,rect.left,rect.top,rect.Width(),height,TRUE);
@@ -217,7 +217,11 @@ StyleComboBox::CreateEditControl()
 void 
 StyleComboBox::CreateListControl()
 {
-  CRect rect(0,0,0,0);
+  CRect rect;
+  GetWindowRect(&rect);
+  rect.right  = rect.left;
+  rect.bottom = rect.top;
+
   DWORD cbstyle = GetStyle();
   DWORD style   = LBS_OWNERDRAWFIXED | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_POPUP | LBS_NOTIFY | LBS_HASSTRINGS;
   DWORD styleEx = WS_EX_TOOLWINDOW   | WS_EX_TOPMOST;
@@ -2574,10 +2578,8 @@ SCBListBox::OnMouseMove(UINT nFlags,CPoint point)
       SetCurSel(index);
       // Paint optimizations:
       // Only redraw the changed items!
-      Invalidate();
-
-//       InvalidateRect(rcCurrent);
-//       InvalidateRect(rcItem);
+      InvalidateRect(rcCurrent);
+      InvalidateRect(rcItem);
     }
   }
 }

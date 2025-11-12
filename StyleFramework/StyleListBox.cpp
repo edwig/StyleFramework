@@ -146,7 +146,7 @@ StyleListBox::OnItemRect(WPARAM wParam,LPARAM lParam)
   rect->right  = client.Width() - 1;
   rect->left   = client.left + 1;
 
-  return 0;
+  return 1;
 }
 
 void
@@ -902,7 +902,9 @@ StyleListBox::Internal_Paint(CDC* p_cdc)
   int    items = GetCount();
   int    style = GetStyle();
   CRect  clientrect;
-  RECT   focusRect = { -1,-1,-1,-1 };
+  CRect  linerect;
+  int    focusItem  = -1;
+  int    lastBottom = 0;
 
   // Special case! Do not paint
   if(style & LBS_NOREDRAW)
@@ -943,42 +945,36 @@ StyleListBox::Internal_Paint(CDC* p_cdc)
 
   for(int index = top_item; index < items; index++)
   {
-    itemrect.bottom = itemrect.top + item_height;
-
     /* keep the focus rect, to paint the focus item after */
-    if (index == focus_item)
+    if(index == focus_item)
     {
-      focusRect = itemrect;
+      focusItem = index;
     }
-    Internal_PaintItem(p_cdc,&itemrect,index,ODA_DRAWENTIRE,TRUE);
-    itemrect.top = itemrect.bottom;
-
-    if(itemrect.top >= clientrect.Height())
+    OnItemRect((WPARAM)index,(LPARAM)&itemrect);
+    if(itemrect.IsRectNull())
     {
       break;
     }
+    Internal_PaintItem(p_cdc,&itemrect,index,ODA_DRAWENTIRE,TRUE);
+    lastBottom = itemrect.bottom;
   }
 
   /* Paint the focus item now */
-  if(focusRect.top != focusRect.bottom && focus_item >= 0)
+  if(focusItem >= 0)
   {
-    Internal_PaintItem(p_cdc,&focusRect, focus_item, ODA_FOCUS, FALSE);
+    RECT   focusRect = {-1,-1,-1,-1};
+    if(OnItemRect((WPARAM)focusItem,(LPARAM) & focusRect))
+    {
+      Internal_PaintItem(p_cdc,&focusRect,focus_item,ODA_FOCUS,FALSE);
+    }
   }
 
   /* Clear the remainder of the client area */
   p_cdc->SelectObject(brush);
-  if (itemrect.top < clientrect.Height())
+  if(lastBottom < clientrect.Height())
   {
-    itemrect.bottom = clientrect.bottom;
-    p_cdc->ExtTextOut(0, 0, ETO_OPAQUE | ETO_CLIPPED,&itemrect, NULL, 0, NULL);
-  }
-  if(itemrect.right < clientrect.Width())
-  {
-    itemrect.left   = itemrect.right;
-    itemrect.right  = clientrect.right;
-    itemrect.top    = 0;
-    itemrect.bottom = clientrect.bottom;
-    p_cdc->ExtTextOut(0, 0, ETO_OPAQUE | ETO_CLIPPED,&itemrect, NULL, 0, NULL);
+    clientrect.top = lastBottom + 1;
+    p_cdc->ExtTextOut(0, 0, ETO_OPAQUE | ETO_CLIPPED,&clientrect, NULL, 0, NULL);
   }
 
   // Reset old values in DC

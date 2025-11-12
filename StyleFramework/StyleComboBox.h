@@ -26,6 +26,7 @@
 #define COMBO_DEFAULT_DROPWIDTH   100  // Number of pixels
 #define COMBO_DEFAULT_RESERVED   1000  // Number of items allocated
 #define COMBO_KEYBOARD_CACHE     2000  // 2000 ms keyboard cache
+#define COMBO_EDIT_HEIGHT_EXTRA     4  // Extra height for edit control
 
 class SCBTextEdit;
 class SCBListBox;
