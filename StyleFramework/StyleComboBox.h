@@ -181,6 +181,7 @@ protected:
   bool         m_typebuffer         { false };                      // type buffer for combo list
   bool         m_focus              { false };                      // Has the keyboard focus
   bool         m_error              { false };                      // Control is in error state
+  bool         m_firstShow          { true  };                      // First time showing the list
   ItemStore    m_items;                                             // Set/GetDataItem storage
   COLORREF     m_frameColor         { RGB(0,0,0) };                 // Color of the outer rim of the combobox
   COLORREF     m_arrowColor         { RGB(0,0,0) };                 // Color of the combobox arrow
