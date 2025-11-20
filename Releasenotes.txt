@@ -12,7 +12,14 @@
 
 VERSION 1.2.1 of xx-xx-2025
 ---------------------------
-1)  Re-implement your resource file numbers between 135 and 200 for the new scrollbar bitmaps
+1)  Ported to Visual Studio 20206
+2)  - Added scrollbar bitmaps for high DPI settings (125%, 150% and 200%)
+    - Fix for StyleScrollBar to properly display the new bitmaps
+    - Fix for several classes to properly use the DPI changes per monitor
+    - Changed the use of GetSystemMetrics to GetSystemMetricsForDpi where needed
+3)  TAKE ACTION:
+    - Re-implement your resource file numbers between 135 and 200 for the new scrollbar bitmaps
+      So review your resource.h file for this number range
 
 VERSION 1.2.0 of 07-11-2025
 ---------------------------
