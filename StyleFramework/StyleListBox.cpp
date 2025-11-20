@@ -48,12 +48,6 @@ StyleListBox::~StyleListBox()
   RemoveLineInfo();
   ResetSkin();
   OnNcDestroy();
-
-  if(m_font)
-  {
-    delete m_font;
-    m_font = nullptr;
-  }
 }
 
 BEGIN_MESSAGE_MAP(StyleListBox, CListBox)
@@ -491,13 +485,16 @@ StyleListBox::AdjustHorizontalExtent()
   CFont* o = dc.SelectObject(f);
 
   m_width = 0;
+  int dpi = ::GetDpiForWindow(GetSafeHwnd());
+  int extra = 3 * ::GetSystemMetricsForDpi(SM_CXBORDER,dpi);
+
   for(int i = 0; i < CListBox::GetCount(); i++)
   {
     /* scan strings */
     CString s;
     GetText(i,s);
     CSize sz = dc.GetTextExtent(s);
-    sz.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
+    sz.cx += extra;
     if(sz.cx > m_width)
     {
       m_width = sz.cx;
@@ -813,7 +810,8 @@ StyleListBox::UpdateWidth(LPCTSTR p_string)
 
   // Find our extent
   CSize sz = dc.GetTextExtent(p_string,len);
-  sz.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
+  int dpi = ::GetDpiForWindow(GetSafeHwnd());
+  sz.cx += 3 * ::GetSystemMetricsForDpi(SM_CXBORDER,dpi);
   if(sz.cx > m_width)
   {
     // Extend the max horizontal scroll bar width
@@ -919,7 +917,8 @@ StyleListBox::Internal_Paint(CDC* p_cdc)
   GetScrollInfo(SB_HORZ,&info);
   if(info.nPos > 0)
   {
-    int shift = info.nPos + ::GetSystemMetrics(SM_CXHSCROLL);
+    int dpi = ::GetDpiForWindow(GetSafeHwnd());
+    int shift = info.nPos + ::GetSystemMetricsForDpi(SM_CXHSCROLL,dpi);
     SetWindowOrgEx(p_cdc->GetSafeHdc(),shift,0,nullptr);
     clientrect.right += shift;
   }
@@ -1073,14 +1072,16 @@ void
 StyleListBox::ResetFont(HMONITOR p_monitor /*= nullptr*/)
 {
   // Getting the font scaling factor
-  int scale = 100;
+  int dpi = USER_DEFAULT_SCREEN_DPI;
   if(p_monitor)
   {
-    scale = GetSFXSizeFactor(p_monitor);
+    const StyleMonitor* mon = g_styling.GetMonitor(p_monitor);
+    mon->GetDPI(dpi,dpi);
   }
   else
   {
-    scale = GetSFXSizeFactor(GetSafeHwnd());
+    const StyleMonitor* mon = g_styling.GetMonitor(GetSafeHwnd());
+    mon->GetDPI(dpi,dpi);
   }
 
   LOGFONT lgFont;
@@ -1088,7 +1089,7 @@ StyleListBox::ResetFont(HMONITOR p_monitor /*= nullptr*/)
   lgFont.lfClipPrecision  = 0;
   lgFont.lfEscapement     = 0;
   _tcscpy_s(lgFont.lfFaceName,LF_FACESIZE,m_fontName);
-  lgFont.lfHeight         = (m_fontSize * scale) / 100;
+  lgFont.lfHeight         = -MulDiv((m_fontSize / 10),dpi,72);
   lgFont.lfItalic         = m_italic;
   lgFont.lfOrientation    = 0;
   lgFont.lfOutPrecision   = 0;
@@ -1097,23 +1098,16 @@ StyleListBox::ResetFont(HMONITOR p_monitor /*= nullptr*/)
   lgFont.lfStrikeOut      = 0;
   lgFont.lfUnderline      = m_underLine;
   lgFont.lfWidth          = 0;
-  lgFont.lfWeight         = m_bold ? FW_BOLD : FW_MEDIUM;
+  lgFont.lfWeight         = m_bold ? FW_BOLD : FW_NORMAL;
 
   // Create new font or remove old object from it
-  if(m_font)
+  if(m_font.m_hObject)
   {
-    if(m_font->m_hObject)
-    {
-      m_font->DeleteObject();
-    }
-  }
-  else
-  {
-    m_font = new CFont();
+    m_font.DeleteObject();
   }
   // Create new font and set it to this control
-  m_font->CreatePointFontIndirect(&lgFont);
-  SetFont(m_font);
+  m_font.CreateFontIndirect(&lgFont);
+  SetFont(&m_font);
 }
 
 LRESULT

@@ -10,6 +10,10 @@
 //
 // RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES RELEASENOTES
 
+VERSION 1.2.1 of xx-xx-2025
+---------------------------
+1)  Re-implement your resource file numbers between 135 and 200 for the new scrollbar bitmaps
+
 VERSION 1.2.0 of 07-11-2025
 ---------------------------
 1)  This version supports High DPI and multiple monitors with different DPI settings

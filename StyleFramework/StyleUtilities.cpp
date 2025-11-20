@@ -153,7 +153,8 @@ RepositionFrameWnd(CWnd* p_wnd,bool p_isFrame /*=true*/)
 
   if(p_isFrame)
   {
-    int extra = 2 * GetSystemMetrics(SM_CYFRAME);
+    int dpi = ::GetDpiForWindow(p_wnd->GetSafeHwnd());
+    int extra = 2 * GetSystemMetricsForDpi(SM_CYFRAME,dpi);
     rect.InflateRect(extra,extra);
   }
 

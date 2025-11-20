@@ -61,7 +61,8 @@ BEGIN_MESSAGE_MAP(SkinScrollBar, CScrollBar)
   ON_WM_LBUTTONUP()
   ON_WM_TIMER()
   ON_WM_SETFOCUS()
-  ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
+  ON_MESSAGE(WM_MOUSELEAVE,             OnMouseLeave)
+  ON_MESSAGE(WM_DPICHANGED_BEFOREPARENT,OnDpiChangedBefore)
 END_MESSAGE_MAP()
 
 BOOL SkinScrollBar::IsVertical()
@@ -156,17 +157,25 @@ UINT SkinScrollBar::HitTest(CPoint pt)
   return uHit;
 }
 
+LRESULT 
+SkinScrollBar::OnDpiChangedBefore(WPARAM wParam,LPARAM lParam)
+{
+  if(lParam)
+  {
+    m_nWidth = ThemeColor::GetSkinScrollWidth(GetSafeHwnd(),(HMONITOR)lParam);
+  }
+  return 0;
+}
+
 // Adjusting the width of the scrollbar
 // taking the size from the bitmap
 void 
-SkinScrollBar::SetBitmapSize()
+SkinScrollBar::SetBitmapSize(HMONITOR p_monitor /*= nullptr*/)
 {
+  // Set the width from the bitmap size
+  m_nWidth = ThemeColor::GetSkinScrollWidth(GetSafeHwnd(),p_monitor);
+
   ASSERT(m_hWnd);
-  HBITMAP hBmp = ThemeColor::GetScrollbarBitmap();
-  BITMAP bm;
-  GetObject(hBmp,sizeof(bm),&bm);
-  m_nWidth     = bm.bmWidth  / 9;
-  m_nFrmHeight = bm.bmHeight / 3;
   CRect rc;
   GetWindowRect(&rc);
   GetParent()->ScreenToClient(&rc);
@@ -196,7 +205,7 @@ void
 SkinScrollBar::OnPaint() 
 {
   CPaintDC dc(this); // device context for painting
-  HBITMAP hBitmap = ThemeColor::GetScrollbarBitmap();
+  HBITMAP hBitmap = ThemeColor::GetScrollbarBitmap(GetSafeHwnd());
   CDC memdc;
   memdc.CreateCompatibleDC(&dc);
   HGDIOBJ hOldBmp=::SelectObject(memdc,hBitmap);
@@ -472,7 +481,7 @@ SkinScrollBar::OnMouseMove(UINT nFlags, CPoint point)
     m_bTrace        = _TrackMouseEvent(&tme);
   }
 
-  HBITMAP hBitmap = ThemeColor::GetScrollbarBitmap();
+  HBITMAP hBitmap = ThemeColor::GetScrollbarBitmap(GetSafeHwnd());
 
   if(m_bDrag)
   {
@@ -620,7 +629,7 @@ SkinScrollBar::OnLButtonUp(UINT nFlags, CPoint point)
 
   if(m_bDrag)
   {
-    HBITMAP hBitmap = ThemeColor::GetScrollbarBitmap();
+    HBITMAP hBitmap = ThemeColor::GetScrollbarBitmap(GetSafeHwnd());
     m_bDrag = FALSE;
     GetParent()->SendMessage(IsVertical()?WM_VSCROLL:WM_HSCROLL,MAKELONG(SB_THUMBPOSITION,m_si.nTrackPos),(LPARAM)m_hWnd);
     CDC *pDC = GetDC();
@@ -734,7 +743,7 @@ void
 SkinScrollBar::DrawArrow(UINT uArrow, int nState)
 {
   ASSERT(uArrow == SB_LINEUP || uArrow == SB_LINEDOWN);
-  HBITMAP hBitmap = ThemeColor::GetScrollbarBitmap();
+  HBITMAP hBitmap = ThemeColor::GetScrollbarBitmap(GetSafeHwnd());
   CDC *pDC = GetDC();
   CDC memdc ;
   memdc.CreateCompatibleDC(pDC);
@@ -787,7 +796,7 @@ SkinScrollBar::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
     }
     if(bRedraw)
     {
-      HBITMAP hBitmap = ThemeColor::GetScrollbarBitmap();
+      HBITMAP hBitmap = ThemeColor::GetScrollbarBitmap(GetSafeHwnd());
       CDC *pDC = GetDC();
       CDC memdc;
       memdc.CreateCompatibleDC(pDC);

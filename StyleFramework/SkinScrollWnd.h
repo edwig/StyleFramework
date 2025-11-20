@@ -43,6 +43,7 @@ public:
   void     SetBorderColor(COLORREF p_color);
   void     SetPollScrollbars(BOOL p_poll);
   void     SetPaintPassthrough(BOOL p_paint);
+  void     SetSkinScrollWidth(HWND p_hwnd,HMONITOR p_monitor = nullptr);
   void     CalculateControlSize(CRect& p_rect);
   void     RepositionControlWindow(CWnd* p_wnd = nullptr);
 
@@ -68,7 +69,7 @@ public:
   BOOL          m_doPaint;      // Paint pass-through
   COLORREF      m_lastColor;    // Last set color of the outer border
   COLORREF      m_borderColor;  // Color of the inner border (if any)
-  int           m_nScrollWid;   // Width of a vertical scroll bar
+  int           m_nScrollWidth; // Width of a vertical scroll bar
   int           m_nAngleType;   // Angle type in the bitmap (left or right)
   int           m_borderSize;   // Border between frame and control
   int           m_scrollBias;   // Bias for the scrollbars
@@ -103,6 +104,7 @@ public:
   afx_msg LRESULT OnXButtonUp    (WPARAM wParam,LPARAM lParam);
   afx_msg LRESULT OnXButtonDblClk(WPARAM wParam,LPARAM lParam);
   afx_msg LRESULT OnGetDpiScaledSize(WPARAM wParam,LPARAM lParam);
+  afx_msg LRESULT OnDpiChangedBefore(WPARAM wParam,LPARAM lParam);
   afx_msg LRESULT OnDpiChangedAfter (WPARAM wParam,LPARAM lParam);
 
 protected:

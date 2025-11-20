@@ -466,13 +466,37 @@
     <Image Include="Icons\80_Calender.ico" />
     <Image Include="res\MyFrame.ico" />
     <Image Include="res\ScrollBar1.bmp" />
+    <Image Include="res\ScrollBar1_125.bmp" />
+    <Image Include="res\ScrollBar1_150.bmp" />
+    <Image Include="res\ScrollBar1_200.bmp" />
     <Image Include="res\ScrollBar2.bmp" />
+    <Image Include="res\ScrollBar2_125.bmp" />
+    <Image Include="res\ScrollBar2_150.bmp" />
+    <Image Include="res\ScrollBar2_200.bmp" />
     <Image Include="res\ScrollBar3.bmp" />
+    <Image Include="res\ScrollBar3_125.bmp" />
+    <Image Include="res\ScrollBar3_150.bmp" />
+    <Image Include="res\ScrollBar3_200.bmp" />
     <Image Include="res\ScrollBar4.bmp" />
+    <Image Include="res\ScrollBar4_125.bmp" />
+    <Image Include="res\ScrollBar4_150.bmp" />
+    <Image Include="res\ScrollBar4_200.bmp" />
     <Image Include="res\ScrollBar5.bmp" />
+    <Image Include="res\ScrollBar5_125.bmp" />
+    <Image Include="res\ScrollBar5_150.bmp" />
+    <Image Include="res\ScrollBar5_200.bmp" />
     <Image Include="res\ScrollBar6.bmp" />
+    <Image Include="res\ScrollBar6_125.bmp" />
+    <Image Include="res\ScrollBar6_150.bmp" />
+    <Image Include="res\ScrollBar6_200.bmp" />
     <Image Include="res\ScrollBar7.bmp" />
+    <Image Include="res\ScrollBar7_125.bmp" />
+    <Image Include="res\ScrollBar7_150.bmp" />
+    <Image Include="res\ScrollBar7_200.bmp" />
     <Image Include="res\ScrollBar8.bmp" />
+    <Image Include="res\ScrollBar8_125.bmp" />
+    <Image Include="res\ScrollBar8_150.bmp" />
+    <Image Include="res\ScrollBar8_200.bmp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="WorkToDo.txt" />

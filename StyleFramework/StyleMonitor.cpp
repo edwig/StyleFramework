@@ -59,7 +59,13 @@ StyleMonitor::GetName() const
 {
   return m_name;
 }
-  
+
+const CString
+StyleMonitor::GetDeviceName() const
+{
+  return m_deviceName;
+}
+
 const CRect
 StyleMonitor::GetRect() const
 {
@@ -103,10 +109,29 @@ StyleMonitor::GetIsMarked() const
   return m_mark;
 }
 
+int
+StyleMonitor::GetSystemMetrics(int p_index) const
+{
+  if(m_dpi_x)
+  {
+    return GetSystemMetricsForDpi(p_index,static_cast<UINT>(m_dpi_x));
+  }
+  else
+  {
+    return ::GetSystemMetrics(p_index);
+  }
+}
+
 void
 StyleMonitor::SetAsMarked(bool p_mark /* = true */)
 {
   m_mark = p_mark;
+}
+
+void
+StyleMonitor::SetDeviceName(CString p_deviceName)
+{
+  m_deviceName = p_deviceName;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -165,7 +190,23 @@ StyleMonitors::DiscoverAllMonitors()
                                     }
                                    ,(LPARAM)this);  // No data
 
-  return true;
+  // Find the logical device names for the monitors
+  DISPLAY_DEVICE dd;
+  dd.cb = sizeof(DISPLAY_DEVICE);
+  for(int i = 0; EnumDisplayDevices(nullptr,i,&dd,0); ++i)
+  {
+    // Find the monitor with this device name
+    for(auto& monitor : m_monitors)
+    {
+      if(monitor->GetName().CompareNoCase(dd.DeviceName) == 0)
+      {
+        monitor->SetDeviceName(dd.DeviceString);
+        break;
+      }
+    }
+  }
+
+  return result;
 }
 
 // Try to add a monitor, returns false if already present

@@ -37,6 +37,8 @@ BEGIN_MESSAGE_MAP(StyleTab,CDialog)
   ON_NOTIFY_EX(TTN_NEEDTEXT,0,          OnToolTipNotify)
   ON_MESSAGE(WM_CTLCOLORSTATIC,         OnCtlColorStatic)
   ON_MESSAGE(WM_CTLCOLORLISTBOX,        OnCtlColorListBox)
+  ON_MESSAGE(WM_DPICHANGED_BEFOREPARENT,OnDpiChangedBefore)
+  ON_MESSAGE(WM_DPICHANGED,             OnDpiChanged)
 END_MESSAGE_MAP()
 
 StyleTab::StyleTab(UINT  p_IDTemplate,CWnd* p_parentWnd)
@@ -354,6 +356,80 @@ StyleTab::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
   return CDialog::OnCtlColor(pDC,pWnd,nCtlColor);
 }
 
+LRESULT
+StyleTab::OnDpiChangedBefore(WPARAM wParam,LPARAM lParam)
+{
+  // We do nothing here
+  // We must catch this message, otherwise we crash in the default WindowProc handler !!
+  return 0;
+}
+
+static int   g_dpi_x = USER_DEFAULT_SCREEN_DPI;
+static int   g_dpi_y = USER_DEFAULT_SCREEN_DPI;
+
+// A change in DPI has happened
+LRESULT
+StyleTab::OnDpiChanged(WPARAM wParam,LPARAM lParam)
+{
+  // The new DPI
+  g_dpi_x = m_dpi_x;
+  g_dpi_y = m_dpi_y;
+  m_dpi_x = HIWORD(wParam);
+  m_dpi_y = LOWORD(wParam);
+
+  // Check if anything has changed
+  if(m_dpi_x == g_dpi_x && m_dpi_y == g_dpi_y)
+  {
+    // No change
+    return 0;
+  }
+
+  // Remove the invalid layout manager
+  auto manager = GetDynamicLayout();
+  bool layoutEnabled(manager != nullptr);
+  if(manager)
+  {
+    m_pDynamicLayout = nullptr;
+    delete manager;
+  }
+
+  // Now redraw everything
+  Invalidate(TRUE);
+  OnNcPaint();
+
+  // Create a new dynamic layout manager for the new DPI
+  if(layoutEnabled)
+  {
+    // Scale the original size
+    m_originalSize.right  = m_originalSize.left + ::MulDiv(m_originalSize.Width(), m_dpi_x,g_dpi_x);
+    m_originalSize.bottom = m_originalSize.top  + ::MulDiv(m_originalSize.Height(),m_dpi_y,g_dpi_y);
+
+    SetCanResize(true);
+  }
+  return 0;
+}
+
+void
+StyleTab::SendMessageToAllChildWindows(UINT MessageId,WPARAM wParam,LPARAM lParam)
+{
+  SMessage sMessage;
+  sMessage.MessageId = MessageId;
+  sMessage.wParam = wParam;
+  sMessage.lParam = lParam;
+
+  if(GetSafeHwnd())
+  {
+    ::EnumChildWindows(m_hWnd,
+                      [](HWND p_wnd,LPARAM lParam) -> BOOL
+                      {
+                        PSMessage psMessage = (PSMessage)lParam;
+                        ::SendMessage(p_wnd,psMessage->MessageId,psMessage->wParam,psMessage->lParam);
+                        return TRUE;
+                      },
+                      (LPARAM)&sMessage);
+  }
+}
+  
 void
 StyleTab::OnCancel()
 {

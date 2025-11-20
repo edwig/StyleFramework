@@ -196,7 +196,7 @@ private:
   bool     m_bold         { false };                    // Use bold font
   bool     m_underLine    { false };                    // Use underlined font
   CString  m_fontName     { STYLE_DEFAULT_FONT };       // Name of font to use
-  CFont*   m_font         { nullptr };                  // Pointer to font structure
+  CFont    m_font;                                      // Font for the edit control
   BYTE     m_language     { DEFAULT_CHARSET };          // Default language
   // Colors
   COLORREF m_colorText            { FRAME_DEFAULT_COLOR };

@@ -35,6 +35,7 @@ public:
   // GETTERS
   const HMONITOR    GetMonitor()   const;
   const CString     GetName()      const; 
+  const CString     GetDeviceName()const;
   const CRect       GetRect()      const;
   const bool        GetIsPrimary() const;
   const bool        GetIsMarked()  const;
@@ -42,12 +43,16 @@ public:
   const int         GetHeight()    const;
   const int         GetWidth()     const;
   void              GetDPI(int& p_dpi_x,int& p_dpi_y) const;
+  int               GetSystemMetrics(int p_index) const;
 
   void SetAsMarked(bool p_mark = true);
+  void SetDeviceName(CString p_deviceName);
+
 
 private:
   HMONITOR   m_monitor;             // Monitor handle for the OS
   CString    m_name;                // Internal name of the monitor
+  CString    m_deviceName;          // Device name of the monitor
   CRect      m_rect;                // Usable portion of the virtual desktop
   bool       m_primary;             // Is the primary monitor in the system?
   bool       m_mark { false };      // Mark status for rescanning all monitors

@@ -122,6 +122,6 @@ protected:
   bool     m_bold         { false };                    // Use bold font
   bool     m_underLine    { false };                    // Use underlined font
   CString  m_fontName     { STYLE_DEFAULT_FONT };       // Name of font to use
-  CFont*   m_font         { nullptr };                  // Pointer to font structure
+  CFont    m_font;                                      // Pointer to font structure
   BYTE     m_language     { DEFAULT_CHARSET };          // Default language
 };

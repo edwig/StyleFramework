@@ -66,11 +66,6 @@ StyleEdit::StyleEdit()
 
 StyleEdit::~StyleEdit()
 {
-  if(m_font)
-  {
-    delete m_font;
-    m_font = nullptr;
-  }
   // Strange but true: Only way to destroy this window
   OnNcDestroy();
 
@@ -122,8 +117,7 @@ StyleEdit::InitSkin(bool p_force /*=false*/)
       m_borderSize = STYLE_SINGLELN_BORDER;
     }
   }
-  CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFont);
-  SetFont(font);
+  ResetFont();
   if(p_force || (style & ES_MULTILINE))
   {
     SkinWndScroll(this,border ? m_borderSize : 0);
@@ -1141,7 +1135,7 @@ StyleEdit::OnDoubleClick(WPARAM wParam, LPARAM lParam)
   GetWindowText(text);
 
   StyleCalendar cal(this,text,bottom,left);
-  cal.RegisterFont(m_font);
+  cal.RegisterFont(&m_font);
 
   if(cal.DoModal() == IDOK)
   {
@@ -1232,14 +1226,16 @@ void
 StyleEdit::ResetFont(HMONITOR p_monitor /*= nullptr*/)
 {
   // Getting the font scaling factor
-  int scale = 100;
+  int dpi = USER_DEFAULT_SCREEN_DPI;
   if(p_monitor)
   {
-    scale = GetSFXSizeFactor(p_monitor);
+    const StyleMonitor* mon = g_styling.GetMonitor(p_monitor);
+    mon->GetDPI(dpi,dpi);
   }
   else
   {
-    scale = GetSFXSizeFactor(GetSafeHwnd());
+    const StyleMonitor* mon = g_styling.GetMonitor(GetSafeHwnd());
+    mon->GetDPI(dpi,dpi);
   }
 
   LOGFONT lgFont;
@@ -1247,7 +1243,7 @@ StyleEdit::ResetFont(HMONITOR p_monitor /*= nullptr*/)
   lgFont.lfClipPrecision  = 0;
   lgFont.lfEscapement     = 0;
   _tcscpy_s(lgFont.lfFaceName,LF_FACESIZE,m_fontName);
-  lgFont.lfHeight         = (m_fontSize * scale) / 100;
+  lgFont.lfHeight         = -MulDiv((m_fontSize / 10),dpi,72);
   lgFont.lfItalic         = m_italic;
   lgFont.lfOrientation    = 0;
   lgFont.lfOutPrecision   = 0;
@@ -1256,23 +1252,16 @@ StyleEdit::ResetFont(HMONITOR p_monitor /*= nullptr*/)
   lgFont.lfStrikeOut      = 0;
   lgFont.lfUnderline      = m_underLine;
   lgFont.lfWidth          = 0;
-  lgFont.lfWeight         = m_bold ? FW_BOLD : FW_MEDIUM;
+  lgFont.lfWeight         = m_bold ? FW_BOLD : FW_NORMAL;
 
   // Create new font or remove old object from it
-  if(m_font)
+  if(m_font.m_hObject)
   {
-    if(m_font->m_hObject)
-    {
-      m_font->DeleteObject();
-    }
-  }
-  else
-  {
-    m_font = new CFont();
+    m_font.DeleteObject();
   }
   // Create new font and set it to this control
-  m_font->CreatePointFontIndirect(&lgFont);
-  SetFont(m_font);
+  m_font.CreateFontIndirect(&lgFont);
+  SetFont(&m_font);
 }
 
 void 

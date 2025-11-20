@@ -610,7 +610,7 @@ CSize CGridCellBase::GetTextExtent(LPCTSTR szText, CDC* pDC /*= NULL*/)
 }
 
 
-CSize CGridCellBase::GetCellExtent(CDC* pDC)
+CSize CGridCellBase::GetCellExtent(CDC* pDC,HWND p_hwnd)
 {
   CSize size = GetTextExtent(GetText(), pDC);
   CSize ImageSize(0,0);

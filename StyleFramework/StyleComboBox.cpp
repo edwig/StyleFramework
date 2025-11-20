@@ -219,8 +219,8 @@ StyleComboBox::CreateListControl()
 {
   CRect rect;
   GetWindowRect(&rect);
-  rect.right  = rect.left;
-  rect.bottom = rect.top;
+//   rect.right  = rect.left;
+//   rect.bottom = rect.top;
 
   DWORD cbstyle = GetStyle();
   DWORD style   = LBS_OWNERDRAWFIXED | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_POPUP | LBS_NOTIFY | LBS_HASSTRINGS;
@@ -254,7 +254,7 @@ StyleComboBox::CreateListControl()
     skin->SetMouseCapture(TRUE,TME_HOVER);
     skin->SkinSetMouseTracking();
   }
-  m_listControl->PostMessage(WM_SETFONT,(WPARAM)GetFont()->GetSafeHandle(),MAKELPARAM(TRUE,0));
+  // m_listControl->SendMessage(WM_SETFONT,(WPARAM)m_itemControl->GetFont()->GetSafeHandle(),MAKELPARAM(TRUE,0));
 }
 
 // Needs to be called when created dynamic and not through a resource *.rc file

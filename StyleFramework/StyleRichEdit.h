@@ -61,6 +61,7 @@ protected:
 
   // Paint our own border
   afx_msg void    OnPaint();
+  afx_msg void    OnSetFont(CFont* pFont,BOOL bRedraw);
   afx_msg void    OnHScroll(UINT nSBCode,UINT nPos,CScrollBar* pScrollBar);
   afx_msg void    OnVScroll(UINT nSBCode,UINT nPos,CScrollBar* pScrollBar);
   afx_msg LRESULT OnDpiChangedAfter(WPARAM wParam, LPARAM lParam);

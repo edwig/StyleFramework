@@ -134,25 +134,27 @@ HookWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     DWORD dwStyle     = ::GetWindowLong(hwnd,GWL_STYLE);
     DWORD dwExStyle   = ::GetWindowLong(hwnd,GWL_EXSTYLE);
     bool  bLeftScroll = (dwExStyle & WS_EX_LEFTSCROLLBAR) != 0;
-    int nWid=::GetSystemMetrics(SM_CXVSCROLL);
+    int dpi           = ::GetDpiForWindow(hwnd);
+    int nWidth        = ::GetSystemMetricsForDpi(SM_CXVSCROLL,dpi);
     if(dwStyle & WS_VSCROLL) 
     {
       if (bLeftScroll)
       {
-        pNcCalcSizeParam->rgrc[0].left -= nWid - skin->m_nScrollWid;
+        pNcCalcSizeParam->rgrc[0].left -= nWidth - skin->m_nScrollWidth;
       }
       else
       {
-        pNcCalcSizeParam->rgrc[0].right += nWid - skin->m_nScrollWid;
+        pNcCalcSizeParam->rgrc[0].right += nWidth - skin->m_nScrollWidth;
       }
     }
     if(dwStyle & WS_HSCROLL)
     {
-      pNcCalcSizeParam->rgrc[0].bottom += nWid - skin->m_nScrollWid;
+      pNcCalcSizeParam->rgrc[0].bottom += nWidth - skin->m_nScrollWidth;
     }
     RECT rcVert,rcHorz;
-      
-    nWid = skin->m_nScrollWid;
+
+    nWidth = skin->m_nScrollWidth;
+
     int border = skin->m_borderSize;
     int bias   = skin->m_scrollBias;
     if(bLeftScroll)
@@ -160,26 +162,26 @@ HookWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       int nLeft     = pNcCalcSizeParam->rgrc[0].left;
       int nBottom   = pNcCalcSizeParam->rgrc[0].bottom;
       rcVert.right  = nLeft - bias;
-      rcVert.left   = nLeft - nWid - bias;
+      rcVert.left   = nLeft - nWidth - bias;
       rcVert.top    = border;
       rcVert.bottom = nBottom - border + 1 - bias;
       rcHorz.left   = nLeft + border;
       rcHorz.right  = pNcCalcSizeParam->rgrc[0].right - border;
       rcHorz.top    = nBottom + bias;
-      rcHorz.bottom = nBottom + nWid + bias;
+      rcHorz.bottom = nBottom + nWidth + bias;
     }
     else
     {
       int nRight    = pNcCalcSizeParam->rgrc[0].right;
       int nBottom   = pNcCalcSizeParam->rgrc[0].bottom;
       rcVert.left   = nRight + bias;
-      rcVert.right  = nRight + nWid + bias;
+      rcVert.right  = nRight + nWidth + bias;
       rcVert.top    = border;
       rcVert.bottom = nBottom - border + 1 - bias;
       rcHorz.left   = border;
       rcHorz.right  = nRight  - border + 1;
       rcHorz.top    = nBottom + bias;
-      rcHorz.bottom = nBottom + nWid + bias;
+      rcHorz.bottom = nBottom + nWidth + bias;
     }
     if(dwStyle & WS_VSCROLL && dwStyle & WS_HSCROLL)
     {
@@ -272,7 +274,7 @@ SkinScrollWnd::SkinScrollWnd()
   m_doCapture    = FALSE;
   m_didCapture   = FALSE;
   m_didTracking  = false;
-  m_nScrollWid   = 16;
+  m_nScrollWidth   = 16;
   m_nAngleType   = 0;
   m_lastColor    = RGB(0,0,0);
   m_borderColor  = RGB(0xFF,0xFF,0xFF);
@@ -300,9 +302,10 @@ BEGIN_MESSAGE_MAP(SkinScrollWnd, CWnd)
   ON_WM_SETFOCUS()
   ON_WM_MOUSEMOVE()
   ON_WM_CAPTURECHANGED()
-  ON_MESSAGE(SF_LIMITERMOVE,           OnLimiterMove)
-  ON_MESSAGE(WM_GETDPISCALEDSIZE,      OnGetDpiScaledSize)
-  ON_MESSAGE(WM_DPICHANGED_AFTERPARENT,OnDpiChangedAfter)
+  ON_MESSAGE(SF_LIMITERMOVE,            OnLimiterMove)
+  ON_MESSAGE(WM_GETDPISCALEDSIZE,       OnGetDpiScaledSize)
+  ON_MESSAGE(WM_DPICHANGED_BEFOREPARENT,OnDpiChangedBefore)
+  ON_MESSAGE(WM_DPICHANGED_AFTERPARENT, OnDpiChangedAfter)
   // MOUSE BUTTON MESSAGES
   ON_MESSAGE(WM_MOUSEHOVER,   OnMouseHover)
   ON_MESSAGE(WM_MOUSELEAVE,   OnMouseLeave)
@@ -327,10 +330,11 @@ BOOL
 SkinScrollWnd::SkinWindow(CWnd* p_wnd,int p_borderSize /*=0*/,int p_clientBias /*=0*/)
 {
   ASSERT(m_hWnd == nullptr);
-  HBITMAP hBmpScroll = ThemeColor::GetScrollbarBitmap();
-  BITMAP bm;
-  GetObject(hBmpScroll,sizeof(bm),&bm);
-  m_nScrollWid = bm.bmWidth / 9;
+
+  // Set early for the NonClient area calculations
+  SetSkinScrollWidth(p_wnd->GetSafeHwnd());
+
+  // Keep the client bias
   m_clientBias = p_clientBias;
 
   // Calculate the frame and new control rectangles
@@ -496,6 +500,12 @@ void
 SkinScrollWnd::SetPaintPassthrough(BOOL p_paint)
 {
   m_doPaint = p_paint;
+}
+
+void
+SkinScrollWnd::SetSkinScrollWidth(HWND p_hwnd,HMONITOR p_monitor /*=nullptr*/)
+{
+  m_nScrollWidth = ThemeColor::GetSkinScrollWidth(p_hwnd,p_monitor);
 }
 
 void
@@ -692,7 +702,7 @@ SkinScrollWnd::OnPaint()
   CPaintDC dc(this); // device context for painting
   CDC memdc;
   memdc.CreateCompatibleDC(&dc);
-  HGDIOBJ hOldBmp = ::SelectObject(memdc,ThemeColor::GetScrollbarBitmap());
+  HGDIOBJ hOldBmp = ::SelectObject(memdc,ThemeColor::GetScrollbarBitmap(GetSafeHwnd()));
   RECT rc;
   GetClientRect(&rc);
   if(m_nAngleType == 0 || m_doPaint)
@@ -706,23 +716,23 @@ SkinScrollWnd::OnPaint()
   else if(m_nAngleType == 1)
   {
     dc.BitBlt(rc.left   + m_borderSize
-             ,rc.bottom - m_borderSize - m_nScrollWid
-             ,m_nScrollWid
-             ,m_nScrollWid
+             ,rc.bottom - m_borderSize - m_nScrollWidth
+             ,m_nScrollWidth
+             ,m_nScrollWidth
              ,&memdc
-             ,m_nScrollWid * 8
-             ,m_nScrollWid * 1
+             ,m_nScrollWidth * 8
+             ,m_nScrollWidth * 1
              ,SRCCOPY);
   }
   else if(m_nAngleType == 2)
   {
-    dc.BitBlt(rc.right  - m_nScrollWid - m_borderSize
-             ,rc.bottom - m_nScrollWid - m_borderSize
-             ,m_nScrollWid
-             ,m_nScrollWid
+    dc.BitBlt(rc.right  - m_nScrollWidth - m_borderSize
+             ,rc.bottom - m_nScrollWidth - m_borderSize
+             ,m_nScrollWidth
+             ,m_nScrollWidth
              ,&memdc
-             ,m_nScrollWid * 8
-             ,m_nScrollWid * 0
+             ,m_nScrollWidth * 8
+             ,m_nScrollWidth * 0
              ,SRCCOPY);
   }
   ::SelectObject(memdc,hOldBmp);
@@ -779,15 +789,15 @@ SkinScrollWnd::OnLimiterMove(WPARAM wParam, LPARAM lParam)
   bool bVScroll    = ((wParam & WS_VSCROLL) != 0);
   bool bHScroll    = ((wParam & WS_HSCROLL) != 0);
   bool bLeftScroll = (bool) lParam;
-  RECT rcClient;
+  CRect rcClient;
   GetClientRect(&rcClient);
-  RECT rcLimit,rcWnd;
+  CRect rcLimit,rcWnd;
   rcWnd   = rcClient;
   rcLimit = rcClient;
 
   if(bHScroll)
   {
-    rcLimit.bottom -= m_nScrollWid + m_borderSize;
+    rcLimit.bottom -= m_nScrollWidth + m_borderSize;
   }
   else
   {
@@ -797,12 +807,12 @@ SkinScrollWnd::OnLimiterMove(WPARAM wParam, LPARAM lParam)
   {
     if(bLeftScroll)
     {
-      rcLimit.left += m_nScrollWid + m_borderSize;
-      OffsetRect(&rcWnd,-m_nScrollWid-m_borderSize,0);
+      rcLimit.left += m_nScrollWidth + m_borderSize;
+      OffsetRect(&rcWnd,-m_nScrollWidth-m_borderSize,0);
     }
     else
     {
-      rcLimit.right -= m_nScrollWid + m_borderSize;
+      rcLimit.right -= m_nScrollWidth + m_borderSize;
     }
   }
 
@@ -1207,6 +1217,16 @@ SkinScrollWnd::OnGetDpiScaledSize(WPARAM wParam,LPARAM lParam)
 }
 
 LRESULT
+SkinScrollWnd::OnDpiChangedBefore(WPARAM wParam,LPARAM lParam)
+{
+  if(lParam)
+  {
+    SetSkinScrollWidth(GetSafeHwnd(),(HMONITOR)lParam);
+  }
+  return 0;
+}
+
+LRESULT
 SkinScrollWnd::OnDpiChangedAfter(WPARAM wParam,LPARAM lParam)
 {
   HMONITOR monitor = reinterpret_cast<HMONITOR>(lParam);
@@ -1214,6 +1234,10 @@ SkinScrollWnd::OnDpiChangedAfter(WPARAM wParam,LPARAM lParam)
   {
     return 0;
   }
+
+  // Set the new scrollbar width/height
+  SetSkinScrollWidth(GetSafeHwnd(),monitor);
+
   if(!m_dpiRect.IsRectNull())
   {
     // Scale the cooridinates
@@ -1233,6 +1257,11 @@ SkinScrollWnd::OnDpiChangedAfter(WPARAM wParam,LPARAM lParam)
     MoveWindow(m_dpiRect);
 
     m_dpiRect.SetRectEmpty();
+
+//     OnLimiterMove((WPARAM)(WS_VSCROLL | WS_HSCROLL),0);
+//     // First setting of scrollbars in this amount of delay time
+//     SetTimer(TIMER_UPDATE,FRAME_FIRST_SCROLLBARS,nullptr);
   }
+
   return 0;
 }

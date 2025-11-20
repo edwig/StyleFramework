@@ -1127,18 +1127,9 @@ static CWnd* g_resize_wnd(nullptr);
 
 // A change in DPI has happened
 LRESULT
-StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
+StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM lParam)
 {
   g_resize_wnd = this;
-
-  // Remove the invalid layout manager
-  auto manager = GetDynamicLayout();
-  bool layoutEnabled(manager != nullptr);
-  if(manager)
-  {
-    m_pDynamicLayout = nullptr;
-    delete manager;
-  }
 
   // The new DPI
   g_dpi_x = m_dpi_x;
@@ -1151,6 +1142,15 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
   {
     // No change
     return 0;
+  }
+
+  // Remove the invalid layout manager
+  auto manager = GetDynamicLayout();
+  bool layoutEnabled(manager != nullptr);
+  if(manager)
+  {
+    m_pDynamicLayout = nullptr;
+    delete manager;
   }
 
   // Current monitor configuration
@@ -1171,6 +1171,9 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
                  wrect.Height(),
                  SWP_NOZORDER | SWP_NOACTIVATE);
 
+  // Notify all child windows that we are about to change DPI
+  NotifyMonitorToAllChilds(true);
+
   // Scale child windows using newDpi and oldDpi (the previous DPI)
   ::EnumChildWindows( m_hWnd,
                       [](HWND hWnd,LPARAM lParam) -> BOOL
@@ -1186,7 +1189,6 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
                         {
                           return TRUE;
                         }
-
                         // Getting the child window rectangle
                         CRect rcChild;
                         child->GetWindowRect(rcChild);
@@ -1231,6 +1233,9 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM /*lParam*/)
     RepositionBars(AFX_IDW_CONTROLBAR_FIRST,AFX_IDW_CONTROLBAR_LAST,0);
   }
 
+  // Propagate the DPI change to all child windows
+  SendMessageToAllChildWindows(WM_DPICHANGED,wParam,lParam);
+
   // Now redraw everything
   Invalidate(TRUE);
   OnNcPaint();
@@ -1255,6 +1260,7 @@ StyleDialog::OnDisplayChange(WPARAM wParam,LPARAM lParam)
   // Current monitor configuration
   g_styling.RefreshMonitors();
 
+  // Mainly to set new font sizes
   NotifyMonitorToAllChilds();
 
   // Move to original monitor if needed
@@ -1263,7 +1269,7 @@ StyleDialog::OnDisplayChange(WPARAM wParam,LPARAM lParam)
 
 // After a DPI change or a change in monitors or monitor settings
 void
-StyleDialog::NotifyMonitorToAllChilds()
+StyleDialog::NotifyMonitorToAllChilds(bool p_beforeParent /*= false*/)
 {
   // Take the HMONITOR for the new monitor
   const  StyleMonitor* mon = g_styling.GetMonitor(GetSafeHwnd());
@@ -1273,15 +1279,24 @@ StyleDialog::NotifyMonitorToAllChilds()
   }
   HMONITOR newMonitor = mon->GetMonitor();
 
-  // Notify all child windows after parent has changed DPI
-  // So that we can handle different fonts etc.
-  CFont* font = GetSFXFont(newMonitor,StyleFontType::DialogFont);
-  if(font)
+  if(p_beforeParent)
   {
-    SendMessageToAllChildWindows(WM_SETFONT,(WPARAM)font->GetSafeHandle(),(LPARAM)TRUE);
+    // Notify all child windows before parent has changed DPI
+    // So that we can prepare for the change
+    SendMessageToAllChildWindows(WM_DPICHANGED_BEFOREPARENT,g_dpi_x,(LPARAM)newMonitor);
   }
-  // Let Style controls 'do-their-thing'
-  SendMessageToAllChildWindows(WM_DPICHANGED_AFTERPARENT,g_dpi_x,(LPARAM)newMonitor);
+  else
+  {
+    // Notify all child windows after parent has changed DPI
+    // So that we can handle different fonts etc.
+    CFont* font = GetSFXFont(newMonitor,StyleFontType::DialogFont);
+    if(font)
+    {
+      SendMessageToAllChildWindows(WM_SETFONT,(WPARAM)font->GetSafeHandle(),(LPARAM)TRUE);
+    }
+    // Let Style controls 'do-their-thing'
+    SendMessageToAllChildWindows(WM_DPICHANGED_AFTERPARENT,g_dpi_x,(LPARAM)newMonitor);
+  }
 }
 
 void 
@@ -1663,8 +1678,9 @@ StyleDialog::OnPaint()
     SendMessage(WM_ICONERASEBKGND,reinterpret_cast<WPARAM>(dc.GetSafeHdc()),0);
 
     // Center icon in client rectangle
-    int cxIcon = GetSystemMetrics(SM_CXICON);
-    int cyIcon = GetSystemMetrics(SM_CYICON);
+    int dpi = ::GetDpiForWindow(GetSafeHwnd());
+    int cxIcon = GetSystemMetricsForDpi(SM_CXICON,dpi);
+    int cyIcon = GetSystemMetricsForDpi(SM_CYICON,dpi);
     CRect rect;
     GetClientRect(&rect);
     int x = (rect.Width()  - cxIcon + 1) / 2;
@@ -1682,8 +1698,9 @@ StyleDialog::OnPaint()
     CDC* pDC = GetDC();
     CRect rect;
     GetClientRect(rect);
-    rect.left = rect.right  - ::GetSystemMetrics(SM_CXHSCROLL);
-    rect.top  = rect.bottom - ::GetSystemMetrics(SM_CYVSCROLL);
+    int dpi = ::GetDpiForWindow(GetSafeHwnd());
+    rect.left = rect.right  - ::GetSystemMetricsForDpi(SM_CXHSCROLL,dpi);
+    rect.top  = rect.bottom - ::GetSystemMetricsForDpi(SM_CYVSCROLL,dpi);
     pDC->DrawFrameControl(rect,DFC_SCROLL,DFCS_SCROLLSIZEGRIP);
     ReleaseDC(pDC);
   }
@@ -1698,8 +1715,9 @@ StyleDialog::EraseGripper()
     CDC* pDC = GetDC();
     CRect rect;
     GetClientRect(rect);
-    rect.left = rect.right - ::GetSystemMetrics(SM_CXHSCROLL);
-    rect.top = rect.bottom - ::GetSystemMetrics(SM_CYVSCROLL);
+    int dpi = ::GetDpiForWindow(GetSafeHwnd());
+    rect.left = rect.right - ::GetSystemMetricsForDpi(SM_CXHSCROLL,dpi);
+    rect.top = rect.bottom - ::GetSystemMetricsForDpi(SM_CYVSCROLL,dpi);
     pDC->FillRect(rect,&m_defaultBrush);
     ReleaseDC(pDC);
   }

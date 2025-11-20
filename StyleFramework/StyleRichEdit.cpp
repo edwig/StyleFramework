@@ -42,6 +42,7 @@ BEGIN_MESSAGE_MAP(StyleRichEdit,CRichEditCtrl)
   ON_WM_PAINT()
   ON_WM_HSCROLL()
   ON_WM_VSCROLL()
+  ON_WM_SETFONT()
   ON_MESSAGE(WM_DPICHANGED_AFTERPARENT,OnDpiChangedAfter)
 END_MESSAGE_MAP()
 
@@ -76,6 +77,12 @@ StyleRichEdit::OnDpiChangedAfter(WPARAM wParam, LPARAM lParam)
     Invalidate();
   }
   return 0;
+}
+
+void
+StyleRichEdit::OnSetFont(CFont* pFont,BOOL bRedraw)
+{
+  // Ignore the WM_SETFONT from the DPI mechanism
 }
 
 void StyleRichEdit::OnPaint()
@@ -162,8 +169,10 @@ StyleRichEdit::GetRTFText()
 void
 StyleRichEdit::SetRTFText(CString p_text)
 {
-  SetTextMode(TM_RICHTEXT);
-
+  if((GetTextMode() & TM_RICHTEXT) == 0)
+  {
+    SetTextMode(TM_RICHTEXT | TM_SINGLECODEPAGE);
+  }
   EDITSTREAM es;
   es.dwCookie    = (DWORD_PTR)&p_text;    // Pass a pointer to the CString to the callback function
   es.pfnCallback = EditStreamInCallback;  // Specify the pointer to the callback function
@@ -186,19 +195,20 @@ StyleRichEdit::FormatRTFText(CString p_text)
   m_unformatted = p_text;
 
   CString rtfHeader = CreateRTFHeader();
-  
   PrepareRTFText(p_text);
-
   CString fullRTF = rtfHeader + p_text + _T("}");
-  SetRTFText(fullRTF);
 
+  SetRTFText(fullRTF);
   return fullRTF;
 }
 
 void
 StyleRichEdit::Redisplay()
 {
-  SetRTFText(FormatRTFText(m_unformatted));
+  CString rtfHeader = CreateRTFHeader();
+  CString prep(m_unformatted);
+  PrepareRTFText(prep);
+  SetRTFText(rtfHeader + prep + _T("}"));
 }
 
 void 

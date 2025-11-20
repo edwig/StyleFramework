@@ -3434,13 +3434,15 @@ void CGridCtrl::ResetScrollBars()
   {
     return;
   }
+
+  int dpi = ::GetDpiForWindow(GetSafeHwnd());
   if(IsVisibleVScroll())
   {
-    rect.right += GetSystemMetrics(SM_CXVSCROLL) + GetSystemMetrics(SM_CXBORDER);
+    rect.right += GetSystemMetricsForDpi(SM_CXVSCROLL,dpi) + GetSystemMetricsForDpi(SM_CXBORDER,dpi);
   }
   if(IsVisibleHScroll())
   {
-    rect.bottom += GetSystemMetrics(SM_CYHSCROLL) + GetSystemMetrics(SM_CYBORDER);
+    rect.bottom += GetSystemMetricsForDpi(SM_CYHSCROLL,dpi) + GetSystemMetricsForDpi(SM_CYBORDER,dpi);
   }
   rect.left += GetFixedColumnWidth();
   rect.top += GetFixedRowHeight();
@@ -3464,18 +3466,20 @@ void CGridCtrl::ResetScrollBars()
   //      IsVisibleHScroll(), IsVisibleVScroll());
 
   // If vertical scroll bar, horizontal space is reduced
+  dpi = ::GetDpiForWindow(GetSafeHwnd());
+
   if(VisibleRect.Height() < VirtualRect.Height())
   {
-    VisibleRect.right -= ::GetSystemMetrics(SM_CXVSCROLL);
+    VisibleRect.right -= ::GetSystemMetricsForDpi(SM_CXVSCROLL,dpi);
   }
   // If horz scroll bar, vert space is reduced
   if(VisibleRect.Width() < VirtualRect.Width())
   {
-    VisibleRect.bottom -= ::GetSystemMetrics(SM_CYHSCROLL);
+    VisibleRect.bottom -= ::GetSystemMetricsForDpi(SM_CYHSCROLL,dpi);
   }
   // Recheck vertical scroll bar
   //if (VisibleRect.Height() < VirtualRect.Height())
-  // VisibleRect.right -= ::GetSystemMetrics(SM_CXVSCROLL);
+  // VisibleRect.right -= ::GetSystemMetricsForDpi(SM_CXVSCROLL,dpi);
     
   if (VisibleRect.Height() < VirtualRect.Height())
   {
@@ -5365,7 +5369,7 @@ BOOL CGridCtrl::AutoSizeColumn(int nCol, UINT nAutoSizeStyle /*=GVS_DEFAULT*/,
     CGridCellBase* pCell = GetCell(nRow, nCol);
     if(pCell)
     {
-      size = pCell->GetCellExtent(pDC);
+      size = pCell->GetCellExtent(pDC,GetSafeHwnd());
     }
     if(size.cx > nWidth)
     {
@@ -5417,7 +5421,7 @@ BOOL CGridCtrl::AutoSizeRow(int nRow, BOOL bResetScroll /*=TRUE*/)
     CGridCellBase* pCell = GetCell(nRow, nCol);
     if(pCell)
     {
-      size = pCell->GetCellExtent(pDC);
+      size = pCell->GetCellExtent(pDC,GetSafeHwnd());
     }
     if(size.cy > nHeight)
     {
@@ -5514,7 +5518,7 @@ void CGridCtrl::AutoSize(UINT nAutoSizeStyle /*=GVS_DEFAULT*/)
           CGridCellBase* pCell = GetCell(nRow, nCol);
           if(pCell)
           {
-            size = pCell->GetCellExtent(pDC);
+            size = pCell->GetCellExtent(pDC,GetSafeHwnd());
           }
           if(size.cx > (int)m_arColWidths[nCol])
           {
@@ -5643,7 +5647,7 @@ void CGridCtrl::ExpandLastColumn()
   if (nDifference > 0)
   {
     //if (GetVirtualHeight() > rect.Height())
-    //    nDifference -= GetSystemMetrics(SM_CXVSCROLL);
+    //    nDifference -= GetSystemMetricsForDpi(SM_CXVSCROLL,dpi);
 
     m_arColWidths[ nLastColumn ] += nDifference;
     Refresh();
@@ -6279,7 +6283,7 @@ void CGridCtrl::OnMouseMove(UINT /*nFlags*/,CPoint point)
             szTipText = GetTitleTip(tipnum);
             if(tipnum >= 0 && szTipText && szTipText[0])
             {
-              TRACE("Title tip: %s\n",szTipText);
+              ATLTRACE(_T("Title tip: %s\n"),szTipText);
               GetCellRect(idCurrentCell.row,idCurrentCell.col,TextRect);
               pCell->GetTipTextRect(TextRect);
               GetCellRect(idCurrentCell.row, idCurrentCell.col, CellRect);

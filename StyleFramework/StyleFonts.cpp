@@ -55,7 +55,7 @@ StyleFonts::MakeLOGFONTFromString(CString fontstring)
   _tcscpy_s(lf.lfFaceName,LF_FACESIZE,StyleFontName);
   lf.lfWeight = FW_NORMAL;
   // lf.lfHeight = -MulDiv(12,96,m_dpi);
-  lf.lfHeight = -MulDiv(STANDARDFONTSIZE,m_dpi,USER_DEFAULT_SCREEN_DPI);
+  lf.lfHeight = -MulDiv(STANDARDFONTSIZE,m_dpi,72);
 
   std::vector<CString> fontParts;
   Split(fontstring,_T(";"),fontParts);
@@ -66,7 +66,7 @@ StyleFonts::MakeLOGFONTFromString(CString fontstring)
     _tcscpy_s(lf.lfFaceName,LF_FACESIZE,fontParts[0]);
     if(fontParts.size() >= 2)
     {
-      lf.lfHeight = -MulDiv(_ttoi(fontParts[1]),m_dpi,80);
+      lf.lfHeight = -MulDiv(_ttoi(fontParts[1]),m_dpi,72);
       if(fontParts.size() == 3)
       {
         lf.lfWeight = _ttoi(fontParts[2]);

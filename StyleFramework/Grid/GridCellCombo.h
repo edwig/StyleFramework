@@ -36,7 +36,7 @@ public:
 public:
   virtual BOOL  Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;
   virtual void  EndEdit() override;
-  virtual CSize GetCellExtent(CDC* pDC) override;
+  virtual CSize GetCellExtent(CDC* pDC,HWND p_hwnd) override;
   virtual CWnd* GetEditWnd() const override;
 
 // CGridCellCombo specific calls

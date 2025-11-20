@@ -1,0 +1,30 @@
+StyleFramwork colors
+====================
+
+Style        Hue     HexCode  RGB
+------------ ------- -------- -----------
+Lime         Light   #80E040  128,224, 64
+             Middle  #80C000  128,192,  0
+			 Dark    #608000   96,128,  0
+Skyblue      Light   #67C6FE  103,198,254
+             Middle  #19A6FE   25,166,254
+             Dark    #0166A3    1,102,163
+Purple       Light   #B196FA  177,150,250
+             Middle  #875AF7  135, 90,247
+             Dark    #4A0CEF   74, 12,239
+Mustard      Light   #A18022  161,128, 34
+             Middle  #C69E2A  198,158, 42
+			 Dark    #FDCA1C  253,202, 28
+ModerateGray Light   #BACEDA  186,206,218
+             Middle  #86A9BE  134,169,190
+             Dark    #5888A5   88,136,165
+PureGray     Light   #C8DEF3  200,222,243
+             Middle  #A5C8E8  165,200,235
+			 Dark    #A5C8E8  165,200,235
+BlackWhite   Light   #505050   80, 80, 80
+             Middle  #000000    0,  0,  0
+			 Dark    #000000    0,  0,  0
+Dark         BACKGND #2E2E2D   46, 46, 46
+             Light   #4D4D4D   77, 77, 77
+             Middle  #999999  153,153,153
+			 Dark    #BEBEBE  190,190,190
