@@ -57,6 +57,7 @@ public:
   virtual INT_PTR DoModal(bool p_showGrayscreen);
   virtual BOOL    OnInitDialog() override;
   virtual BOOL    InitFirstFocus();
+  virtual void    PostInitDialog();
   virtual bool    OnClosing();
   virtual void    SetupDynamicLayout();
   virtual void    OnDroppedFile(UINT p_id,UINT p_index,LPCTSTR p_fileName);

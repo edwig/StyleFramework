@@ -77,6 +77,7 @@ MyFrameDlg::OnInitDialog()
   // Implement OnDroppedFile !!
   m_editText.DragAcceptFiles(TRUE);
 
+  PostInitDialog();
   return TRUE;
 }
 

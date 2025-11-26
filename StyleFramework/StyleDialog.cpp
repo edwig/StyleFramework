@@ -128,11 +128,19 @@ StyleDialog::OnInitDialog()
   {
     InitStatusBar();
   }
+  return InitFirstFocus();
+}
+
+// In order to be working correctly:
+// call "SetCanResize()" prior to "PostInitDialog()"
+// in all your applications
+void
+StyleDialog::PostInitDialog()
+{
   if(m_saveMonitor)
   {
     StyleRestoreWindowPosition(this);
   }
-  return InitFirstFocus();
 }
 
 int

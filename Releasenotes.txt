@@ -12,7 +12,7 @@
 
 VERSION 1.2.1 of xx-xx-2025
 ---------------------------
-1)  Ported to Visual Studio 20206
+1)  Ported to Visual Studio 2026
 2)  - Added scrollbar bitmaps for high DPI settings (125%, 150% and 200%)
     - Fix for StyleScrollBar to properly display the new bitmaps
     - Fix for several classes to properly use the DPI changes per monitor
@@ -24,6 +24,7 @@ VERSION 1.2.1 of xx-xx-2025
     DDX_Control() override for a string binding. This creates the possibility to bind to the
     XString class of the BaseLibrary.
 5)  Style static now also supports right-alined texts
+6)  Call "PostInitDialog()" to trigger the re-positioning of a Dialog application
 
 
 VERSION 1.2.0 of 07-11-2025

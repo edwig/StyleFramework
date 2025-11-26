@@ -315,7 +315,9 @@ void StyleSaveWindowPosition(CWnd* p_wnd)
   }
   // Save the name of the monitor
   const CString name = monitor->GetName();
-  app->WriteProfileString(_T("Monitor"),_T("Name"),name);
+  app->WriteProfileString(_T("Monitor"),_T("Name"),  name);
+  app->WriteProfileInt   (_T("Monitor"),_T("Width"), monitor->GetWidth());
+  app->WriteProfileInt   (_T("Monitor"),_T("Height"),monitor->GetHeight());
 
   // Save the window position relative to the monitor
   CRect monRect = monitor->GetRect();
@@ -324,9 +326,15 @@ void StyleSaveWindowPosition(CWnd* p_wnd)
 
   int left = winRect.left - monRect.left;
   int top  = winRect.top  - monRect.top;
-  app->WriteProfileInt(_T("Monitor"),_T("Left"),left);
-  app->WriteProfileInt(_T("Monitor"),_T("Top"), top);
+  app->WriteProfileInt(_T("Window"),_T("Left"),  left);
+  app->WriteProfileInt(_T("Window"),_T("Top"),   top);
+  app->WriteProfileInt(_T("Window"),_T("Width"), winRect.Width());
+  app->WriteProfileInt(_T("Window"),_T("Height"),winRect.Height());
 }
+
+// We should at least be able to see a minimum amount of pixels
+// so we will not be obscured by a task bar in a different position
+#define MINIMUM_VISIBLE 80
 
 void
 StyleRestoreWindowPosition(CWnd* p_wnd)
@@ -337,15 +345,25 @@ StyleRestoreWindowPosition(CWnd* p_wnd)
   {
     return;
   }
+  int width  = app->GetProfileInt(_T("Monitor"),_T("Width"), -1);
+  int height = app->GetProfileInt(_T("Monitor"),_T("Height"),-1);
+
   const StyleMonitor* monitor = g_styling.GetMonitor(name);
   if(!monitor)
   {
     return;
   }
   // Getting the saved position
-  int top  = app->GetProfileInt(_T("Monitor"),_T("Top"), -1);
-  int left = app->GetProfileInt(_T("Monitor"),_T("Left"),-1);
+  int top  = app->GetProfileInt(_T("Window"),_T("Top"), -1);
+  int left = app->GetProfileInt(_T("Window"),_T("Left"),-1);
   if(top == -1 && left == -1)
+  {
+    return;
+  }
+
+  // See if we would still be visible on that monitor after the move!
+  if(!((left < (monitor->GetWidth()  - MINIMUM_VISIBLE)) &&
+       (top  < (monitor->GetHeight() - MINIMUM_VISIBLE))))
   {
     return;
   }
@@ -361,4 +379,17 @@ StyleRestoreWindowPosition(CWnd* p_wnd)
   ::SetWindowPos(p_wnd->GetSafeHwnd(),nullptr
                 ,rect.left,rect.top,winrect.Width(),winrect.Height()
                 ,SWP_NOZORDER | SWP_NOACTIVATE);
+
+  // See if monitor not changed and we can resize the application
+  if((width != monitor->GetWidth()) || (height != monitor->GetHeight()))
+  {
+    return;
+  }
+
+  // Getting the stored window size
+  int winWidth  = app->GetProfileInt(_T("Window"),_T("Width"), -1);
+  int winHeight = app->GetProfileInt(_T("Window"),_T("Height"),-1);
+
+  // Resize to original size
+  p_wnd->MoveWindow(rect.left,rect.top,winWidth,winHeight);
 }

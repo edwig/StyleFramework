@@ -128,7 +128,6 @@ ThemeColor::GetSkinScrollWidth(HWND p_hwnd,HMONITOR p_monitor /*=nullptr*/)
   else if(factor < 175) factor = 20; // 150%
   else                  factor = 26; // 200%
 
-  TRACE("New skin scroll width: %d\n",factor);
   return factor;
 }
 
