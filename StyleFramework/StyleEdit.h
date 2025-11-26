@@ -17,6 +17,17 @@
 // For license: See the file "LICENSE.txt" in the root folder
 //
 #pragma once
+#include <string>
+
+#ifndef stdstring
+#ifdef _UNICODE
+#define stdstring std::wstring
+#pragma message("XString is now defined as std::wstring")
+#else
+#define stdstring std::string
+#pragma message("XString is now defined as std::string")
+#endif
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // CSG_TextEdit window
@@ -295,6 +306,7 @@ StyleEdit::GetIsComboBox()
 
 void WINAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleEdit& p_editControl);
 void WINAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleEdit& p_editControl,CString& p_text);
+void WINAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleEdit& p_editControl,stdstring& p_text);
 void WINAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleEdit& p_editControl,int& p_number);
 void WINAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleEdit& p_editControl,double& p_number);
 

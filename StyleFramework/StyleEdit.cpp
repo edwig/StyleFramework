@@ -17,6 +17,7 @@
 // For license: See the file "LICENSE.txt" in the root folder
 //
 #include "stdafx.h"
+#include "StyleEdit.h"
 #include <winuser.h>
 
 #ifdef _DEBUG
@@ -1572,6 +1573,29 @@ void WINAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleEdit& p_editControl,CSt
     }
   }
 }
+
+void WINAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleEdit& p_editControl,stdstring& p_text)
+{
+  CString text;
+  CEdit& edit = reinterpret_cast<CEdit&>(p_editControl);
+  DDX_Control(pDX, nIDC, edit);
+  p_editControl.SetInitCorrectly();
+  if (pDX->m_bSaveAndValidate)
+  {
+    p_editControl.GetWindowText(text);
+    p_text = (LPCTSTR) text.GetString();
+  }
+  else
+  {
+    text = p_text.c_str();
+    p_editControl.SetWindowText(text);
+    if (p_editControl.GetIsPassword())
+    {
+      p_editControl.SetPassword(true);
+    }
+  }
+}
+
 
 void WINAPI DDX_Control(CDataExchange* pDX,int nIDC,StyleEdit& p_editControl,int& p_number)
 {

@@ -123,11 +123,19 @@ StyleStatic::OnPaint()
   CFont* font = GetSFXFont(GetSafeHwnd(),StyleFontType::DialogFont);
   CFont* org = pDC->SelectObject(font);
   
-  // Use left offset
-  rect.left += m_leftOffset;
-
+  UINT styles = DT_VCENTER | DT_NOPREFIX | DT_WORDBREAK | DT_EXPANDTABS;
+  if(GetExStyle() & WS_EX_RIGHT)
+  {
+    styles |= DT_RIGHT;
+  }
+  else
+  {
+    // Use left offset
+    rect.left += m_leftOffset;
+    styles |= DT_LEFT;
+  }
   // Print the text
-  pDC->DrawText(text,&rect,DT_LEFT | DT_VCENTER | DT_NOPREFIX | DT_WORDBREAK | DT_EXPANDTABS);
+  pDC->DrawText(text,&rect,styles);
 
   // Restore originals
   pDC->SelectObject(org);

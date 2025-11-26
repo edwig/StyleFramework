@@ -20,6 +20,11 @@ VERSION 1.2.1 of xx-xx-2025
 3)  TAKE ACTION:
     - Re-implement your resource file numbers between 135 and 200 for the new scrollbar bitmaps
       So review your resource.h file for this number range
+4)  StyleEdit is now also capable of binding with a std::string or a std::wstring in the
+    DDX_Control() override for a string binding. This creates the possibility to bind to the
+    XString class of the BaseLibrary.
+5)  Style static now also supports right-alined texts
+
 
 VERSION 1.2.0 of 07-11-2025
 ---------------------------
