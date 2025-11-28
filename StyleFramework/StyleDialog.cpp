@@ -387,6 +387,12 @@ StyleDialog::SetCanResize(bool p_resize)
   }
 }
 
+void
+StyleDialog::SetSaveMonitor(bool p_save /*= true*/)
+{
+  m_saveMonitor = p_save;
+}
+
 void 
 StyleDialog::ShowCloseButton(bool p_show)
 {

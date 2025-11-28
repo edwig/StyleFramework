@@ -603,6 +603,10 @@ MessageDialog::OnInitDialog()
   // Bring to foreground?
   CreateSetForeground();
 
+  // Never meddle with the last positions
+  // IN case we are the last dialog the application uses
+  SetSaveMonitor(false);
+
   // Set focus on the default button (if any)
   return InitFocus();
 }

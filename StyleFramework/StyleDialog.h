@@ -69,6 +69,7 @@ public:
   void    ShowCloseButton (bool p_closeButton = true);
   void    ShowGripper     (bool p_gripper     = true);
   void    SetCanResize    (bool p_resize      = true);
+  void    SetSaveMonitor  (bool p_save        = true);
   void    SetWindowText(LPCTSTR lpstString);
   BOOL    SetSysMenu(UINT p_menuResource);
   void    SetAboutBoxAndIcon(int p_command,int p_menutitle);
@@ -76,6 +77,7 @@ public:
   void    SetTheme(ThemeColor::Themes p_theme);
   void    LoadStyleTheme();
   CWnd*   GetNextDlgTabItem(CWnd* p_control, BOOL p_previous = FALSE) const;
+  bool    GetSaveMonitor() { return m_saveMonitor; }
 
   void    RegisterTooltip(int p_ID,            LPCTSTR p_text);
   void    RegisterTooltip(CWnd& p_wnd,         LPCTSTR p_text);
