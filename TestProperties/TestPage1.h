@@ -26,9 +26,6 @@ protected:
 	afx_msg void OnEnKillfocusEdit3();
 	afx_msg void OnEnKillfocusEdit4();
 	afx_msg void OnEnKillfocusEdit5();
-	afx_msg void OnEnKillfocusEdit6();
-	afx_msg void OnEnKillfocusEdit7();
-	afx_msg void OnEnKillfocusEdit8();
 
 private:
 	CString   m_test1;
@@ -36,15 +33,9 @@ private:
 	CString   m_test3;
 	CString   m_test4;
 	CString   m_test5;
-	CString   m_test6;
-	CString   m_test7;
-	CString   m_test8;
 	StyleEdit m_editTest1;
 	StyleEdit m_editTest2;
 	StyleEdit m_editTest3;
 	StyleEdit m_editTest4;
 	StyleEdit m_editTest5;
-	StyleEdit m_editTest6;
-	StyleEdit m_editTest7;
-	StyleEdit m_editTest8;
 };

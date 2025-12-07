@@ -1110,6 +1110,7 @@ StyleListBox::ResetFont(HMONITOR p_monitor /*= nullptr*/)
   SetFont(&m_font);
 }
 
+// wParam = new DPI, lParam = HMONITOR
 LRESULT
 StyleListBox::OnDpiChanged(WPARAM wParam,LPARAM lParam)
 {

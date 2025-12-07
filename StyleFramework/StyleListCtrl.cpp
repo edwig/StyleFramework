@@ -48,6 +48,7 @@ BEGIN_MESSAGE_MAP(StyleHeaderCtrl, CMFCHeaderCtrl)
   ON_MESSAGE(HDM_LAYOUT,OnLayout)
 END_MESSAGE_MAP()
 
+// wParam = new DPI, lParam = HMONITOR
 LRESULT
 StyleHeaderCtrl::OnDpiChanged(WPARAM wParam,LPARAM lParam)
 {
@@ -328,6 +329,7 @@ StyleListCtrl::GetSkin()
   return (SkinScrollWnd*)GetWindowLongPtr(GetSafeHwnd(), GWLP_USERDATA);
 }
 
+// wParam = new DPI, lParam = HMONITOR
 LRESULT
 StyleListCtrl::OnDpiChanged(WPARAM wParam,LPARAM lParam)
 {

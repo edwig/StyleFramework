@@ -70,6 +70,7 @@ protected:
 
 protected:
   virtual void PreSubclassWindow();
+  virtual bool RegisterAsControlPlane(CWnd* p_plane);
           void PaintError(CDC* pDC, CRect rect);
           void ResizeTab(int p_tab);
 

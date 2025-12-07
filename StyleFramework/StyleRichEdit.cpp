@@ -66,6 +66,7 @@ StyleRichEdit::SetBorderSize(int p_size)
   }
 }
 
+// wParam = new DPI, lParam = HMONITOR
 LRESULT 
 StyleRichEdit::OnDpiChangedAfter(WPARAM wParam, LPARAM lParam)
 {

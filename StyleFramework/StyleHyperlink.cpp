@@ -169,6 +169,7 @@ StyleHyperLink::SetTipText(LPCTSTR p_tipText)
   }
 }
 
+// wParam = new DPI, lParam = HMONITOR
 LRESULT
 StyleHyperLink::OnDpiChanged(WPARAM wParam,LPARAM lParam)
 {

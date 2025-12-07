@@ -39,6 +39,7 @@ BEGIN_MESSAGE_MAP(StyleTab,CDialog)
   ON_MESSAGE(WM_CTLCOLORLISTBOX,        OnCtlColorListBox)
   ON_MESSAGE(WM_DPICHANGED_BEFOREPARENT,OnDpiChangedBefore)
   ON_MESSAGE(WM_DPICHANGED,             OnDpiChanged)
+  ON_MESSAGE(WM_DPICHANGED_AFTERPARENT, OnDpiChangedAfter)
 END_MESSAGE_MAP()
 
 StyleTab::StyleTab(UINT  p_IDTemplate,CWnd* p_parentWnd)
@@ -59,7 +60,6 @@ StyleTab::OnInitDialog()
   OnStyleChanged(0,0);
 
   ASSERT(GetStyle()   & WS_CHILD);
-  ASSERT(GetExStyle() & WS_EX_CONTROLPARENT);
 
   GetDpi(GetSafeHwnd(),m_dpi_x,m_dpi_y);
   return TRUE;
@@ -356,49 +356,60 @@ StyleTab::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
   return CDialog::OnCtlColor(pDC,pWnd,nCtlColor);
 }
 
-LRESULT
-StyleTab::OnDpiChangedBefore(WPARAM wParam,LPARAM lParam)
-{
-  // We do nothing here
-  // We must catch this message, otherwise we crash in the default WindowProc handler !!
-  return 0;
-}
-
 static int   g_dpi_x = USER_DEFAULT_SCREEN_DPI;
 static int   g_dpi_y = USER_DEFAULT_SCREEN_DPI;
 
-// A change in DPI has happened
 LRESULT
-StyleTab::OnDpiChanged(WPARAM wParam,LPARAM lParam)
+StyleTab::OnDpiChangedBefore(WPARAM wParam,LPARAM lParam)
 {
-  // The new DPI
-  g_dpi_x = m_dpi_x;
-  g_dpi_y = m_dpi_y;
-  m_dpi_x = HIWORD(wParam);
-  m_dpi_y = LOWORD(wParam);
-
-  // Check if anything has changed
-  if(m_dpi_x == g_dpi_x && m_dpi_y == g_dpi_y)
+  if(wParam == 0 && lParam == 0)
   {
-    // No change
+    // Default system message
     return 0;
   }
 
+  // Save old DPI
+  g_dpi_x = m_dpi_x;
+  g_dpi_y = m_dpi_y;
+  // The new DPI
+  m_dpi_x = HIWORD(wParam);
+  m_dpi_y = LOWORD(wParam);
+
   // Remove the invalid layout manager
   auto manager = GetDynamicLayout();
-  bool layoutEnabled(manager != nullptr);
+  m_canResize  = (manager != nullptr);
   if(manager)
   {
     m_pDynamicLayout = nullptr;
     delete manager;
   }
 
+  // We must catch this message, otherwise we crash in the default WindowProc handler !!
+  return 0;
+}
+
+// A change in DPI has happened
+LRESULT
+StyleTab::OnDpiChanged(WPARAM wParam,LPARAM lParam)
+{
   // Now redraw everything
   Invalidate(TRUE);
   OnNcPaint();
+  return 0;
+}
+
+// wParam = new DPI, lParam = HMONITOR
+LRESULT
+StyleTab::OnDpiChangedAfter(WPARAM wParam,LPARAM lParam)
+{
+  if(wParam == 0 && lParam == 0)
+  {
+    // Default system message
+    return 0;
+  }
 
   // Create a new dynamic layout manager for the new DPI
-  if(layoutEnabled)
+  if(m_canResize)
   {
     // Scale the original size
     m_originalSize.right  = m_originalSize.left + ::MulDiv(m_originalSize.Width(), m_dpi_x,g_dpi_x);

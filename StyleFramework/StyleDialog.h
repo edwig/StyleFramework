@@ -17,6 +17,7 @@
 // For license: See the file "LICENSE.txt" in the root folder
 //
 #pragma once
+#include <vector>
 #include <map>
 #include <afxdialogex.h>
 
@@ -32,6 +33,14 @@ typedef struct
   LPARAM lParam;
 } 
 SMessage, *PSMessage;
+
+using ControlPlanes = std::vector<CWnd*>;
+
+//////////////////////////////////////////////////////////////////////
+//
+// StyleDialog class
+//
+/////////////////////////////////////////////////////////////////////
 
 class StyleDialog : public CDialogEx
 {
@@ -61,6 +70,7 @@ public:
   virtual bool    OnClosing();
   virtual void    SetupDynamicLayout();
   virtual void    OnDroppedFile(UINT p_id,UINT p_index,LPCTSTR p_fileName);
+  virtual bool    AddControlPlane(CWnd* p_dialog);
 
   void    ReDrawFrame();
   void    ShowSysMenu     (bool p_sysmenu     = true);
@@ -156,7 +166,7 @@ protected:
   CRect     m_captionRect { 0,0,0,0 };
   // Original window size
   CRect     m_originalSize{ 0,0,0,0 };
-  // caption bar 
+  // Booleans
   bool      m_caption     { true  };
   bool      m_closeButton { true  };
   bool      m_mnuButton   { false };
@@ -172,11 +182,12 @@ protected:
   int       m_dpi_x       { 0     };
   int       m_dpi_y       { 0     };
   // Objects
-  CMenu      m_menu;
-  HICON      m_hIcon;
-  CStatusBar m_statusBar;
-  CBrush     m_defaultBrush;
-  ToolTips   m_tooltips;
+  CMenu         m_menu;
+  HICON         m_hIcon;
+  CStatusBar    m_statusBar;
+  ControlPlanes m_controlPlanes;
+  CBrush        m_defaultBrush;
+  ToolTips      m_tooltips;
 };
 
 class AutoBlockActivation

@@ -957,6 +957,7 @@ StyleComboBox::OnChar(UINT nChar,UINT nRepCnt,UINT nFlags)
   CEdit::OnChar(nChar,nRepCnt,nFlags);
 }
 
+// wParam = new DPI, lParam = HMONITOR
 LRESULT
 StyleComboBox::OnDpiChanged(WPARAM wParam,LPARAM lParam)
 {

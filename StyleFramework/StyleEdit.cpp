@@ -1397,6 +1397,7 @@ StyleEdit::OnSize(UINT nType, int cx, int cy)
   }
 }
 
+// wParam = new DPI, lParam = HMONITOR
 LRESULT
 StyleEdit::OnDpiChangedAfter(WPARAM wParam,LPARAM lParam)
 {

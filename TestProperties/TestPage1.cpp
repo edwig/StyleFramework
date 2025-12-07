@@ -26,9 +26,6 @@ void TestPage1::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX,IDC_EDIT3,m_editTest3,m_test3);
 	DDX_Control(pDX,IDC_EDIT4,m_editTest4,m_test4);
 	DDX_Control(pDX,IDC_EDIT5,m_editTest5,m_test5);
-	DDX_Control(pDX,IDC_EDIT6,m_editTest6,m_test6);
-	DDX_Control(pDX,IDC_EDIT7,m_editTest7,m_test7);
-	DDX_Control(pDX,IDC_EDIT8,m_editTest8,m_test8);
 }
 
 BEGIN_MESSAGE_MAP(TestPage1,StyleTab)
@@ -37,9 +34,6 @@ BEGIN_MESSAGE_MAP(TestPage1,StyleTab)
 	ON_EN_KILLFOCUS(IDC_EDIT3,OnEnKillfocusEdit3)
 	ON_EN_KILLFOCUS(IDC_EDIT4,OnEnKillfocusEdit4)
 	ON_EN_KILLFOCUS(IDC_EDIT5,OnEnKillfocusEdit5)
-	ON_EN_KILLFOCUS(IDC_EDIT6,OnEnKillfocusEdit6)
-	ON_EN_KILLFOCUS(IDC_EDIT7,OnEnKillfocusEdit7)
-	ON_EN_KILLFOCUS(IDC_EDIT8,OnEnKillfocusEdit8)
 END_MESSAGE_MAP()
 
 BOOL
@@ -83,20 +77,3 @@ TestPage1::OnEnKillfocusEdit5()
   UpdateData();
 }
 
-void 
-TestPage1::OnEnKillfocusEdit6()
-{
-  UpdateData();
-}
-
-void 
-TestPage1::OnEnKillfocusEdit7()
-{
-  UpdateData();
-}
-
-void 
-TestPage1::OnEnKillfocusEdit8()
-{
-  UpdateData();
-}

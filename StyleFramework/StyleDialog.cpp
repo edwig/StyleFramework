@@ -294,11 +294,19 @@ StyleDialog::DoModal(bool p_showGrayScreen)
 BOOL 
 StyleDialog::PreTranslateMessage(MSG* p_msg)
 {
-  if(!PreTranslateMenu(p_msg))
+  if(PreTranslateMenu(p_msg))
   {
-    return CDialogEx::PreTranslateMessage(p_msg);
+    return TRUE;
   }
-  return TRUE;
+
+  for(auto& wnd : m_controlPlanes)
+  {
+    if(wnd->GetSafeHwnd() && wnd->IsDialogMessage(p_msg))
+    {
+      return TRUE;
+    }
+  }
+  return CDialogEx::PreTranslateMessage(p_msg);
 }
 
 // Process the menu items.
@@ -566,6 +574,17 @@ StyleDialog::RegisterTooltip(StyleComboBox& p_wnd,LPCTSTR p_text)
     m_tooltips[p_wnd.GetSafeHwnd()] = p_text;
     m_tooltips[p_wnd.GetEditControl()->GetSafeHwnd()] = p_text;
   }
+}
+
+bool
+StyleDialog::AddControlPlane(CWnd* p_dialog)
+{
+  if(GetExStyle() & WS_EX_CONTROLPARENT)
+  {
+    m_controlPlanes.push_back(p_dialog);
+    return true;
+  }
+  return false;
 }
 
 BOOL
@@ -1145,9 +1164,10 @@ StyleDialog::OnDpiChanged(WPARAM wParam,LPARAM lParam)
 {
   g_resize_wnd = this;
 
-  // The new DPI
+  // Save the old DPI
   g_dpi_x = m_dpi_x;
   g_dpi_y = m_dpi_y;
+  // The new DPI
   m_dpi_x = HIWORD(wParam);
   m_dpi_y = LOWORD(wParam);
 
@@ -1297,7 +1317,7 @@ StyleDialog::NotifyMonitorToAllChilds(bool p_beforeParent /*= false*/)
   {
     // Notify all child windows before parent has changed DPI
     // So that we can prepare for the change
-    SendMessageToAllChildWindows(WM_DPICHANGED_BEFOREPARENT,g_dpi_x,(LPARAM)newMonitor);
+    SendMessageToAllChildWindows(WM_DPICHANGED_BEFOREPARENT,m_dpi_x,(LPARAM)newMonitor);
   }
   else
   {
@@ -1309,7 +1329,7 @@ StyleDialog::NotifyMonitorToAllChilds(bool p_beforeParent /*= false*/)
       SendMessageToAllChildWindows(WM_SETFONT,(WPARAM)font->GetSafeHandle(),(LPARAM)TRUE);
     }
     // Let Style controls 'do-their-thing'
-    SendMessageToAllChildWindows(WM_DPICHANGED_AFTERPARENT,g_dpi_x,(LPARAM)newMonitor);
+    SendMessageToAllChildWindows(WM_DPICHANGED_AFTERPARENT,m_dpi_x,(LPARAM)newMonitor);
   }
 }
 

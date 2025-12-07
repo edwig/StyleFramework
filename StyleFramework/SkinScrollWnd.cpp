@@ -1194,6 +1194,7 @@ SkinScrollWnd::OnGetDpiScaledSize(WPARAM wParam,LPARAM lParam)
   {
     return 0;
   }
+
   // Getting the child window rectangle
   CRect rcChild;
   GetWindowRect(rcChild);
@@ -1226,6 +1227,7 @@ SkinScrollWnd::OnDpiChangedBefore(WPARAM wParam,LPARAM lParam)
   return 0;
 }
 
+// wParam = new DPI, lParam = HMONITOR
 LRESULT
 SkinScrollWnd::OnDpiChangedAfter(WPARAM wParam,LPARAM lParam)
 {
@@ -1238,8 +1240,12 @@ SkinScrollWnd::OnDpiChangedAfter(WPARAM wParam,LPARAM lParam)
   // Set the new scrollbar width/height
   SetSkinScrollWidth(GetSafeHwnd(),monitor);
 
+  return 0;
+
   if(!m_dpiRect.IsRectNull())
   {
+    TRACE("SkinScrollWnd::OnDpiChangedAfter: Scaling skinned control\n");
+
     // Scale the cooridinates
     int newDpi_x = USER_DEFAULT_SCREEN_DPI;
     int newDpi_y = USER_DEFAULT_SCREEN_DPI;
@@ -1257,11 +1263,6 @@ SkinScrollWnd::OnDpiChangedAfter(WPARAM wParam,LPARAM lParam)
     MoveWindow(m_dpiRect);
 
     m_dpiRect.SetRectEmpty();
-
-//     OnLimiterMove((WPARAM)(WS_VSCROLL | WS_HSCROLL),0);
-//     // First setting of scrollbars in this amount of delay time
-//     SetTimer(TIMER_UPDATE,FRAME_FIRST_SCROLLBARS,nullptr);
   }
-
   return 0;
 }

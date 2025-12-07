@@ -63,6 +63,7 @@ private:
   afx_msg LPARAM  OnCtlColorStatic  (WPARAM wParam,LPARAM lParam);
   afx_msg LPARAM  OnCtlColorListBox (WPARAM wParam,LPARAM lParam);
   afx_msg LRESULT OnDpiChangedBefore(WPARAM wParam,LPARAM lParam);
+  afx_msg LRESULT OnDpiChangedAfter (WPARAM wParam,LPARAM lParam);
   afx_msg LRESULT OnDpiChanged      (WPARAM wParam,LPARAM lParam);
   afx_msg HBRUSH  OnCtlColor(CDC* pDC,CWnd* pWnd,UINT nCtlColor);
   afx_msg LRESULT OnStyleChanged(WPARAM,LPARAM);

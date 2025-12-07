@@ -3684,6 +3684,7 @@ LRESULT CGridCtrl::OnGetFont(WPARAM /*wParam*/, LPARAM /*lParam*/)
   return (LRESULT) m_cellDefault.GetFontObject()->GetSafeHandle();
 }
 
+// wParam = new DPI, lParam = HMONITOR
 LRESULT
 CGridCtrl::OnDpiChanged(WPARAM wParam,LPARAM lParam)
 {
