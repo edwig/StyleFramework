@@ -183,6 +183,7 @@ StyleToast::OnTimer(UINT_PTR nIDEvent)
   if(nIDEvent == m_killTimer)
   {
     DestroyToast(this);
+    return;
   }
   if(nIDEvent == m_stepTimer)
   {

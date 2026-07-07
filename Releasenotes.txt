@@ -25,6 +25,7 @@ VERSION 1.2.1 of xx-xx-2025
     XString class of the BaseLibrary.
 5)  Style static now also supports right-alined texts
 6)  Call "PostInitDialog()" to trigger the re-positioning of a Dialog application
+7)  Crash fix in closing the StyleToast in production situations
 
 
 VERSION 1.2.0 of 07-11-2025
