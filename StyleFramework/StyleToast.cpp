@@ -487,7 +487,7 @@ StyleToast* CreateToast(int      p_style
   toast->PostMessage(WM_PAINT,0,0);
   toast->PumpMessage();
 
-  if(focuswin)
+  if(focuswin && focuswin->GetSafeHwnd() != NULL)
   {
     focuswin->SetFocus();
   }
